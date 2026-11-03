@@ -135,9 +135,44 @@ Result: no visible changes. Underneath:
 - A connector reads Invest Detroit's real FormAssembly form using its actual field IDs. It never reads the SSN field.
 - 27 automated tests and an architecture guide (`docs/ARCHITECTURE.md`) were added.
 
+**20. Planning the add-on**
+> What would we need for the add-on script?
+
+Result: a plain-language list. On our side: one add-on file, styles that can't clash with Invest Detroit's site, a "fail safely" rule, a fix for translated pages, a test page, and somewhere to host the file. On Invest Detroit's side: someone to add one line to their page (in WordPress or in FormAssembly's custom-code area), privacy and security approval, a decision on what blocks Submit, an AI service, and a heads-up when they edit the form.
+
+**21. Build the add-on**
+> Build whatever pieces that we can build so far.
+
+Result:
+- `npm run build` now also makes **one add-on file** (`dist/embed/copilot.js`). It finds Invest Detroit's FormAssembly form, adds the review panel above its Submit button and the chat button in the corner, and locks Submit until a review passes. It also blocks attempts to get around the lock.
+- Its look is **sealed off** from the host page in both directions.
+- If anything breaks, it **removes itself and unlocks Submit**, so the official form always works.
+- Answers are read by the form's **hidden option codes**, so reviews still work when the page is translated.
+- A **test page** (`/embed-test/`) has a plain copy of the real form's structure. It acts out the form loading late, the form's own Submit handler, and a "Simulate Spanish translation" button.
+- A phone-layout bug where the chat button covered the form's spam-check badge was found and fixed.
+
+**22. Language dropdown** *(sent while the add-on was being built)*
+> Add a dropdown somewhere convenient on the page, perhaps on the top, that translates the page accurately into some main core languages.
+
+Result:
+- A language dropdown in the header with **English, Español, العربية (Arabic) and বাংলা (Bengali)**, the same languages Invest Detroit's own site offers.
+- Instead of word-by-word machine translation, every piece of text has a written translation: all questions and choices, review messages, the chat, the pop-up and the page itself.
+- Arabic switches the page to right-to-left.
+- Answers and review rules stay in English underneath, so switching language never breaks a review.
+- The choice is remembered on the device.
+- A note on translated pages says they were drafted with AI and not yet checked by a professional translator.
+- The add-on follows the language of whatever page it's on.
+
+**23. Keep this file current** *(sent while the language work was being built)*
+> After you are done, update our Prompt History md.
+
+Result: entries 20–23 were added to this file.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.
 - **Describe what you want to see and click.** The most effective prompts said exactly where something goes and how it behaves ("above Submit", "grey out until…", "in green with a checkmark").
 - **Small follow-ups mid-build work.** Requests like "make it a pop-up" or "grey it out, don't remove it" were picked up while Claude was still working.
 - **Ask "what's next according to our plan?"** It keeps the build tied to the project plan instead of drifting.
+- **Ask "what would we need?" before "build it".** Getting the list of pieces first made it clear which parts the team could build and which depend on Invest Detroit.
+- **Say what "accurate" means to you.** For translations, that meant real written translations rather than an automatic widget, plus an honest note that they still need professional review.
