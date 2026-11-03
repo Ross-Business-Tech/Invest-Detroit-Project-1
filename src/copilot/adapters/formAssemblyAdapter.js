@@ -13,24 +13,32 @@
 // fields that aren't mapped (the live form's SSN field is deliberately unmapped).
 
 import { FORM_ASSEMBLY_MAP, FORM_ASSEMBLY_SUBMIT_ID } from './formAssemblyMap.js'
+import { FIELDS_BY_ID } from '../formDefinition.js'
 
-function labelText(root, input) {
-  const label = root.querySelector(`label[for="${input.id}"]`)
-  return (label?.textContent || input.value || '').replace(/\s+/g, ' ').trim()
+const clean = (s) => (s || '').replace(/\s+/g, ' ').trim()
+
+/** Option code (tfa_373) -> our option ("Yes"), using the field's options in formDefinition.js. */
+function optionLookup(fieldId, codes) {
+  const options = FIELDS_BY_ID[fieldId]?.options || []
+  return codes ? Object.fromEntries(codes.map((code, i) => [code, options[i]])) : null
 }
 
-function readField(root, { kind, id }) {
+// With a code list, answers come from hidden option values so translated pages still read
+// "Yes". Without one, fall back to the visible text.
+function readField(root, { kind, id }, lookup) {
+  const choice = (value, text) => (lookup && lookup[value]) || clean(text)
   if (kind === 'radio') {
     const checked = root.querySelector(`input[type="radio"][name="${id}"]:checked`)
-    return checked ? labelText(root, checked) : undefined
+    if (!checked) return undefined
+    return choice(checked.value, root.querySelector(`label[for="${checked.id}"]`)?.textContent || checked.value)
   }
   const el = root.querySelector(`#${id}`)
   if (!el) return undefined
   switch (kind) {
     case 'select':
-      return el.value ? el.selectedOptions[0]?.textContent.trim() : ''
+      return el.value ? choice(el.value, el.selectedOptions[0]?.textContent) : ''
     case 'multi':
-      return [...el.selectedOptions].filter((o) => o.value).map((o) => o.textContent.trim())
+      return [...el.selectedOptions].filter((o) => o.value).map((o) => choice(o.value, o.textContent))
     case 'file':
       return el.files?.[0]?.name || ''
     case 'checkbox':
@@ -56,12 +64,13 @@ export function createFormAssemblyAdapter({ root = document, map = FORM_ASSEMBLY
   const byElement = {}
   for (const [fieldId, entry] of Object.entries(map)) byElement[entry.id] = fieldId
   const fieldIdOf = (el) => byElement[el?.id] || byElement[el?.name] || byElement[el?.name?.replace(/\[\]$/, '')] || null
+  const lookups = Object.fromEntries(Object.entries(map).map(([fieldId, e]) => [fieldId, optionLookup(fieldId, e.codes)]))
 
   return {
     getSnapshot() {
       const values = {}
       for (const [fieldId, entry] of Object.entries(map)) {
-        const v = readField(root, entry)
+        const v = readField(root, entry, lookups[fieldId])
         if (v !== undefined) values[fieldId] = v
       }
       return values

@@ -19,10 +19,10 @@ const WELCOME = {
 }
 
 /**
- * @param {{ assistant: { ask: Function }, activeFieldId: string | null }} props
+ * @param {{ assistant: { ask: Function }, activeFieldId: string | null, subtitle?: string }} props
  *   assistant comes from createAssistant(); activeFieldId from the form adapter
  */
-export default function ChatAssistant({ assistant, activeFieldId }) {
+export default function ChatAssistant({ assistant, activeFieldId, subtitle = 'AI helper · Preview, not connected yet' }) {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState([WELCOME])
   const [draft, setDraft] = useState('')
@@ -67,7 +67,7 @@ export default function ChatAssistant({ assistant, activeFieldId }) {
             <div className="chat-avatar" aria-hidden="true">ID</div>
             <div className="chat-heading">
               <h2 id="chat-title">Application Assistant</h2>
-              <p>AI helper · Preview, not connected yet</p>
+              <p>{subtitle}</p>
             </div>
             <button type="button" className="chat-close" aria-label="Close assistant" onClick={() => { setOpen(false); buttonRef.current?.focus() }}>×</button>
           </header>

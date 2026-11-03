@@ -5,6 +5,7 @@ import IntakeForm from './prototype/IntakeForm.jsx'
 import ChatAssistant from './components/ChatAssistant.jsx'
 import { createAssistant } from './copilot/assistant.js'
 import { track } from './copilot/events.js'
+import './components/copilot.css'
 import './App.css'
 
 export default function App() {

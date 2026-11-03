@@ -22,3 +22,18 @@ test('each live element is mapped once', () => {
   const seen = Object.values(FORM_ASSEMBLY_MAP).map((e) => e.id)
   assert.equal(new Set(seen).size, seen.length)
 })
+
+test('option codes line up with the options in the field definition', () => {
+  const problems = []
+  for (const [fieldId, entry] of Object.entries(FORM_ASSEMBLY_MAP)) {
+    if (!['radio', 'select', 'multi'].includes(entry.kind)) continue
+    const options = FIELDS_BY_ID[fieldId].options
+    if (!entry.codes) {
+      if (fieldId !== 're_team_contact') problems.push(`${fieldId}: no option codes`)
+      continue
+    }
+    if (entry.codes.length !== options.length) problems.push(`${fieldId}: ${entry.codes.length} codes for ${options.length} options`)
+    if (new Set(entry.codes).size !== entry.codes.length) problems.push(`${fieldId}: repeated code`)
+  }
+  assert.deepEqual(problems, [])
+})

@@ -80,7 +80,7 @@ export default function ReviewPanel({ state, onRun, onGoToField }) {
         </div>
       )}
 
-      <button type="button" className="btn review-btn" onClick={onRun} disabled={status === 'running'}>
+      <button type="button" className="review-btn" onClick={onRun} disabled={status === 'running'}>
         {status === 'running' ? 'Reviewing…' : status === 'done' ? 'Review again' : 'Review My Application'}
       </button>
     </div>
