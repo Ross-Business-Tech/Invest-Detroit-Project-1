@@ -9,7 +9,9 @@
 //     check:            which review step found it (one of REVIEW_CHECKS ids)
 //     level:            'blocker' | 'warning' | 'info'
 //     category:         machine-readable reason, e.g. 'missing_required', 'cross_field_inconsistency'
-//     title, message:   applicant-facing text (plain language, phrased as a question for warnings)
+//     title, message:   applicant-facing text in English (plain language, warnings phrased as questions)
+//     title_template, message_template, params:
+//                       the same text as a template + values, so screens can translate it
 //     inline_message:   short text to show under the field, or null
 //     suggested_action: 'fix' | 'verify_or_edit' | 'read_more'
 //     source_ids:       keys into SOURCES (config.js) that back this check
@@ -20,6 +22,7 @@
 // A future AI consistency check should return the same shape with blocking: false.
 
 import { FIELDS_BY_ID, visibleSections, validate } from './formDefinition.js'
+import { fill } from './text.js'
 
 export const REVIEW_CHECKS = [
   { id: 'required', label: 'Checking required questions' },
@@ -31,6 +34,13 @@ export const REVIEW_CHECKS = [
 
 export const LEVELS = ['blocker', 'warning', 'info']
 
+/** How the review panel groups issues, in order. */
+export const REVIEW_GROUPS = [
+  { key: 'blocker', title: 'Must fix before submitting', icon: '!' },
+  { key: 'warning', title: 'Please double-check', icon: '?' },
+  { key: 'info', title: 'Good to know', icon: 'i' },
+]
+
 const INTAKE = ['intake_form_v59']
 
 const num = (v) => {
@@ -41,8 +51,38 @@ const num = (v) => {
 const money = (n) => '$' + n.toLocaleString('en-US')
 const labelOf = (id) => FIELDS_BY_ID[id]?.label || id
 
-function issue(fields) {
+// Every applicant-facing sentence the review can produce. Kept together so they can be translated.
+export const REVIEW_TEXT = {
+  missingTitle: 'Required question left blank',
+  formatTitle: 'Answer format',
+  docTitle: 'Required document missing',
+  ackTitle: 'Acknowledgement not checked',
+  fieldOnly: '{field}',
+  fieldProblem: '{field}: {problem}',
+  loanTitle: 'Loan is larger than the total budget',
+  loanMessage: 'You asked for {loan}, but your total budget is {budget}. The loan request is usually part of the total budget, so please check both numbers.',
+  loanInline: 'Loan is larger than the total budget.',
+  amiTitle: 'Affordability units don’t match total units',
+  amiMessage: 'You said the project creates {units} housing units, but the affordability (AMI) boxes add up to {ami}. Is one of these numbers off?',
+  netTitle: 'Net {kind} square footage is larger than gross',
+  netMessage: 'Net square footage ({net}) is usually smaller than gross ({gross}), because gross includes walls, hallways and shared space. Could these be swapped?',
+  emptyTitle: '{section} section is empty',
+  emptyMessage: 'You chose "{type}" as the type of real estate, so this section applies to you. Filling it in helps the team review your project faster.',
+  equityTitle: 'About the 10% contribution',
+  equityMessage: 'You answered that you can’t provide at least 10% of the project cost as cash or equity. You can still submit. The Invest Detroit team may ask about other ways to fund that portion.',
+  fundsTitle: 'How the loan would be used',
+  fundsMessage: 'This question is optional, but answering it helps the team understand your request.',
+  kinds: ['retail', 'office', 'commercial', 'residential'],
+}
+const R = REVIEW_TEXT
+
+function issue({ title, message, params = {}, ...fields }) {
   return {
+    title: fill(title, params),
+    message: fill(message, params),
+    title_template: title,
+    message_template: message,
+    params,
     inline_message: null,
     suggested_action: fields.level === 'info' ? 'read_more' : fields.level === 'warning' ? 'verify_or_edit' : 'fix',
     source_ids: INTAKE,
@@ -62,15 +102,17 @@ function requiredAndFormat({ values }) {
       return issue({
         id: `missing_${id}`, field_id: id, check: 'documents', level: 'blocker',
         category: type === 'ack' ? 'missing_acknowledgement' : 'missing_document',
-        title: type === 'ack' ? 'Acknowledgement not checked' : 'Required document missing',
-        message: labelOf(id), inline_message: message,
+        title: type === 'ack' ? R.ackTitle : R.docTitle,
+        message: R.fieldOnly, params: { field: labelOf(id) }, inline_message: message,
       })
     }
     return issue({
       id: `${missing ? 'missing' : 'format'}_${id}`, field_id: id, check: missing ? 'required' : 'format', level: 'blocker',
       category: missing ? 'missing_required' : 'invalid_format',
-      title: missing ? 'Required question left blank' : 'Answer format',
-      message: missing ? labelOf(id) : `${labelOf(id)}: ${message}`, inline_message: message,
+      title: missing ? R.missingTitle : R.formatTitle,
+      message: missing ? R.fieldOnly : R.fieldProblem,
+      params: missing ? { field: labelOf(id) } : { field: labelOf(id), problem: message },
+      inline_message: message,
     })
   })
 }
@@ -82,9 +124,8 @@ function loanVsBudget({ values }) {
   return [issue({
     id: 'loan_gt_budget', field_id: 'loan_amount', check: 'consistency', level: 'blocker',
     category: 'cross_field_inconsistency',
-    title: 'Loan is larger than the total budget',
-    message: `You asked for ${money(loan)}, but your total budget is ${money(budget)}. The loan request is usually part of the total budget, so please check both numbers.`,
-    inline_message: 'Loan is larger than the total budget.',
+    title: R.loanTitle, message: R.loanMessage, params: { loan: money(loan), budget: money(budget) },
+    inline_message: R.loanInline,
   })]
 }
 
@@ -96,8 +137,7 @@ function affordableUnits({ values, visibleIds }) {
   return [issue({
     id: 'ami_mismatch', field_id: 'housing_units', check: 'consistency', level: 'warning',
     category: 'cross_field_inconsistency',
-    title: 'Affordability units don’t match total units',
-    message: `You said the project creates ${units} housing units, but the affordability (AMI) boxes add up to ${amiTotal}. Is one of these numbers off?`,
+    title: R.amiTitle, message: R.amiMessage, params: { units, ami: amiTotal },
   })]
 }
 
@@ -111,8 +151,8 @@ function netVsGross({ values, visibleIds }) {
     out.push(issue({
       id: `net_gt_gross_${kind}`, field_id: n, check: 'consistency', level: 'warning',
       category: 'possible_misunderstanding',
-      title: `Net ${kind} square footage is larger than gross`,
-      message: `Net square footage (${net.toLocaleString()}) is usually smaller than gross (${gross.toLocaleString()}), because gross includes walls, hallways and shared space. Could these be swapped?`,
+      title: R.netTitle, message: R.netMessage,
+      params: { kind, net: net.toLocaleString('en-US'), gross: gross.toLocaleString('en-US') },
     }))
   }
   return out
@@ -127,8 +167,7 @@ function emptyTypeSections({ values, visible }) {
     out.push(issue({
       id: `empty_${s.id}`, field_id: inputs[0].id, check: 'project_details', level: 'warning',
       category: 'incomplete_section',
-      title: `${s.title} section is empty`,
-      message: `You chose "${values.real_estate_type}" as the type of real estate, so this section applies to you. Filling it in helps the team review your project faster.`,
+      title: R.emptyTitle, message: R.emptyMessage, params: { section: s.title, type: values.real_estate_type },
     }))
   }
   return out
@@ -139,8 +178,7 @@ function equityGuidance({ values }) {
   return [issue({
     id: 'equity_no', field_id: 'equity_10pct', check: 'project_details', level: 'info',
     category: 'program_guidance',
-    title: 'About the 10% contribution',
-    message: 'You answered that you can’t provide at least 10% of the project cost as cash or equity. You can still submit. The Invest Detroit team may ask about other ways to fund that portion.',
+    title: R.equityTitle, message: R.equityMessage,
   })]
 }
 
@@ -149,8 +187,7 @@ function useOfFunds({ values, visibleIds }) {
   return [issue({
     id: 'use_of_funds_blank', field_id: 'use_of_funds', check: 'project_details', level: 'info',
     category: 'optional_unanswered',
-    title: 'How the loan would be used',
-    message: 'This question is optional, but answering it helps the team understand your request.',
+    title: R.fundsTitle, message: R.fundsMessage,
   })]
 }
 

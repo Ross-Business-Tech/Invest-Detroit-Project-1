@@ -22,13 +22,20 @@ import { redactSensitive } from './privacy.js'
  * }} AssistantReply
  */
 
+export const CANNED_REPLIES = {
+  placeholder: 'The AI assistant isn’t connected yet. In the finished version, I’ll answer here with a plain-language explanation and a link to the official source.',
+  error: 'Sorry, I couldn’t reach the assistant right now. Please try again, or contact the Invest Detroit team.',
+  noAnswer: 'Sorry, I don’t have an answer for that. You can ask the Invest Detroit team directly.',
+}
+
 export const PRIVACY_WARNING =
   'That looks like a Social Security Number or account number. Please don’t share it in chat. I’ve hidden it. Sensitive details should only go in the secure form field.'
 
 /** Build the request body. Exported so tests can prove what leaves the browser. */
-export function buildRequest({ message, activeFieldId = null, history = [], historyWindow = ASSISTANT.history_window }) {
+export function buildRequest({ message, activeFieldId = null, history = [], locale = null, historyWindow = ASSISTANT.history_window }) {
   return {
     ...PROGRAM,
+    ...(locale ? { locale } : {}), // the applicant's chosen language, so answers come back in it
     field: activeFieldId ? fieldContext(activeFieldId) : null,
     message: redactSensitive(message).text,
     history: history.slice(-historyWindow).map((t) => ({ role: t.role, text: redactSensitive(t.text).text })),
@@ -40,7 +47,7 @@ function normalizeReply(raw) {
   const ids = Array.isArray(raw?.source_ids) ? raw.source_ids : []
   return {
     kind: 'answer',
-    text: typeof raw?.text === 'string' && raw.text.trim() ? raw.text : 'Sorry, I don’t have an answer for that. You can ask the Invest Detroit team directly.',
+    text: typeof raw?.text === 'string' && raw.text.trim() ? raw.text : CANNED_REPLIES.noAnswer,
     sources: ids.filter((id) => SOURCES[id]).map((id) => ({ id, title: SOURCES[id].title, url: SOURCES[id].url })),
     needs_staff: !!raw?.needs_staff,
   }
@@ -52,7 +59,7 @@ export const placeholderTransport = {
   async send() {
     return {
       kind: 'placeholder',
-      text: 'The AI assistant isn’t connected yet. In the finished version, I’ll answer here with a plain-language explanation and a link to the official source.',
+      text: CANNED_REPLIES.placeholder,
       sources: [],
       needs_staff: false,
     }
@@ -86,11 +93,11 @@ export function transportFromConfig(config = ASSISTANT) {
 export function createAssistant({ transport = transportFromConfig(), onEvent = () => {} } = {}) {
   return {
     /**
-     * @param {{ message: string, activeFieldId?: string | null, history?: ChatTurn[] }} input
+     * @param {{ message: string, activeFieldId?: string | null, history?: ChatTurn[], locale?: string }} input
      * @returns {Promise<{ shownMessage: string, reply: AssistantReply }>}
      *   shownMessage is the applicant's message as it should appear in the chat (redacted).
      */
-    async ask({ message, activeFieldId = null, history = [] }) {
+    async ask({ message, activeFieldId = null, history = [], locale = null }) {
       const { text: shownMessage, found } = redactSensitive(message)
       if (found.length) {
         onEvent({ type: 'assistant_privacy_block', kinds: found })
@@ -98,13 +105,13 @@ export function createAssistant({ transport = transportFromConfig(), onEvent = (
       }
       onEvent({ type: 'assistant_question', field_id: activeFieldId })
       try {
-        const reply = await transport.send(buildRequest({ message, activeFieldId, history }))
+        const reply = await transport.send(buildRequest({ message, activeFieldId, history, locale }))
         return { shownMessage, reply }
       } catch {
         onEvent({ type: 'assistant_error', field_id: activeFieldId })
         return {
           shownMessage,
-          reply: { kind: 'error', text: 'Sorry, I couldn’t reach the assistant right now. Please try again, or contact the Invest Detroit team.', sources: [], needs_staff: true },
+          reply: { kind: 'error', text: CANNED_REPLIES.error, sources: [], needs_staff: true },
         }
       }
     },

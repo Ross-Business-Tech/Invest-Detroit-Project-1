@@ -1,10 +1,15 @@
 // Draws one question from the field definition. Used by the prototype form only;
 // on Invest Detroit's site the real form draws its own questions.
+// Text is translated for display only: answers keep the English option values.
+import { useI18n } from './i18nContext.js'
+import RichText from './RichText.jsx'
 
 function Label({ field, htmlFor, as = 'label' }) {
+  const { locale, t } = useI18n()
   const Tag = as
-  let content = field.label
-  if (field.emphasis) {
+  // Translations mark emphasis themselves (__bruto__), so only English splits on field.emphasis.
+  let content = <RichText text={t(field.label)} />
+  if (field.emphasis && locale === 'en') {
     const [before, after] = field.label.split(` ${field.emphasis} `)
     content = (
       <>
@@ -21,20 +26,26 @@ function Label({ field, htmlFor, as = 'label' }) {
 }
 
 function Hint({ field }) {
+  const { t } = useI18n()
   if (field.hintLink) {
     const { before, text, href, after } = field.hintLink
     return (
       <p className="hint">
-        {before}
-        <a href={href} target="_blank" rel="noreferrer">{text}</a>
-        {after}
+        {t(before)}
+        <a href={href} target="_blank" rel="noreferrer">{t(text)}</a>
+        {t(after)}
       </p>
     )
   }
-  return field.hint ? <p className="hint" id={`${field.id}-hint`}>{field.hint}</p> : null
+  if (field.hintTemplate) return <p className="hint" id={`${field.id}-hint`}>{t(field.hintTemplate, field.hintParams)}</p>
+  return field.hint ? <p className="hint" id={`${field.id}-hint`}>{t(field.hint)}</p> : null
 }
 
+// Numbers, codes and email addresses stay left-to-right even on Arabic pages.
+const LTR_TYPES = new Set(['email', 'tel', 'state', 'zip', 'money', 'number', 'integer'])
+
 export default function Field({ field, value, error, onChange }) {
+  const { t } = useI18n()
   const id = field.id
   const errId = `${id}-error`
   const common = {
@@ -44,20 +55,20 @@ export default function Field({ field, value, error, onChange }) {
     'aria-describedby': [field.hint ? `${id}-hint` : '', error ? errId : ''].filter(Boolean).join(' ') || undefined,
     'aria-required': field.required ? 'true' : undefined,
   }
-  const errorEl = error ? <p className="error" id={errId}>{error}</p> : null
+  const errorEl = error ? <p className="error" id={errId}>{t(error)}</p> : null
   const cls = `field w-${field.width || 'full'}${error ? ' has-error' : ''}`
 
   switch (field.type) {
     case 'subheading':
-      return <h4 className={`subheading${field.plain ? ' plain' : ''}`}>{field.text}</h4>
+      return <h4 className={`subheading${field.plain ? ' plain' : ''}`}>{t(field.text)}</h4>
     case 'paragraph':
-      return <p className="section-paragraph">{field.text}</p>
+      return <p className="section-paragraph">{t(field.text)}</p>
     case 'disabled':
       return (
         <div data-field-id={id} className={`${cls} is-disabled`}>
           <Label field={field} htmlFor={id} />
-          <input {...common} type="text" disabled value="" placeholder="Not collected in prototype" />
-          <p className="hint">{field.disabledNote}</p>
+          <input {...common} type="text" disabled value="" placeholder={t('Not collected in prototype')} />
+          <p className="hint">{t(field.disabledNote)}</p>
         </div>
       )
     case 'textarea':
@@ -77,7 +88,7 @@ export default function Field({ field, value, error, onChange }) {
             {field.options.map((opt) => (
               <label key={opt} className="choice">
                 <input type="radio" name={id} id={`${id}-${opt}`} value={opt} checked={value === opt} onChange={() => onChange(id, opt)} />
-                <span>{opt}</span>
+                <span>{t(opt)}</span>
               </label>
             ))}
           </div>
@@ -95,7 +106,7 @@ export default function Field({ field, value, error, onChange }) {
             {field.options.map((opt, i) => (
               <label key={opt} className="choice">
                 <input type="checkbox" id={`${id}-${i}`} checked={list.includes(opt)} onChange={() => toggle(opt)} />
-                <span>{opt}</span>
+                <span>{t(opt)}</span>
               </label>
             ))}
           </div>
@@ -108,10 +119,10 @@ export default function Field({ field, value, error, onChange }) {
         <div data-field-id={id} className={cls}>
           <Label field={field} htmlFor={id} />
           <select {...common} value={value || ''} onChange={(e) => onChange(id, e.target.value)}>
-            <option value="">Please select...</option>
-            {field.options.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
+            <option value="">{t('Please select...')}</option>
+            {field.options.map((opt) => <option key={opt} value={opt}>{t(opt)}</option>)}
           </select>
-          {field.prototypeNote && <p className="hint proto-note">{field.prototypeNote}</p>}
+          {field.prototypeNote && <p className="hint proto-note">{t(field.prototypeNote)}</p>}
           {errorEl}
         </div>
       )
@@ -120,7 +131,7 @@ export default function Field({ field, value, error, onChange }) {
         <div data-field-id={id} className={cls}>
           <Label field={field} htmlFor={id} />
           <input {...common} type="file" onChange={(e) => onChange(id, e.target.files?.[0]?.name || '')} />
-          {value && <p className="hint">Selected: {value} (stays on your device)</p>}
+          {value && <p className="hint">{t('Selected: {file} (stays on your device)', { file: value })}</p>}
           <Hint field={field} />
           {errorEl}
         </div>
@@ -130,7 +141,7 @@ export default function Field({ field, value, error, onChange }) {
         <div data-field-id={id} className={`${cls} ack`}>
           <label className="choice">
             <input type="checkbox" {...common} checked={!!value} onChange={(e) => onChange(id, e.target.checked)} />
-            <span>{field.label}{field.required && <span className="req" aria-hidden="true">*</span>}</span>
+            <span>{t(field.label)}{field.required && <span className="req" aria-hidden="true">*</span>}</span>
           </label>
           {errorEl}
         </div>
@@ -152,6 +163,7 @@ export default function Field({ field, value, error, onChange }) {
             <input
               {...common}
               {...inputProps}
+              dir={LTR_TYPES.has(field.type) ? 'ltr' : undefined}
               autoComplete={field.autoComplete || inputProps.autoComplete}
               value={value || ''}
               onChange={(e) => onChange(id, field.type === 'state' ? e.target.value.toUpperCase() : e.target.value)}

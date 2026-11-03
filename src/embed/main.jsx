@@ -5,7 +5,8 @@
 //
 //   <script src="https://…/embed/copilot.js" defer
 //           data-launcher-bottom="84px"                 (optional: lift the chat button)
-//           data-assistant-endpoint="https://…"></script> (optional: connect a real AI)
+//           data-assistant-endpoint="https://…"           (optional: connect a real AI)
+//           data-locale="es"></script>                   (optional: otherwise follows <html lang>)
 //
 // What it does:
 //   1. Waits for FormAssembly form 4907942 to appear on the page.
@@ -21,13 +22,15 @@
 
 import { createRoot } from 'react-dom/client'
 import css from '../components/copilot.css?inline'
-import { FailSafe, EmbeddedReview, EmbeddedChat } from './EmbeddedApps.jsx'
+import { FailSafe, EmbeddedReview, EmbeddedChat, PageLanguage } from './EmbeddedApps.jsx'
+import { localeFromLang } from '../copilot/i18n/index.js'
 import { createFormAssemblyAdapter } from '../copilot/adapters/formAssemblyAdapter.js'
 import { FORM_ASSEMBLY_FORM_ID, FORM_ASSEMBLY_SUBMIT_ID } from '../copilot/adapters/formAssemblyMap.js'
 import { createReviewSession } from '../copilot/reviewSession.js'
 import { createAssistant, httpTransport, transportFromConfig } from '../copilot/assistant.js'
 import { track } from '../copilot/events.js'
 import { PROGRAM } from '../copilot/config.js'
+import { CONNECTED_SUBTITLE } from '../components/chatText.js'
 
 export const VERSION = '0.1.0'
 
@@ -38,6 +41,7 @@ const SETTINGS = {
   launcherBottom: scriptTag?.dataset.launcherBottom || null,
   assistantEndpoint: scriptTag?.dataset.assistantEndpoint || null,
   waitMs: Number(scriptTag?.dataset.waitMs) || 15000,
+  locale: scriptTag?.dataset.locale ? localeFromLang(scriptTag.dataset.locale) : null, // default: follow the page
 }
 
 function makeHost(className) {
@@ -104,7 +108,7 @@ export async function mount(options = {}) {
     const review = makeHost('idc-review-host')
     anchor.parentNode.insertBefore(review.host, anchor)
     const reviewRoot = createRoot(review.mountPoint)
-    reviewRoot.render(<FailSafe onError={failOpen}><EmbeddedReview session={session} adapter={adapter} onError={failOpen} /></FailSafe>)
+    reviewRoot.render(<FailSafe onError={failOpen}><PageLanguage fixed={opts.locale}><EmbeddedReview session={session} adapter={adapter} onError={failOpen} /></PageLanguage></FailSafe>)
     cleanups.push(() => reviewRoot.unmount(), () => review.host.remove())
 
     // Chat button in the corner.
@@ -115,8 +119,8 @@ export async function mount(options = {}) {
     }
     document.body.append(chat.host)
     const chatRoot = createRoot(chat.mountPoint)
-    const subtitle = opts.assistantEndpoint ? 'AI helper · Answers from official Invest Detroit sources' : undefined
-    chatRoot.render(<FailSafe onError={failOpen}><EmbeddedChat assistant={assistant} adapter={adapter} subtitle={subtitle} /></FailSafe>)
+    const subtitle = opts.assistantEndpoint ? CONNECTED_SUBTITLE : undefined
+    chatRoot.render(<FailSafe onError={failOpen}><PageLanguage fixed={opts.locale}><EmbeddedChat assistant={assistant} adapter={adapter} subtitle={subtitle} /></PageLanguage></FailSafe>)
     cleanups.push(() => chatRoot.unmount(), () => chat.host.remove())
 
     // Lock Submit until a review passes, and re-lock when an answer changes.

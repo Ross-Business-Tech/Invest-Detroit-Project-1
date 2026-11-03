@@ -48,6 +48,8 @@ The copilot is a **core** (`src/copilot/`) with no screen code, plus small **scr
 src/
   copilot/                    core: no React, no DOM except the adapter
     config.js                 program, form version, official sources, assistant mode
+    i18n/                     Spanish, Arabic and Bengali dictionaries keyed by the English text
+    text.js                   fills {placeholders} in message templates
     formDefinition.js         field dictionary + visibility + format validation
     review.js                 rule-based checks (RULES list) → ReviewIssue[]
     reviewSession.js          review state machine (run / invalidate / reset)
@@ -62,6 +64,7 @@ src/
     EmbeddedApps.jsx
   components/                 reusable screens (React)
     copilot.css               styles for the review panel and chat (shared with the add-on)
+    LanguagePicker.jsx, I18nProvider.jsx, i18nContext.js, RichText.jsx   language support
     ReviewPanel.jsx           progress bar, result, grouped issues
     ChatAssistant.jsx         "Need help?" button and chat window
     useReviewSession.js       React wrapper for reviewSession
@@ -182,13 +185,27 @@ The test page is generated from our own field map, so the **final check must hap
 ### 4. Staff hand-off ("Talk to a person")
 Not built. The reply contract already has `needs_staff`, and issues have `requires_staff`. A hand-off would send only what the applicant chooses to share, through an approved channel.
 
+## Languages
+
+The prototype page has a language dropdown in the header with English, Español, العربية and বাংলা. These are the same languages as the translation menu on investdetroit.com.
+
+- **Full translations, not machine translation on the fly.** Every piece of text has a written translation in `src/copilot/i18n/{es,ar,bn}.js`. That covers questions, answer choices, hints, review messages, the chat and the page itself. Dictionaries are keyed by the exact English text, so anything missing falls back to English instead of breaking.
+- **Answers stay in English underneath.** Only the display changes. Option values and review rules keep using the English values, so switching language mid-form never changes a review.
+- **Review messages are templates.** Each issue carries `title_template`, `message_template` and `params`. The screen translates the template and each value separately, e.g. `'{section} section is empty'` with `section: 'Retail Project'`.
+- **Arabic** sets `dir="rtl"` on the page. Numbers, zip codes, emails and dollar amounts stay left-to-right, and the review panel uses logical CSS (`border-inline-start`) so it mirrors correctly. Noto Sans Arabic and Noto Sans Bengali are loaded as fallback fonts.
+- **The chat** sends the chosen language (`locale`) with each question, so a connected AI can answer in it.
+- **The add-on** follows the host page's `<html lang>`, including live changes, or a fixed `data-locale`.
+- **`tests/i18n.test.js`** fails if any text on the page is missing from a dictionary, or if a translation drops a `{placeholder}`.
+
+**Not yet reviewed:** the translations were drafted with AI. The page says so, and that the English version is official. The brief and Invest Detroit's Language Assistance Plan call for qualified review of high-impact terms (legal acknowledgements, eligibility questions, financial terms) before real use. To revise a translation, edit the value in the language file; the English key must stay exactly as it is.
+
 ## Decisions that need Invest Detroit's approval
 From the project brief, still open:
 - Which review rules may **block** Submit. Today only missing required items, bad formats and loan-bigger-than-budget block.
 - Whether an embedded script may read the form's answers in the browser (privacy and security review), and what the assistant vendor may receive and keep.
 - Who owns the field definitions and help text, and how they're kept in sync with form edits.
 - Where staff hand-off requests go.
-- Whether the copilot should support the site's Spanish, Arabic and Bengali translations. The site already offers them through its translation menu. All copilot text lives in the core and screen files today, ready to be moved into translation files.
+- Who reviews and approves the Spanish, Arabic and Bengali translations, and whether other languages are needed.
 
 ## Running and checking
 ```bash

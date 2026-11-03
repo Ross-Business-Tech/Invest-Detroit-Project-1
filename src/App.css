@@ -139,3 +139,28 @@
 .btn.submit:disabled { background: #d3d7d5; color: #8a9390; cursor: not-allowed; }
 .submit-help { text-align: center; font-size: 13px; color: var(--muted); margin: 8px 0 0; }
 .site-footer { padding-bottom: 100px; }
+
+/* Language dropdown and translation note */
+.header-actions { display: flex; align-items: center; gap: 12px; }
+.lang-picker { display: flex; align-items: center; gap: 6px; color: var(--dark); }
+.lang-picker select {
+  font: 700 14px var(--font); color: var(--dark); background: #fff; cursor: pointer;
+  border: 2px solid var(--dark); border-radius: 0; padding: 9px 10px; min-height: 44px;
+}
+.translation-note { background: #fff7e3; color: var(--ink); border-bottom: 1px solid #f1e2bb; text-align: center; font-size: 13px; padding: 8px 16px; }
+@media (max-width: 640px) {
+  .header-inner { gap: 8px; }
+  .header-actions { gap: 6px; }
+  .logo { font-size: 15px; white-space: nowrap; }
+  .lang-picker svg { display: none; }
+  .lang-picker select { font-size: 13px; padding: 8px 4px; max-width: 96px; }
+  .header-actions .btn.yellow { white-space: nowrap; padding: 11px 9px; font-size: 11px; letter-spacing: .04em; }
+}
+/* Right-to-left (Arabic): dollar sign stays with its left-to-right number box */
+[dir="rtl"] .money input { text-align: left; }
+@media (max-width: 380px) {
+  .container { padding: 0 14px; }
+  .logo { font-size: 13px; }
+  .header-actions .btn.yellow { padding: 10px 7px; font-size: 10.5px; letter-spacing: .02em; }
+  .lang-picker select { max-width: 88px; }
+}

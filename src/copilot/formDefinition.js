@@ -30,6 +30,9 @@ const ETHNICITIES = [
   'Something else',
 ]
 const GENDERS = ['Men', 'Women', 'Nonbinary', 'Something else']
+// Hint for the "how many owners identify as…" boxes. The template is kept for translation.
+export const COUNT_HINT = 'Example: If two business owners identify as {group}, enter "2" in the box above.'
+const countHint = (group) => ({ hint: COUNT_HINT.replace('{group}', group), hintTemplate: COUNT_HINT, hintParams: { group } })
 const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '')
 
 const AMI_LEVELS = ['10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%', '110%', '120%', 'Greater Than 120%']
@@ -250,7 +253,7 @@ export const SECTIONS = [
         label: e,
         type: 'integer',
         width: 'half',
-        hint: `Example: If two business owners identify as ${e === 'Something else' ? 'something else' : e}, enter "2" in the box above.`,
+        ...countHint(e === 'Something else' ? 'something else' : e),
         showIf: (v) => has(v, 'ethnicities', e),
       })),
       { id: 'gender_heading', type: 'subheading', text: 'Gender' },
@@ -267,7 +270,7 @@ export const SECTIONS = [
         label: g,
         type: 'integer',
         width: 'half',
-        hint: `Example: If two business owners identify as ${g.toLowerCase()}, enter "2" in the box above.`,
+        ...countHint(g.toLowerCase()),
         showIf: (v) => has(v, 'genders', g),
       })),
     ],
