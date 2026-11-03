@@ -225,7 +225,9 @@
 .msg.bot { align-self: flex-start; background: #fff; border: 1px solid var(--line); border-bottom-left-radius: 4px; }
 .msg.user { align-self: flex-end; background: var(--dark); color: #fff; border-bottom-right-radius: 4px; }
 .msg.placeholder { color: var(--muted); font-style: italic; }
-.msg.warn { background: var(--error-bg); border-color: #f3c3bd; color: #8e2a1f; }
+.msg.privacy_warning, .msg.error { background: var(--error-bg); border-color: #f3c3bd; color: #8e2a1f; }
+.msg-sources { display: block; margin-top: 6px; font-size: 12.5px; color: var(--muted); }
+.msg.typing { color: var(--muted); letter-spacing: .2em; }
 .chat-suggestions { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 16px; background: var(--band); border-top: 1px solid var(--line); }
 .chat-suggestions button { font: 13px var(--font); background: #fff; border: 1px solid var(--yellow-dark); color: var(--ink); border-radius: 999px; padding: 6px 11px; cursor: pointer; text-align: left; }
 .chat-suggestions button:hover { background: #fff7e3; }

@@ -123,6 +123,18 @@ Result: the repository's here.now publishing key and settings were never added d
 
 Result: this file.
 
+## 7. Getting ready for the real website
+
+**19. Integration-ready architecture**
+> Can you review and refactor our existing AI application pipeline so that it will be easy to integrate our features into Invest Detroit's actual website and loan application system in the future? Our current application is a prototype, but we want to design the architecture with real-world integration in mind.
+
+Result: no visible changes. Underneath:
+- The copilot logic (field definitions, review rules, Submit lock, assistant, privacy rules) moved into a core that doesn't depend on our page.
+- Review results now follow the data format from the brief.
+- The assistant has a defined request and reply format, with sensitive numbers removed before anything is sent.
+- A connector reads Invest Detroit's real FormAssembly form using its actual field IDs. It never reads the SSN field.
+- 27 automated tests and an architecture guide (`docs/ARCHITECTURE.md`) were added.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

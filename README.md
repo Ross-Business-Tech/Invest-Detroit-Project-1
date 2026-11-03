@@ -56,8 +56,9 @@ To see the review catch mistakes, change the loan amount to more than the total 
 
 - New here? Start with [START-HERE.md](START-HERE.md). Ready-made prompts are in [PROMPTS.md](PROMPTS.md).
 - Built with React and Vite, hosted on here.now as a static website.
+- How it's built, and how to connect it to Invest Detroit's real website: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 - Where things live:
-  - `src/formSchema.js`: every question on the form, plus the sample applicant
-  - `src/reviewRules.js`: the Review My Application checks
-  - `src/ChatAssistant.jsx`: the chat window
-  - `src/App.jsx`: the page layout
+  - `src/copilot/`: the copilot itself, with no screen code (field definitions, review rules, assistant client, privacy rules, and the connector for Invest Detroit's real FormAssembly form)
+  - `src/components/`: the review panel and chat window
+  - `src/prototype/`: our copy of the form and the fictional sample applicant
+  - `tests/`: automated checks; run `npm test`

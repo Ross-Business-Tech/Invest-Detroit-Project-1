@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+// Floating "Need help?" chat window. It only displays the conversation: what gets sent, privacy
+// redaction and where answers come from are handled by copilot/assistant.js.
 
-// Floating AI assistant. Placeholder only: not connected to an AI model yet.
-// It already tracks which question the applicant is on, so the real assistant can use it later.
+import { useEffect, useRef, useState } from 'react'
+import { fieldContext } from '../copilot/formDefinition.js'
 
 const SUGGESTIONS = [
   'What does "total budget" include?',
@@ -10,33 +11,23 @@ const SUGGESTIONS = [
   'Which documents do I need?',
 ]
 
-const SSN_PATTERN = /\b\d{3}[-\s]?\d{2}[-\s]?\d{4}\b/
-
 const WELCOME = {
-  from: 'bot',
+  role: 'assistant',
+  kind: 'welcome',
   text: 'Hi! I can explain any question on this form in plain language, point you to official Invest Detroit resources, or connect you with the team. I can’t approve loans or decide eligibility.',
+  sources: [],
 }
 
-function useActiveQuestion() {
-  const [active, setActive] = useState(null)
-  useEffect(() => {
-    const onFocus = (e) => {
-      const field = e.target.closest?.('.intake .field')
-      if (!field) return
-      const label = field.querySelector('.field-label, .choice span')
-      if (label) setActive(label.textContent.replace(/\s*\*\s*$/, '').trim())
-    }
-    document.addEventListener('focusin', onFocus)
-    return () => document.removeEventListener('focusin', onFocus)
-  }, [])
-  return active
-}
-
-export default function ChatAssistant() {
+/**
+ * @param {{ assistant: { ask: Function }, activeFieldId: string | null }} props
+ *   assistant comes from createAssistant(); activeFieldId from the form adapter
+ */
+export default function ChatAssistant({ assistant, activeFieldId }) {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState([WELCOME])
   const [draft, setDraft] = useState('')
-  const active = useActiveQuestion()
+  const [waiting, setWaiting] = useState(false)
+  const active = activeFieldId ? fieldContext(activeFieldId) : null
   const listRef = useRef(null)
   const inputRef = useRef(null)
   const buttonRef = useRef(null)
@@ -56,20 +47,16 @@ export default function ChatAssistant() {
 
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' })
-  }, [messages, open])
+  }, [messages, open, waiting])
 
-  const send = (text) => {
-    const clean = text.trim()
-    if (!clean) return
-    const looksLikeSSN = SSN_PATTERN.test(clean)
-    setMessages((m) => [
-      ...m,
-      { from: 'user', text: looksLikeSSN ? clean.replace(SSN_PATTERN, '•••-••-••••') : clean },
-      looksLikeSSN
-        ? { from: 'bot', warn: true, text: 'That looks like a Social Security Number. Please don’t share it in chat. I’ve hidden it. Sensitive details should only go in the secure form field.' }
-        : { from: 'bot', placeholder: true, text: 'The AI assistant isn’t connected yet. In the finished version, I’ll answer here with a plain-language explanation and a link to the official source.' },
-    ])
+  const send = async (text) => {
+    if (!text.trim() || waiting) return
     setDraft('')
+    setWaiting(true)
+    const history = messages.filter((m) => m.kind !== 'welcome').map(({ role, text: t }) => ({ role, text: t }))
+    const { shownMessage, reply } = await assistant.ask({ message: text.trim(), activeFieldId, history })
+    setMessages((m) => [...m, { role: 'user', text: shownMessage, sources: [] }, { role: 'assistant', ...reply }])
+    setWaiting(false)
   }
 
   return (
@@ -87,16 +74,25 @@ export default function ChatAssistant() {
 
           {active && (
             <div className="chat-context">
-              <span>Asking about:</span> <strong title={active}>{active}</strong>
+              <span>Asking about:</span> <strong title={active.field_label}>{active.field_label}</strong>
             </div>
           )}
 
           <ol className="chat-messages" ref={listRef} aria-live="polite">
             {messages.map((m, i) => (
-              <li key={i} className={`msg ${m.from}${m.warn ? ' warn' : ''}${m.placeholder ? ' placeholder' : ''}`}>
+              <li key={i} className={`msg ${m.role === 'user' ? 'user' : 'bot'} ${m.kind || ''}`}>
                 {m.text}
+                {m.sources?.length > 0 && (
+                  <span className="msg-sources">
+                    Source:{' '}
+                    {m.sources.map((s, j) => (
+                      <span key={s.id}>{j > 0 && ', '}<a href={s.url} target="_blank" rel="noreferrer">{s.title}</a></span>
+                    ))}
+                  </span>
+                )}
               </li>
             ))}
+            {waiting && <li className="msg bot typing" aria-label="Assistant is typing">…</li>}
           </ol>
 
           {messages.length === 1 && (
@@ -117,7 +113,7 @@ export default function ChatAssistant() {
               placeholder="Ask about any question on the form…"
               autoComplete="off"
             />
-            <button type="submit" aria-label="Send" disabled={!draft.trim()}>➤</button>
+            <button type="submit" aria-label="Send" disabled={!draft.trim() || waiting}>➤</button>
           </form>
           <p className="chat-footnote">Don’t share Social Security or bank account numbers in chat.</p>
         </section>

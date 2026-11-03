@@ -1,5 +1,10 @@
-// Replica of the Invest Detroit "Real Estate/C&I In-Take Form" (investdetroit.com/need-support).
-// Each field has a stable `id` so the AI assistant and the reviewer can refer to it later.
+// Field definition for the Invest Detroit "Real Estate/C&I In-Take Form" (investdetroit.com/need-support).
+//
+// This is the canonical field dictionary the copilot works from: stable field ids, official
+// labels, required/conditional rules and formats. It has no UI code, so the same definition
+// drives the prototype form, the reviewer, the assistant's field context and the adapter that
+// reads Invest Detroit's real FormAssembly form (see adapters/formAssemblyMap.js).
+//
 // Changes from the real form, on purpose:
 //   - The Social Security Number field is shown but disabled (greyed out).
 //   - Staff names in the "who are you working with" list are replaced by placeholders.
@@ -305,6 +310,7 @@ export const SECTIONS = [
   },
 ]
 
+// 'disabled' (the SSN field) is not an input: it is shown but never collected.
 export const INPUT_TYPES = new Set(['text', 'email', 'tel', 'state', 'zip', 'money', 'number', 'integer', 'textarea', 'radio', 'select', 'checkboxes', 'file', 'ack'])
 
 export function visibleSections(values) {
@@ -338,23 +344,30 @@ export function validate(values) {
   return errors
 }
 
-// Fictional sample applicant for demos. Every name, address and number is made up.
-export const SAMPLE_APPLICANT = {
-  first_name: 'Jordan', last_name: 'Ellis', job_title: 'Managing Partner',
-  home_address: '1234 Sample Ave', home_city: 'Detroit', home_state: 'MI', home_zip: '48207',
-  email: 'jordan.ellis@example.com', phone: '313-555-0142',
-  business_name: 'Riverside Example Development LLC', business_address: '500 Example Blvd, Suite 2',
-  business_city: 'Detroit', business_state: 'MI', business_zip: '48201',
-  project_name: 'Gratiot Corner Lofts (sample)', project_address: '789 Placeholder St', project_city: 'Detroit', project_state: 'MI', project_zip: '48207',
-  age_18: 'Yes', in_detroit: 'Yes', citizen: 'Yes', bankruptcy_24mo: 'No', restricted_business: 'No', cannabis: 'No', elected_official: 'No', previous_client: 'No',
-  executive_summary: 'Renovation of a vacant two-story mixed-use building into 6 apartments above 2 ground-floor retail bays. (Fictional sample project for the prototype.)',
-  total_budget: '1450000', loan_amount: '600000', equity_10pct: 'Yes',
-  other_lenders: ['Michigan Economic Development Corporation (MEDC)'], community_partners: ['Jefferson East Inc.'],
-  criminal: 'No', judgments: 'No', bankruptcy_7yr: 'No',
-  construction_jobs: '25', use_of_funds: 'Constructed Improvements', real_estate_type: 'Mixed Use',
-  retail_gross_sqft: '3200', retail_net_sqft: '2900', retail_rent: '18',
-  residential_gross_sqft: '6400', residential_net_sqft: '5800', housing_units: '6', ami_60: '2', ami_80: '2', ami_100: '2',
-  current_pt: '1', current_ft: '3', new_pt: '0', new_ft: '1', indirect_pt: '4', indirect_ft: '3',
-  owners_detroit: 'Yes', owners_veterans: 'No', owners_immigrants: 'No', owners_lgbtq: 'Prefer not to say', owners_returning: 'No', owners_cdo: 'No',
-  owner_count: '2', ethnicities: ['Prefer not to say'], genders: ['Prefer not to say'],
+// ---- Lookups -------------------------------------------------------------------------------
+
+export const FIELDS_BY_ID = Object.fromEntries(SECTIONS.flatMap((s) => s.fields.map((f) => [f.id, { ...f, sectionId: s.id, sectionTitle: s.title }])))
+
+export const isInputField = (field) => !!field && INPUT_TYPES.has(field.type)
+
+/** Ids of every field an applicant can answer (excludes headings and notes). */
+export const INPUT_FIELD_IDS = Object.values(FIELDS_BY_ID).filter(isInputField).map((f) => f.id)
+
+/**
+ * Field metadata that is safe to share with the AI assistant: no applicant values.
+ * Matches the "form-context and field metadata" contract in the project brief.
+ */
+export function fieldContext(fieldId) {
+  const f = FIELDS_BY_ID[fieldId]
+  if (!f) return null
+  return {
+    field_id: f.id,
+    field_label: f.label || f.text || f.id,
+    section: f.sectionTitle,
+    required: !!f.required,
+    conditional: typeof f.showIf === 'function',
+    type: f.type,
+    help_text: f.hint || null,
+    options: f.options || null,
+  }
 }
