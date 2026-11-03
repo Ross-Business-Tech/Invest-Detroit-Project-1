@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { FORM_INTRO, SAMPLE_APPLICANT, visibleSections, validate } from './formSchema.js'
 import { REVIEW_STEPS, runReview } from './reviewRules.js'
+import ChatAssistant from './ChatAssistant.jsx'
 import './App.css'
 
 function Label({ field, htmlFor, as = 'label' }) {
@@ -459,6 +460,8 @@ export default function App() {
           <p>Prototype built by students to test an AI application assistant. Content adapted from the public Invest Detroit intake form. Not affiliated with or endorsed by Invest Detroit.</p>
         </div>
       </footer>
+
+      <ChatAssistant />
     </>
   )
 }
