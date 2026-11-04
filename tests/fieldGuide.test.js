@@ -105,6 +105,10 @@ const GOLDEN = [
   ['I need a loan for equipment for my bakery. Is this the right form?', /Small Business program may fit better/],
   ['Who is Invest Detroit?', /Community Development Financial Institution/],
   ['Who should I contact with questions?', /Business Development Officer/],
+  ['What is the Strategic Neighborhood Fund?', /began in 2016/],
+  ['Can you help with permitting?', /technical assistance/],
+  ['Does Invest Detroit do equipment financing for industrial businesses?', /Commercial and Industrial page/],
+  ['What happens after I submit the form?', /discussion with a team member/],
 ]
 test('golden questions from Invest Detroit documents reach the right answer', () => {
   for (const [q, want] of GOLDEN) assert.match(ask(q).text, want, q)
@@ -112,7 +116,8 @@ test('golden questions from Invest Detroit documents reach the right answer', ()
 
 test('every source a reply cites has a title, and links only when a url exists', () => {
   const r = ask('How long does the lending process take?')
-  assert.deepEqual(r.sources, [{ id: 'lending_guide', title: SOURCES.lending_guide.title, url: null }])
+  assert.deepEqual(r.sources[0], { id: 'lending_guide', title: SOURCES.lending_guide.title, url: null })
+  assert.ok(r.sources.slice(1).every((s) => s.url && s.title))
 })
 
 test('new help tips exist for the remaining document and yes/no questions', () => {

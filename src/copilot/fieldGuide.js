@@ -151,7 +151,7 @@ export const FIELD_GUIDE = {
   criminal: legal, judgments: legal, bankruptcy_7yr: legal, bankruptcy_24mo: legal,
   in_detroit: {
     explain: 'Only addresses inside Detroit\'s city limits count. Highland Park and Hamtramck are separate cities, even though Detroit surrounds them. If you are unsure, check the property tax bill or ask the city. The Real Estate program also has target neighborhoods (including the Strategic Neighborhood Fund areas); the team can tell you whether your address is in one.',
-    keywords: ['city limits', 'highland park', 'hamtramck', 'located', 'detroit city', 'target neighborhoods', 'strategic neighborhood fund', 'snf'],
+    keywords: ['city limits', 'highland park', 'hamtramck', 'located', 'detroit city'],
     source_ids: RE,
   },
   home_state: { explain: 'Use the two-letter state abbreviation in capital letters, like MI for Michigan.', keywords: ['state abbreviation'], source_ids: INTAKE },

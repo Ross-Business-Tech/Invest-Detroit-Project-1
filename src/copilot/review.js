@@ -89,7 +89,7 @@ export const REVIEW_TEXT = {
   loanRangeTitle: 'Your loan request is outside the typical range',
   loanRangeMessage: 'You asked for {loan}. Invest Detroit’s Real Estate Support flyer gives a typical loan size of $150,000 to $2,500,000 (subject to change). You can still submit. It may help to talk with the team first about how your request fits.',
   equipmentTitle: 'Equipment loans may fit another program',
-  equipmentMessage: 'You chose Machinery & Equipment. This form is for Real Estate and C&I lending. If the money is mainly for your own business’s equipment, Invest Detroit’s Small Business program may fit better. You can still submit, and the team can tell you which program fits.',
+  equipmentMessage: 'You chose Machinery & Equipment. This form is mainly for real estate projects. Invest Detroit also finances equipment through its Commercial and Industrial program, which has its own intake form, and its Small Business program. You can still submit, and the team can tell you which program fits.',
   constructionTitle: 'Please don’t start construction before closing',
   constructionMessage: 'Invest Detroit’s lending guide asks borrowers not to start construction before the loan closes unless Invest Detroit approves it, because starting early can affect lien rights, costs and the financing. Screening to closing typically takes several months, so plan your start date with that in mind.',
   experienceTitle: 'Consider mentioning your team’s experience',
@@ -297,7 +297,7 @@ function equipmentProgram({ values, visibleIds }) {
   if (!visibleIds.has('use_of_funds') || values.use_of_funds !== 'Machinery & Equipment') return []
   return [issue({
     id: 'equipment_program', field_id: 'use_of_funds', check: 'project_details', level: 'info',
-    category: 'program_guidance', source_ids: ['sb_flyer', 'program_overviews'], requires_staff: true,
+    category: 'program_guidance', source_ids: ['cni_page', 'sb_flyer', 'program_overviews'], requires_staff: true,
     title: R.equipmentTitle, message: R.equipmentMessage,
   })]
 }

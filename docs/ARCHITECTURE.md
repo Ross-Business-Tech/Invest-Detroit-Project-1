@@ -220,6 +220,8 @@ Facts from Invest Detroit's documents, written as short entries with keywords an
 | `sb_flyer` | Small Business Support flyer | A **different program**. Only shown in `which_program`, labeled "do not apply to this form" |
 | `lending_guide` | Lending Process & Closing Guide | Draft, no public URL (`url: null`, shown as plain text). Staff should confirm |
 | `about_id` | Who is Invest Detroit? | Lists an older address (600 Renaissance Center); the flyers' 950 Selden St is used |
+| `cni_page`, `developer_sheet` | investdetroit.com pages found by web search | Checked from search excerpts only (site blocked from the build session). See `docs/RESEARCH-NOTES.md` |
+| `snf_overview` | Knight Foundation article on the Strategic Neighborhood Fund | General education (`educational`), not Invest Detroit policy |
 
 Rules, enforced by `tests/fieldGuide.test.js`:
 - Any entry that states a rate, fee or loan-size range must cite an Invest Detroit source and say "subject to change".

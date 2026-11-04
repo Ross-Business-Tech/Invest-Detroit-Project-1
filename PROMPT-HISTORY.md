@@ -292,6 +292,18 @@ Result:
   - The two flyers have no direct links yet.
   - The "Who is Invest Detroit?" sheet lists an older address (600 Renaissance Center). The flyers' 950 Selden Street is used instead.
 
+**38. Research Invest Detroit's website and other sources**
+> In addition to the four documents I've provided, please research Invest Detroit's official website and any other relevant, credible online resources that could improve our AI assistant.
+
+Result: the cloud session can't open investdetroit.com or huduser.gov directly (blocked by its network settings), so Claude researched through web search.
+- New chat answers:
+  - The intake form is a first step, followed by a conversation with a team member.
+  - The Commercial & Industrial program covers working capital, term business loans and equipment, with its own intake form.
+  - Technical help with permits and city requirements.
+  - The Strategic Neighborhood Fund.
+- The equipment review tip now mentions both the C&I and Small Business programs.
+- `docs/RESEARCH-NOTES.md` lists every source and what was added. It also lists conflicts for staff to confirm, such as a 2023 sheet showing 6%–8% pricing versus 8%–9.5% on the newer flyer. Detroit's AMI figures were found but held back until they can be checked at HUD.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

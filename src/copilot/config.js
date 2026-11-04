@@ -80,6 +80,31 @@ export const SOURCES = {
     category: 'official_policy',
     last_verified: '2026-11-04',
   },
+  // Found by web search (Nov 2026). investdetroit.com could not be opened from the build
+  // session, so these were checked from search excerpts only: staff should confirm them.
+  cni_page: {
+    title: 'Commercial and Industrial (program page)',
+    url: 'https://investdetroit.com/commercial-industrial/',
+    provider: 'Invest Detroit',
+    category: 'official_policy',
+    program: 'commercial_industrial',
+    last_verified: '2026-11-04',
+  },
+  developer_sheet: {
+    title: 'Developers That Reflect Our City (2021 info sheet)',
+    url: 'https://investdetroit.com/wp-content/uploads/2021/02/Developer-Info-Sheet_v21.pdf',
+    provider: 'Invest Detroit',
+    category: 'official_policy',
+    program: 'real_estate',
+    last_verified: '2026-11-04',
+  },
+  snf_overview: {
+    title: 'Strategic Neighborhood Fund harnesses the power of partnerships (Knight Foundation)',
+    url: 'https://legacy.knightfoundation.org/articles/strategic-neighborhood-fund-harnesses-the-power-of-partnerships-to-revitalize-detroit-neighborhoods/',
+    provider: 'Knight Foundation',
+    category: 'educational',
+    last_verified: '2026-11-04',
+  },
   mi_entity_search: {
     title: 'Michigan business entity search (LARA)',
     url: 'https://cofs.lara.state.mi.us/searchapi/search/search',
