@@ -6,7 +6,8 @@
 //   <script src="https://…/embed/copilot.js" defer
 //           data-launcher-bottom="84px"                 (optional: lift the chat button)
 //           data-assistant-endpoint="https://…"           (optional: connect a real AI)
-//           data-locale="es"></script>                   (optional: otherwise follows <html lang>)
+//           data-locale="es"                             (optional: otherwise follows <html lang>)
+//           data-feedback-endpoint="https://…"></script> (optional: turns on the chat rating card)
 //
 // What it does:
 //   1. Waits for FormAssembly form 4907942 to appear on the page.
@@ -28,6 +29,7 @@ import { createFormAssemblyAdapter } from '../copilot/adapters/formAssemblyAdapt
 import { FORM_ASSEMBLY_FORM_ID, FORM_ASSEMBLY_SUBMIT_ID } from '../copilot/adapters/formAssemblyMap.js'
 import { createReviewSession } from '../copilot/reviewSession.js'
 import { createAssistant, httpTransport, transportFromConfig } from '../copilot/assistant.js'
+import { createFeedbackClient } from '../copilot/feedback.js'
 import { track } from '../copilot/events.js'
 import { PROGRAM } from '../copilot/config.js'
 import { CONNECTED_SUBTITLE } from '../components/chatText.js'
@@ -42,6 +44,8 @@ const SETTINGS = {
   assistantEndpoint: scriptTag?.dataset.assistantEndpoint || null,
   waitMs: Number(scriptTag?.dataset.waitMs) || 15000,
   locale: scriptTag?.dataset.locale ? localeFromLang(scriptTag.dataset.locale) : null, // default: follow the page
+  // Rating card under the chat. Off unless Invest Detroit gives an endpoint that saves ratings.
+  feedbackEndpoint: scriptTag?.dataset.feedbackEndpoint || null,
 }
 
 function makeHost(className) {
@@ -120,7 +124,8 @@ export async function mount(options = {}) {
     document.body.append(chat.host)
     const chatRoot = createRoot(chat.mountPoint)
     const subtitle = opts.assistantEndpoint ? CONNECTED_SUBTITLE : undefined
-    chatRoot.render(<FailSafe onError={failOpen}><PageLanguage fixed={opts.locale}><EmbeddedChat assistant={assistant} adapter={adapter} subtitle={subtitle} /></PageLanguage></FailSafe>)
+    const feedbackClient = createFeedbackClient({ endpoint: opts.feedbackEndpoint, onEvent: track })
+    chatRoot.render(<FailSafe onError={failOpen}><PageLanguage fixed={opts.locale}><EmbeddedChat assistant={assistant} adapter={adapter} subtitle={subtitle} feedbackClient={feedbackClient} /></PageLanguage></FailSafe>)
     cleanups.push(() => chatRoot.unmount(), () => chat.host.remove())
 
     // Lock Submit until a review passes, and re-lock when an answer changes.

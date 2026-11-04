@@ -316,4 +316,11 @@ export default {
   "Accept suggestion": "Aceptar sugerencia",
   "Edit": "Editar",
   "Leave blank": "Dejar en blanco",
+  "Thank you for your feedback!": "¡Gracias por sus comentarios!",
+  "How was your AI assistant experience?": "¿Qué tal fue su experiencia con el asistente de IA?",
+  "Dismiss feedback": "Cerrar la encuesta",
+  "{count} out of 5 stars": "{count} de 5 estrellas",
+  "Saving…": "Guardando…",
+  "Submit rating": "Enviar calificación",
+  "Couldn’t save your rating. Please try again.": "No se pudo guardar su calificación. Inténtelo de nuevo.",
 }

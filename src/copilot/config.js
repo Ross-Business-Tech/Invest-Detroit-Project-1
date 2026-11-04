@@ -67,3 +67,14 @@ export const ASSISTANT = {
   endpoint: './.herenow/proxy/assistant',
   history_window: 6, // most recent messages sent with each question, not the whole chat
 }
+
+/**
+ * Where chat feedback ratings are saved. here.now Site Data collection declared in
+ * public/.herenow/data.json: visitors can add a rating, only the site owner can read them.
+ * Only works on account-owned here.now sites (the team's previews, dev and public sites).
+ * null turns the rating card off (the add-on's default on Invest Detroit's site).
+ */
+export const FEEDBACK = {
+  endpoint: './.herenow/data/assistant_feedback',
+  min_answers_before_asking: 2, // "meaningful interaction": the assistant has answered two questions
+}

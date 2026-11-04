@@ -316,4 +316,11 @@ export default {
   "Accept suggestion": "প্রস্তাব গ্রহণ করুন",
   "Edit": "সম্পাদনা করুন",
   "Leave blank": "খালি রাখুন",
+  "Thank you for your feedback!": "আপনার মতামতের জন্য ধন্যবাদ!",
+  "How was your AI assistant experience?": "এআই সহকারী ব্যবহারের অভিজ্ঞতা কেমন ছিল?",
+  "Dismiss feedback": "মতামত বন্ধ করুন",
+  "{count} out of 5 stars": "5-এর মধ্যে {count} তারকা",
+  "Saving…": "সংরক্ষণ করা হচ্ছে…",
+  "Submit rating": "রেটিং জমা দিন",
+  "Couldn’t save your rating. Please try again.": "আপনার রেটিং সংরক্ষণ করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।",
 }

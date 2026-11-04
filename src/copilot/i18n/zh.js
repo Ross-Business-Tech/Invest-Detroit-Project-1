@@ -316,4 +316,11 @@ export default {
   "Accept suggestion": "接受建议",
   "Edit": "编辑",
   "Leave blank": "留空",
+  "Thank you for your feedback!": "感谢您的反馈！",
+  "How was your AI assistant experience?": "您对 AI 助手的使用体验如何？",
+  "Dismiss feedback": "关闭评价",
+  "{count} out of 5 stars": "5 星中的 {count} 星",
+  "Saving…": "正在保存…",
+  "Submit rating": "提交评分",
+  "Couldn’t save your rating. Please try again.": "无法保存您的评分，请重试。",
 }

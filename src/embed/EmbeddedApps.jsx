@@ -23,10 +23,10 @@ export function EmbeddedReview({ session, adapter, onError }) {
   return <ReviewPanel state={state} onRun={run} onGoToField={(id) => adapter.focusField(id)} />
 }
 
-export function EmbeddedChat({ assistant, adapter, subtitle }) {
+export function EmbeddedChat({ assistant, adapter, subtitle, feedbackClient = null }) {
   const [activeFieldId, setActiveFieldId] = useState(null)
   useEffect(() => adapter.onActiveFieldChange(setActiveFieldId), [adapter])
-  return <ChatAssistant assistant={assistant} activeFieldId={activeFieldId} subtitle={subtitle} />
+  return <ChatAssistant assistant={assistant} activeFieldId={activeFieldId} subtitle={subtitle} feedbackClient={feedbackClient} />
 }
 
 /** Uses the host page's language (<html lang="es">) and follows it if the page changes it. */

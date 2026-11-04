@@ -1,20 +1,23 @@
 // Floating "Need help?" chat window. It only displays the conversation: what gets sent, privacy
 // redaction and where answers come from are handled by copilot/assistant.js.
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { fieldContext } from '../copilot/formDefinition.js'
 import { useI18n } from './i18nContext.js'
 import { SUGGESTIONS, WELCOME_TEXT, DEFAULT_SUBTITLE } from './chatText.js'
+import FeedbackCard from './FeedbackCard.jsx'
+import { hasMeaningfulInteraction } from '../copilot/feedback.js'
 
 const WELCOME = { role: 'assistant', kind: 'welcome', text: WELCOME_TEXT, sources: [] }
 
 /**
  * @param {{ assistant: { ask: Function }, activeFieldId: string | null, subtitle?: string,
- *           helpRequest?: { fieldId: string, n: number } | null }} props
+ *           helpRequest?: { fieldId: string, n: number } | null, feedbackClient?: { submit: Function } | null }} props
  *   assistant comes from createAssistant(); activeFieldId from the form adapter;
- *   helpRequest changes when the applicant presses a question's ? button.
+ *   helpRequest changes when the applicant presses a question's ? button;
+ *   feedbackClient (copilot/feedback.js) turns on the rating card below the chat.
  */
-export default function ChatAssistant({ assistant, activeFieldId, subtitle = DEFAULT_SUBTITLE, helpRequest = null }) {
+export default function ChatAssistant({ assistant, activeFieldId, subtitle = DEFAULT_SUBTITLE, helpRequest = null, feedbackClient = null }) {
   const { t, info } = useI18n()
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState([WELCOME])
@@ -63,11 +66,23 @@ export default function ChatAssistant({ assistant, activeFieldId, subtitle = DEF
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [helpRequest])
 
+  // Rating card: asked once per chat session, only after the assistant has really helped.
+  // waiting -> shown -> sent (saved; thank-you showing) -> finished. Dismissing also finishes.
+  // Once sent or finished it never asks again this session, even if the chat is closed and reopened.
+  const [feedback, setFeedback] = useState('waiting')
+  if (feedbackClient && feedback === 'waiting' && hasMeaningfulInteraction(messages)) setFeedback('shown')
+  const finishFeedback = useCallback(() => setFeedback('finished'), [])
+  const submitFeedback = useCallback(async (rating) => {
+    await feedbackClient.submit(rating)
+    setFeedback('sent')
+  }, [feedbackClient])
+
   const talkToPerson = () => setMessages((m) => [...m, { role: 'assistant', kind: 'handoff', text: '', sources: [] }])
 
   return (
     <>
       {open && (
+        <div className="chat-dock">
         <section className="chat-panel" role="dialog" aria-modal="false" aria-labelledby="chat-title">
           <header className="chat-header">
             <div className="chat-avatar" aria-hidden="true">ID</div>
@@ -130,6 +145,10 @@ export default function ChatAssistant({ assistant, activeFieldId, subtitle = DEF
           </form>
           <p className="chat-footnote">{t('Don’t share Social Security or bank account numbers in chat.')}</p>
         </section>
+        {(feedback === 'shown' || feedback === 'sent') && (
+          <FeedbackCard alreadySent={feedback === 'sent'} onSubmit={submitFeedback} onDismiss={finishFeedback} onDone={finishFeedback} />
+        )}
+        </div>
       )}
 
       <button

@@ -9,6 +9,7 @@ import RichText from './components/RichText.jsx'
 import { useI18n } from './components/i18nContext.js'
 import { localeInfo, localeFromLang } from './copilot/i18n/index.js'
 import { createAssistant } from './copilot/assistant.js'
+import { createFeedbackClient } from './copilot/feedback.js'
 import { track } from './copilot/events.js'
 import './components/copilot.css'
 import './App.css'
@@ -26,6 +27,7 @@ function savedLocale() {
 function Page({ locale, onLocaleChange }) {
   const { t } = useI18n()
   const [assistant] = useState(() => createAssistant({ onEvent: track }))
+  const [feedbackClient] = useState(() => createFeedbackClient({ onEvent: track }))
   const [activeFieldId, setActiveFieldId] = useState(null)
   const [helpRequest, setHelpRequest] = useState(null)
   const askForHelp = (fieldId) => setHelpRequest((r) => ({ fieldId, n: (r?.n || 0) + 1 }))
@@ -92,7 +94,7 @@ function Page({ locale, onLocaleChange }) {
         </div>
       </footer>
 
-      <ChatAssistant assistant={assistant} activeFieldId={activeFieldId} helpRequest={helpRequest} />
+      <ChatAssistant assistant={assistant} activeFieldId={activeFieldId} helpRequest={helpRequest} feedbackClient={feedbackClient} />
     </>
   )
 }

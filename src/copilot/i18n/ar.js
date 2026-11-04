@@ -316,4 +316,11 @@ export default {
   "Accept suggestion": "قبول الاقتراح",
   "Edit": "تعديل",
   "Leave blank": "ترك الحقل فارغًا",
+  "Thank you for your feedback!": "شكرًا لك على ملاحظاتك!",
+  "How was your AI assistant experience?": "كيف كانت تجربتك مع المساعد الذكي؟",
+  "Dismiss feedback": "إغلاق التقييم",
+  "{count} out of 5 stars": "{count} من 5 نجوم",
+  "Saving…": "جارٍ الحفظ…",
+  "Submit rating": "إرسال التقييم",
+  "Couldn’t save your rating. Please try again.": "تعذّر حفظ تقييمك. يُرجى المحاولة مرة أخرى.",
 }

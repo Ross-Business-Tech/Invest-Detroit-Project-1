@@ -1,0 +1,13 @@
+{
+  "collections": {
+    "assistant_feedback": {
+      "fields": {
+        "feedback_id": { "type": "string", "required": true, "maxLength": 64, "trim": true },
+        "rating": { "type": "integer", "required": true, "minimum": 1, "maximum": 5 },
+        "submitted_at": { "type": "datetime", "required": true }
+      },
+      "access": { "read": "owner", "insert": "public", "update": "none", "delete": "owner" },
+      "rateLimit": "20/hour/ip"
+    }
+  }
+}
