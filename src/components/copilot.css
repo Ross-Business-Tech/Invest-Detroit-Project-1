@@ -9,7 +9,7 @@
   --ink: #2b2f2e; --muted: #515e59; --line: #d6dbd9; --band: #f4f5f4;
   --yellow: #fcaf17; --yellow-dark: #c98400; --dark: #1f2423;
   --error: #c0392b; --error-bg: #fdecea;
-  --font: 'Lato', 'Noto Sans Arabic', 'Noto Sans Bengali', 'Helvetica Neue', Arial, sans-serif;
+  --font: 'Lato', 'Noto Sans Arabic', 'Noto Sans Bengali', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', 'Helvetica Neue', Arial, sans-serif;
   font-family: var(--font); color: var(--ink); line-height: 1.55; font-size: 16px;
 }
 :host * { box-sizing: border-box; }

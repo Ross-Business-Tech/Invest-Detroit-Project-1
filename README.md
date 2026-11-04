@@ -14,7 +14,7 @@ The app is a practice copy of Invest Detroit's **"Need Support?"** page, which h
 | **Review My Application** | A button above Submit runs 5 checks with a progress bar. It lists anything to fix, each with a "Go to field" link. A clean review shows a green "✓ Review successful". | Done |
 | **Submit locked until review passes** | Submit stays greyed out until a successful review and locks again if an answer changes. Submitting shows a "Submitted successfully" pop-up. | Done |
 | **AI assistant chat** | A "Need help?" button in the corner opens a chat window that knows which question you're on. It hides and warns about anything that looks like a Social Security Number. | Window done; AI not connected yet |
-| **Language dropdown** | Switch the whole page between English, Español, العربية and বাংলা, the same languages Invest Detroit's site offers. Arabic reads right to left. The translations are AI-drafted and not yet professionally reviewed, and the page says so. | Done |
+| **Language dropdown** | Switch the whole page between English, Español, العربية, বাংলা and 简体中文 (Invest Detroit's site offers the first four; Chinese is our addition). Arabic reads right to left. The translations are AI-drafted and not yet professionally reviewed, and the page says so. | Done |
 | **Add-on for the real website** | One script file that adds the review panel and chat to Invest Detroit's real FormAssembly form. It turns itself off safely if anything goes wrong. Try it on `/embed-test/`. | Built; not yet on their site |
 | **Field guide** | Plain-language explanation, example and official source link for each question, used by the assistant. | Next |
 

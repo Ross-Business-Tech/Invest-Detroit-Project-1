@@ -4,7 +4,7 @@
 // missing falls back to English instead of breaking. Answers and review rules always use the
 // English option values underneath, so switching language never changes what is checked.
 //
-// The Spanish, Arabic and Bengali text was drafted with AI and has NOT been reviewed by a
+// The Spanish, Arabic, Bengali and Chinese text was drafted with AI and has NOT been reviewed by a
 // qualified translator. The brief asks for translations of high-impact terms to be validated
 // before real use (Invest Detroit Language Assistance Plan, 2024).
 // tests/i18n.test.js fails if any text on the page is missing from a dictionary.
@@ -12,17 +12,20 @@
 import es from './es.js'
 import ar from './ar.js'
 import bn from './bn.js'
+import zh from './zh.js'
 import { fill } from '../text.js'
 
-// Same languages as the translation menu on investdetroit.com.
+// The translation menu on investdetroit.com offers English, Spanish, Arabic and Bengali; we add Chinese.
 export const LOCALES = [
   { code: 'en', name: 'English', dir: 'ltr', bcp47: 'en-US' },
   { code: 'es', name: 'Español', dir: 'ltr', bcp47: 'es-US' },
   { code: 'ar', name: 'العربية', dir: 'rtl', bcp47: 'ar' },
   { code: 'bn', name: 'বাংলা', dir: 'ltr', bcp47: 'bn' },
+  // Simplified Chinese. Pages tagged zh-TW / zh-Hant also get it until Traditional is added.
+  { code: 'zh', name: '简体中文', dir: 'ltr', bcp47: 'zh-Hans' },
 ]
 
-export const DICTIONARIES = { es, ar, bn }
+export const DICTIONARIES = { es, ar, bn, zh }
 
 export const localeInfo = (code) => LOCALES.find((l) => l.code === code) || LOCALES[0]
 

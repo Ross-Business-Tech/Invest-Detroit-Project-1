@@ -30,6 +30,7 @@ for (const [locale, dict] of Object.entries(DICTIONARIES)) {
 test('page language codes map to our languages', () => {
   assert.equal(localeFromLang('es-MX'), 'es')
   assert.equal(localeFromLang('ar'), 'ar')
+  assert.equal(localeFromLang('zh-CN'), 'zh')
   assert.equal(localeFromLang('fr'), 'en')
   assert.equal(localeFromLang(''), 'en')
 })

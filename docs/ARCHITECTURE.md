@@ -187,12 +187,12 @@ Not built. The reply contract already has `needs_staff`, and issues have `requir
 
 ## Languages
 
-The prototype page has a language dropdown in the header with English, Español, العربية and বাংলা. These are the same languages as the translation menu on investdetroit.com.
+The prototype page has a language dropdown in the header with English, Español, العربية, বাংলা and 简体中文. The first four match the translation menu on investdetroit.com; Simplified Chinese is our addition. Pages tagged `zh-TW`/`zh-Hant` also get Simplified until a Traditional dictionary is added.
 
-- **Full translations, not machine translation on the fly.** Every piece of text has a written translation in `src/copilot/i18n/{es,ar,bn}.js`. That covers questions, answer choices, hints, review messages, the chat and the page itself. Dictionaries are keyed by the exact English text, so anything missing falls back to English instead of breaking.
+- **Full translations, not machine translation on the fly.** Every piece of text has a written translation in `src/copilot/i18n/{es,ar,bn,zh}.js`. That covers questions, answer choices, hints, review messages, the chat and the page itself. Dictionaries are keyed by the exact English text, so anything missing falls back to English instead of breaking.
 - **Answers stay in English underneath.** Only the display changes. Option values and review rules keep using the English values, so switching language mid-form never changes a review.
 - **Review messages are templates.** Each issue carries `title_template`, `message_template` and `params`. The screen translates the template and each value separately, e.g. `'{section} section is empty'` with `section: 'Retail Project'`.
-- **Arabic** sets `dir="rtl"` on the page. Numbers, zip codes, emails and dollar amounts stay left-to-right, and the review panel uses logical CSS (`border-inline-start`) so it mirrors correctly. Noto Sans Arabic and Noto Sans Bengali are loaded as fallback fonts.
+- **Arabic** sets `dir="rtl"` on the page. Numbers, zip codes, emails and dollar amounts stay left-to-right, and the review panel uses logical CSS (`border-inline-start`) so it mirrors correctly. Noto Sans Arabic and Noto Sans Bengali are loaded as fallback fonts; Chinese uses the device's own Chinese fonts.
 - **The chat** sends the chosen language (`locale`) with each question, so a connected AI can answer in it.
 - **The add-on** follows the host page's `<html lang>`, including live changes, or a fixed `data-locale`.
 - **`tests/i18n.test.js`** fails if any text on the page is missing from a dictionary, or if a translation drops a `{placeholder}`.
@@ -205,7 +205,7 @@ From the project brief, still open:
 - Whether an embedded script may read the form's answers in the browser (privacy and security review), and what the assistant vendor may receive and keep.
 - Who owns the field definitions and help text, and how they're kept in sync with form edits.
 - Where staff hand-off requests go.
-- Who reviews and approves the Spanish, Arabic and Bengali translations, and whether other languages are needed.
+- Who reviews and approves the Spanish, Arabic, Bengali and Chinese translations, and whether other languages are needed.
 
 ## Running and checking
 ```bash
