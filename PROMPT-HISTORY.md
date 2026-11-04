@@ -195,6 +195,14 @@ Result: everything in the plan that doesn't need an AI key or Invest Detroit's a
 
 Still needs other people: an AI key (instructor), approval of the field guide and translations (Invest Detroit), and installing the add-on on their site.
 
+**26. Tidy the layout** *(with a screenshot of the checklist)*
+> Change these from checkboxes to compact bullet points and use consistent padding and alignment throughout the app.
+
+Result:
+- The "Before you start" checklist now uses compact bullet points instead of checkboxes.
+- The whole app now uses one spacing scale (4, 8, 12, 16, 24, 32, 48, 64 pixels) in place of dozens of one-off numbers.
+- Every box in the form column has the same inside padding. Boxes with a colored edge stripe compensate for it, so their text starts in exactly the same place, measured on desktop and phone, in English and in right-to-left Arabic.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.
@@ -203,3 +211,4 @@ Still needs other people: an AI key (instructor), approval of the field guide an
 - **Ask "what's next according to our plan?"** It keeps the build tied to the project plan instead of drifting.
 - **Ask "what would we need?" before "build it".** Getting the list of pieces first made it clear which parts the team could build and which depend on Invest Detroit.
 - **Say what "accurate" means to you.** For translations, that meant real written translations rather than an automatic widget, plus an honest note that they still need professional review.
+- **Show a screenshot.** Pointing at the exact box ("change these") got a precise fix faster than describing it.

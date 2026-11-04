@@ -9,6 +9,13 @@
   --dark: #1f2423;
   --error: #c0392b;
   --error-bg: #fdecea;
+  /* Spacing scale: use these instead of one-off numbers so boxes line up. */
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px; --sp-6: 32px; --sp-7: 48px; --sp-8: 64px;
+  --gutter: 20px;         /* page edge */
+  --pad-x: 24px;          /* inside left/right padding of every box in the form column */
+  --pad-x-inner: 16px;    /* boxes nested inside another box */
+  --field-gap: 20px;      /* space between questions */
+  --accent: 4px;          /* colored stripe on the leading edge of a box */
   --font: 'Lato', 'Noto Sans Arabic', 'Noto Sans Bengali', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', 'Helvetica Neue', Arial, sans-serif;
   color-scheme: light;
   font-family: var(--font);
@@ -22,3 +29,4 @@ body { background: var(--bg); line-height: 1.55; font-size: 16px; }
 a { color: var(--yellow-dark); }
 img { max-width: 100%; }
 :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+@media (max-width: 640px) { :root { --gutter: 16px; --pad-x: 16px; --pad-x-inner: 12px; --field-gap: 18px; } }
