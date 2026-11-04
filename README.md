@@ -13,18 +13,28 @@ The app is a practice copy of Invest Detroit's **"Need Support?"** page, which h
 | **Practice intake form** | Every section and question from the real form, in the same order. Follow-up questions appear only when they apply (for example, choosing "Mixed Use" opens the Retail and Residential sections). | Done |
 | **Review My Application** | A button above Submit runs 5 checks with a progress bar. It lists anything to fix, each with a "Go to field" link. A clean review shows a green "✓ Review successful". | Done |
 | **Submit locked until review passes** | Submit stays greyed out until a successful review and locks again if an answer changes. Submitting shows a "Submitted successfully" pop-up. | Done |
-| **AI assistant chat** | A "Need help?" button in the corner opens a chat window that knows which question you're on. It hides and warns about anything that looks like a Social Security Number. | Window done; AI not connected yet |
+| **Chat assistant** | A "Need help?" button in the corner opens a chat that knows which question you're on. It answers from the field guide with a source link. Questions about eligibility, rates or fees always go to staff, and it says when it doesn't know. "Talk to a person" shows Invest Detroit's contact details. It hides and warns about anything that looks like a Social Security Number. | Works without AI; a real AI can be connected later |
+| **"?" on each question** | The questions people most often get wrong have a "?" button that opens the chat already explaining that question. | Done |
+| **Field guide** | Plain-language explanation, example, common mistakes and source for about 40 questions, plus general topics like documents and saving. Written by the team as a draft for Invest Detroit to approve. English only for now. | Draft |
+| **Before you start** | A checklist above the form of the documents and numbers to gather first, since the form can't be saved partway through. | Done |
+| **Document-upload preview** | After you attach a development budget, a clearly labeled demo card shows how a future version could suggest an answer from your file, with Accept / Edit / Leave blank. It never opens your file. | Mock-up |
 | **Language dropdown** | Switch the whole page between English, Español, العربية, বাংলা and 简体中文 (Invest Detroit's site offers the first four; Chinese is our addition). Arabic reads right to left. The translations are AI-drafted and not yet professionally reviewed, and the page says so. | Done |
 | **Add-on for the real website** | One script file that adds the review panel and chat to Invest Detroit's real FormAssembly form. It turns itself off safely if anything goes wrong. Try it on `/embed-test/`. | Built; not yet on their site |
-| **Field guide** | Plain-language explanation, example and official source link for each question, used by the assistant. | Next |
 
 ### What the review checks
 
 Only fixed rules are used, with no AI. Only real problems block Submit.
 
 - **Must fix:** required questions left blank, wrong formats (zip code, state, email, numbers), missing required documents or acknowledgements, and a loan request bigger than the total budget.
-- **Please double-check:** affordable (AMI) units that don't add up to total housing units, net square footage bigger than gross, and an empty section for the chosen real estate type.
-- **Good to know:** what answering "No" to the 10% cash or equity contribution means.
+- **Must fix:** a Community Development Organization share over 100%.
+- **Please double-check:**
+  - affordable (AMI) units that don't add up to total housing units;
+  - net square footage bigger than gross;
+  - an empty section for the chosen real estate type;
+  - a "Yes" to the 10% contribution when the loan covers more than 90% of the budget;
+  - ethnicity or gender counts that don't add up to the number of owners;
+  - a total budget so small it may be missing zeros.
+- **Good to know:** what answering "No" to the 10% cash or equity contribution means, and a tip when the project summary is very short.
 
 ## Try it
 
@@ -49,10 +59,11 @@ To see the review catch mistakes, change the loan amount to more than the total 
 
 1. Practice form — done
 2. Rule-based review — done
-3. Field guide and "Before you start" checklist — next
-4. Connect the AI assistant, which needs an AI key added by the instructor in here.now
-5. AI review checks (for example, "Is this a monthly amount?"), which never block Submit
-6. Mock-ups (document upload, "Talk to a person") and polish
+3. Field guide and "Before you start" checklist — done (the guide is a draft for Invest Detroit to approve, English only)
+4. Chat assistant — answers from the field guide today; connecting a real AI needs an AI key added by the instructor in here.now
+5. "Possible misunderstanding" checks — the ones plain rules can do are done; AI-based checks need the AI key and must never block Submit
+6. Mock-ups (document upload, "Talk to a person") — done
+7. Add-on for Invest Detroit's real form — built and tested on a copy; needs Invest Detroit to install it
 
 ## For the team
 
@@ -63,5 +74,6 @@ To see the review catch mistakes, change the loan amount to more than the total 
   - `src/copilot/`: the copilot itself, with no screen code (field definitions, review rules, assistant client, privacy rules, translations, and the connector for Invest Detroit's real FormAssembly form)
   - `src/embed/`: the add-on script for Invest Detroit's live page (built to `dist/embed/copilot.js`)
   - `src/components/`: the review panel and chat window
-  - `src/prototype/`: our copy of the form and the fictional sample applicant
+  - `src/copilot/fieldGuide.js`: the draft field guide the chat answers from
+  - `src/prototype/`: our copy of the form, the checklist, the upload demo and the fictional sample applicant
   - `tests/`: automated checks; run `npm test`

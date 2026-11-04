@@ -73,6 +73,18 @@ export const REVIEW_TEXT = {
   fundsTitle: 'How the loan would be used',
   fundsMessage: 'This question is optional, but answering it helps the team understand your request.',
   kinds: ['retail', 'office', 'commercial', 'residential'],
+  equityConflictTitle: 'Your 10% contribution and loan amount don’t fit together',
+  equityConflictMessage: 'You answered Yes to contributing at least 10% of the project cost ({ten}), but your loan request ({loan}) leaves only {left} of your {budget} budget for everything else. Please check the loan amount, the total budget, or your answer.',
+  ownerCountTitle: 'Owner counts don’t add up',
+  ownerCountMessage: 'You said the business has {owners} owners, but the {group} boxes add up to {sum}. Each owner should be counted once.',
+  groups: ['ethnic background', 'gender'],
+  percentTitle: 'Percentage over 100',
+  percentMessage: 'The percentage owned by the Community Development Organization can’t be more than 100.',
+  percentInline: 'Please enter a number from 0 to 100.',
+  tinyBudgetTitle: 'Is the total budget in dollars?',
+  tinyBudgetMessage: 'You entered {budget} as the total budget. That is unusually small for a real estate project. Did you mean to enter it in thousands, or leave out some zeros?',
+  shortSummaryTitle: 'Your summary could say more',
+  shortSummaryMessage: 'A clearer summary helps the team understand your project faster. Try to include what you will build or do, where, and roughly when.',
 }
 const R = REVIEW_TEXT
 
@@ -191,8 +203,76 @@ function useOfFunds({ values, visibleIds }) {
   })]
 }
 
+// ---- "Possible misunderstanding" checks done with plain rules (the brief planned these for AI).
+// Each flags only a real contradiction in the numbers, and none of them blocks Submit except an
+// impossible percentage.
+
+function equityConflict({ values }) {
+  const budget = num(values.total_budget)
+  const loan = num(values.loan_amount)
+  // If the loan alone is over 90% of the budget, the applicant's own share must be under 10%,
+  // whatever other lenders contribute. (Loan > budget is already its own blocker.)
+  if (values.equity_10pct !== 'Yes' || !budget || loan === null || loan > budget || loan <= budget * 0.9) return []
+  return [issue({
+    id: 'equity_conflict', field_id: 'equity_10pct', check: 'consistency', level: 'warning',
+    category: 'cross_field_inconsistency',
+    title: R.equityConflictTitle, message: R.equityConflictMessage,
+    params: { ten: money(Math.ceil(budget * 0.1)), loan: money(loan), left: money(budget - loan), budget: money(budget) },
+  })]
+}
+
+function ownerCounts({ values, visibleIds }) {
+  const owners = num(values.owner_count)
+  if (owners === null) return []
+  const out = []
+  for (const [prefix, group] of [['eth_count_', R.groups[0]], ['gender_count_', R.groups[1]]]) {
+    const ids = [...visibleIds].filter((id) => id.startsWith(prefix))
+    const filled = ids.filter((id) => num(values[id]) !== null)
+    if (!filled.length) continue
+    const sum = filled.reduce((n, id) => n + num(values[id]), 0)
+    if (sum === owners) continue
+    out.push(issue({
+      id: `owner_count_${prefix.split('_')[0]}`, field_id: filled[0], check: 'consistency', level: 'warning',
+      category: 'cross_field_inconsistency',
+      title: R.ownerCountTitle, message: R.ownerCountMessage, params: { owners, group, sum },
+    }))
+  }
+  return out
+}
+
+function percentRange({ values, visibleIds }) {
+  const pct = num(values.cdo_pct)
+  if (!visibleIds.has('cdo_pct') || pct === null || pct <= 100) return []
+  return [issue({
+    id: 'cdo_pct_range', field_id: 'cdo_pct', check: 'format', level: 'blocker',
+    category: 'invalid_format', title: R.percentTitle, message: R.percentMessage, inline_message: R.percentInline,
+  })]
+}
+
+function tinyBudget({ values }) {
+  const budget = num(values.total_budget)
+  if (budget === null || budget <= 0 || budget >= 10000) return []
+  return [issue({
+    id: 'budget_units', field_id: 'total_budget', check: 'consistency', level: 'warning',
+    category: 'possible_misunderstanding',
+    title: R.tinyBudgetTitle, message: R.tinyBudgetMessage, params: { budget: money(budget) },
+  })]
+}
+
+function shortSummary({ values }) {
+  const text = String(values.executive_summary || '').trim()
+  if (!text || text.length >= 60) return []
+  return [issue({
+    id: 'summary_short', field_id: 'executive_summary', check: 'project_details', level: 'info',
+    category: 'clarity', title: R.shortSummaryTitle, message: R.shortSummaryMessage,
+  })]
+}
+
 /** Add, remove or reorder checks here. Each runs independently on the same snapshot. */
-export const RULES = [requiredAndFormat, loanVsBudget, affordableUnits, netVsGross, emptyTypeSections, equityGuidance, useOfFunds]
+export const RULES = [
+  requiredAndFormat, loanVsBudget, affordableUnits, netVsGross, emptyTypeSections, equityGuidance, useOfFunds,
+  equityConflict, ownerCounts, percentRange, tinyBudget, shortSummary,
+]
 
 /**
  * @param {Record<string, unknown>} values  answers keyed by field id (from any form adapter)

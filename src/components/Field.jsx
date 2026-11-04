@@ -3,6 +3,7 @@
 // Text is translated for display only: answers keep the English option values.
 import { useI18n } from './i18nContext.js'
 import RichText from './RichText.jsx'
+import { FIELD_GUIDE } from '../copilot/fieldGuide.js'
 
 function Label({ field, htmlFor, as = 'label' }) {
   const { locale, t } = useI18n()
@@ -25,6 +26,19 @@ function Label({ field, htmlFor, as = 'label' }) {
   )
 }
 
+/** Label plus a ? button that asks the chat to explain this question (when the guide covers it). */
+function LabelRow({ field, htmlFor, as, onHelp }) {
+  const { t } = useI18n()
+  const label = <Label field={field} htmlFor={htmlFor} as={as} />
+  if (!onHelp || !FIELD_GUIDE[field.id]) return label
+  return (
+    <div className="label-row">
+      {label}
+      <button type="button" className="help-btn" aria-label={t('Explain this question')} title={t('Explain this question')} onClick={() => onHelp(field.id)}>?</button>
+    </div>
+  )
+}
+
 function Hint({ field }) {
   const { t } = useI18n()
   if (field.hintLink) {
@@ -44,7 +58,7 @@ function Hint({ field }) {
 // Numbers, codes and email addresses stay left-to-right even on Arabic pages.
 const LTR_TYPES = new Set(['email', 'tel', 'state', 'zip', 'money', 'number', 'integer'])
 
-export default function Field({ field, value, error, onChange }) {
+export default function Field({ field, value, error, onChange, onHelp }) {
   const { t } = useI18n()
   const id = field.id
   const errId = `${id}-error`
@@ -66,7 +80,7 @@ export default function Field({ field, value, error, onChange }) {
     case 'disabled':
       return (
         <div data-field-id={id} className={`${cls} is-disabled`}>
-          <Label field={field} htmlFor={id} />
+          <LabelRow field={field} htmlFor={id} onHelp={onHelp} />
           <input {...common} type="text" disabled value="" placeholder={t('Not collected in prototype')} />
           <p className="hint">{t(field.disabledNote)}</p>
         </div>
@@ -74,7 +88,7 @@ export default function Field({ field, value, error, onChange }) {
     case 'textarea':
       return (
         <div data-field-id={id} className={cls}>
-          <Label field={field} htmlFor={id} />
+          <LabelRow field={field} htmlFor={id} onHelp={onHelp} />
           <textarea {...common} rows={5} maxLength={field.maxLength} value={value || ''} onChange={(e) => onChange(id, e.target.value)} />
           {field.maxLength && <p className="hint counter">{(value || '').length}/{field.maxLength}</p>}
           {errorEl}
@@ -83,7 +97,7 @@ export default function Field({ field, value, error, onChange }) {
     case 'radio':
       return (
         <div data-field-id={id} className={cls} role="radiogroup" aria-labelledby={`${id}-label`} id={id}>
-          <Label field={field} as="p" />
+          <LabelRow field={field} as="p" onHelp={onHelp} />
           <div className={`choices ${field.layout === 'vertical' ? 'vertical' : 'horizontal'}`}>
             {field.options.map((opt) => (
               <label key={opt} className="choice">
@@ -100,7 +114,7 @@ export default function Field({ field, value, error, onChange }) {
       const toggle = (opt) => onChange(id, list.includes(opt) ? list.filter((o) => o !== opt) : [...list, opt])
       return (
         <div data-field-id={id} className={cls} role="group" aria-labelledby={`${id}-label`} id={id}>
-          <Label field={field} as="p" />
+          <LabelRow field={field} as="p" onHelp={onHelp} />
           <Hint field={field} />
           <div className="choices grid">
             {field.options.map((opt, i) => (
@@ -117,7 +131,7 @@ export default function Field({ field, value, error, onChange }) {
     case 'select':
       return (
         <div data-field-id={id} className={cls}>
-          <Label field={field} htmlFor={id} />
+          <LabelRow field={field} htmlFor={id} onHelp={onHelp} />
           <select {...common} value={value || ''} onChange={(e) => onChange(id, e.target.value)}>
             <option value="">{t('Please select...')}</option>
             {field.options.map((opt) => <option key={opt} value={opt}>{t(opt)}</option>)}
@@ -129,7 +143,7 @@ export default function Field({ field, value, error, onChange }) {
     case 'file':
       return (
         <div data-field-id={id} className={cls}>
-          <Label field={field} htmlFor={id} />
+          <LabelRow field={field} htmlFor={id} onHelp={onHelp} />
           <input {...common} type="file" onChange={(e) => onChange(id, e.target.files?.[0]?.name || '')} />
           {value && <p className="hint">{t('Selected: {file} (stays on your device)', { file: value })}</p>}
           <Hint field={field} />
@@ -158,7 +172,7 @@ export default function Field({ field, value, error, onChange }) {
       }[field.type] || { type: 'text', maxLength: field.maxLength }
       return (
         <div data-field-id={id} className={cls}>
-          <Label field={field} htmlFor={id} />
+          <LabelRow field={field} htmlFor={id} onHelp={onHelp} />
           <div className={field.type === 'money' ? 'money' : undefined}>
             <input
               {...common}

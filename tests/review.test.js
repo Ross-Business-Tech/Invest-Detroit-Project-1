@@ -86,3 +86,38 @@ test('summary contains counts only, no answers', () => {
   assert.ok(summary.total > 0)
   assert.ok(!JSON.stringify(summary).includes('Jordan'))
 })
+
+test('a Yes to 10% that the loan amount contradicts is flagged, not blocked', () => {
+  const i = runReview({ ...complete, total_budget: '1000000', loan_amount: '950000', equity_10pct: 'Yes' }).find((x) => x.id === 'equity_conflict')
+  assert.ok(i)
+  assert.equal(i.blocking, false)
+  assert.match(i.message, /\$100,000/)
+  assert.ok(!runReview({ ...complete, total_budget: '1000000', loan_amount: '850000' }).some((x) => x.id === 'equity_conflict'))
+})
+
+test('owner counts that do not add up are flagged', () => {
+  const values = { ...complete, owner_count: '3', ethnicities: ['Asian', 'White'], eth_count_asian: '2', eth_count_white: '2' }
+  const i = runReview(values).find((x) => x.id === 'owner_count_eth')
+  assert.ok(i)
+  assert.equal(i.params.sum, 4)
+  assert.ok(!runReview({ ...values, eth_count_white: '1' }).some((x) => x.id === 'owner_count_eth'))
+})
+
+test('a CDO share over 100% blocks submit', () => {
+  const issues = runReview({ ...complete, owners_cdo: 'Yes', cdo_pct: '150' })
+  assert.ok(issues.find((x) => x.id === 'cdo_pct_range').blocking)
+})
+
+test('a tiny budget asks whether it is in dollars', () => {
+  assert.ok(runReview({ ...complete, total_budget: '1450', loan_amount: '600' }).some((x) => x.id === 'budget_units'))
+})
+
+test('a very short summary gets a non-blocking tip', () => {
+  const i = runReview({ ...complete, executive_summary: 'Grow the business' }).find((x) => x.id === 'summary_short')
+  assert.equal(i.level, 'info')
+})
+
+test('the complete sample applicant still passes with no new warnings', () => {
+  const ids = runReview(complete).map((i) => i.id)
+  for (const id of ['equity_conflict', 'owner_count_eth', 'owner_count_gender', 'budget_units', 'summary_short', 'cdo_pct_range']) assert.ok(!ids.includes(id), id)
+})

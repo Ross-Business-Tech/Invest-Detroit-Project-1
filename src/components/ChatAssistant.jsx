@@ -9,10 +9,12 @@ import { SUGGESTIONS, WELCOME_TEXT, DEFAULT_SUBTITLE } from './chatText.js'
 const WELCOME = { role: 'assistant', kind: 'welcome', text: WELCOME_TEXT, sources: [] }
 
 /**
- * @param {{ assistant: { ask: Function }, activeFieldId: string | null, subtitle?: string }} props
- *   assistant comes from createAssistant(); activeFieldId from the form adapter
+ * @param {{ assistant: { ask: Function }, activeFieldId: string | null, subtitle?: string,
+ *           helpRequest?: { fieldId: string, n: number } | null }} props
+ *   assistant comes from createAssistant(); activeFieldId from the form adapter;
+ *   helpRequest changes when the applicant presses a question's ? button.
  */
-export default function ChatAssistant({ assistant, activeFieldId, subtitle = DEFAULT_SUBTITLE }) {
+export default function ChatAssistant({ assistant, activeFieldId, subtitle = DEFAULT_SUBTITLE, helpRequest = null }) {
   const { t, info } = useI18n()
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState([WELCOME])
@@ -40,15 +42,28 @@ export default function ChatAssistant({ assistant, activeFieldId, subtitle = DEF
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages, open, waiting])
 
-  const send = async (text) => {
+  const send = async (text, { fieldId = activeFieldId, intent = null } = {}) => {
     if (!text.trim() || waiting) return
     setDraft('')
     setWaiting(true)
-    const history = messages.filter((m) => m.kind !== 'welcome').map(({ role, text: t }) => ({ role, text: t }))
-    const { shownMessage, reply } = await assistant.ask({ message: text.trim(), activeFieldId, history, locale: info.bcp47 })
+    const history = messages.filter((m) => m.role === 'user' || m.kind === 'answer').map(({ role, text: t }) => ({ role, text: t }))
+    const { shownMessage, reply } = await assistant.ask({ message: text.trim(), activeFieldId: fieldId, history, locale: info.bcp47, intent })
     setMessages((m) => [...m, { role: 'user', text: shownMessage, sources: [] }, { role: 'assistant', ...reply }])
     setWaiting(false)
   }
+
+  // The ? button next to a question: open the chat and explain that question.
+  const lastHelp = useRef(null)
+  useEffect(() => {
+    if (!helpRequest || lastHelp.current === helpRequest.n) return
+    lastHelp.current = helpRequest.n
+    setOpen(true)
+    const label = fieldContext(helpRequest.fieldId)?.field_label || ''
+    send(t('Explain: {question}', { question: label }), { fieldId: helpRequest.fieldId, intent: 'explain_field' })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [helpRequest])
+
+  const talkToPerson = () => setMessages((m) => [...m, { role: 'assistant', kind: 'handoff', text: '', sources: [] }])
 
   return (
     <>
@@ -72,7 +87,9 @@ export default function ChatAssistant({ assistant, activeFieldId, subtitle = DEF
           <ol className="chat-messages" ref={listRef} aria-live="polite">
             {messages.map((m, i) => (
               <li key={i} className={`msg ${m.role === 'user' ? 'user' : 'bot'} ${m.kind || ''}`}>
-                {/* Fixed messages are translated here; user messages and AI answers are shown as they are. */}
+                {m.kind === 'handoff' && <Handoff t={t} />}
+                {m.english_only && <span className="msg-note">{t('This answer is only available in English for now.')}</span>}
+                {/* Fixed messages are translated here; user messages and answers are shown as they are. */}
                 {m.role === 'user' || m.kind === 'answer' ? m.text : t(m.text)}
                 {m.sources?.length > 0 && (
                   <span className="msg-sources">
@@ -94,6 +111,10 @@ export default function ChatAssistant({ assistant, activeFieldId, subtitle = DEF
               ))}
             </div>
           )}
+
+          <div className="chat-actions">
+            <button type="button" className="handoff-btn" onClick={talkToPerson}>{t('Talk to a person')}</button>
+          </div>
 
           <form className="chat-input" onSubmit={(e) => { e.preventDefault(); send(draft) }}>
             <label htmlFor="chat-draft" className="sr-only">{t('Type your question')}</label>
@@ -129,5 +150,18 @@ export default function ChatAssistant({ assistant, activeFieldId, subtitle = DEF
         {!open && <span className="launcher-label">{t('Need help?')}</span>}
       </button>
     </>
+  )
+}
+
+/** Contact card for "Talk to a person". Uses Invest Detroit's public contact details; sends nothing. */
+function Handoff({ t }) {
+  return (
+    <span className="handoff-card">
+      <strong>{t('You can reach the Invest Detroit team directly:')}</strong>
+      <span className="handoff-row"><span>{t('Email')}</span> <span className="handoff-value" dir="ltr">info@investdetroit.com</span></span>
+      <span className="handoff-row"><span>{t('Phone')}</span> <span className="handoff-value" dir="ltr">313.259.6368</span></span>
+      <span>{t('When you contact them, mention that you are applying through the Real Estate/C&I In-Take Form, and the question you have. Don’t send Social Security or bank account numbers by email.')}</span>
+      <span className="msg-note">{t('This prototype does not send anything to Invest Detroit staff.')}</span>
+    </span>
   )
 }

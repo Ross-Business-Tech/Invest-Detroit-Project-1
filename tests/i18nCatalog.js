@@ -5,6 +5,8 @@ import { SECTIONS, FORM_INTRO, COUNT_HINT } from '../src/copilot/formDefinition.
 import { REVIEW_TEXT, REVIEW_CHECKS, REVIEW_GROUPS } from '../src/copilot/review.js'
 import { PRIVACY_WARNING, CANNED_REPLIES } from '../src/copilot/assistant.js'
 import { SUGGESTIONS, WELCOME_TEXT, DEFAULT_SUBTITLE, CONNECTED_SUBTITLE } from '../src/components/chatText.js'
+import { NO_MATCH } from '../src/copilot/guideTransport.js'
+import { NUMBERS } from '../src/prototype/beforeYouStartText.js'
 
 // Organization names stay in their original form in every language.
 const PROPER_NOUN_LISTS = new Set(['other_lenders', 'community_partners'])
@@ -35,14 +37,14 @@ export function formStrings() {
 export function reviewStrings() {
   const out = new Set([...REVIEW_CHECKS.map((c) => c.label), ...REVIEW_GROUPS.map((g) => g.title)])
   for (const [key, v] of Object.entries(REVIEW_TEXT)) {
-    if (key === 'kinds') v.forEach((k) => out.add(k))
+    if (key === 'kinds' || key === 'groups') v.forEach((k) => out.add(k))
     else if (key !== 'fieldOnly' && key !== 'fieldProblem') out.add(v)
   }
   return out
 }
 
 export function assistantStrings() {
-  return new Set([PRIVACY_WARNING, ...Object.values(CANNED_REPLIES), ...SUGGESTIONS, WELCOME_TEXT, DEFAULT_SUBTITLE, CONNECTED_SUBTITLE])
+  return new Set([...NUMBERS, PRIVACY_WARNING, NO_MATCH, ...Object.values(CANNED_REPLIES), ...SUGGESTIONS, WELCOME_TEXT, DEFAULT_SUBTITLE, CONNECTED_SUBTITLE])
 }
 
 /** Static strings passed to t('…') in the screen code. */

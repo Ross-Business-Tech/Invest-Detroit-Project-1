@@ -54,6 +54,8 @@ src/
     review.js                 rule-based checks (RULES list) → ReviewIssue[]
     reviewSession.js          review state machine (run / invalidate / reset)
     assistant.js              assistant client + transports
+    fieldGuide.js             draft field guide (help for ~40 questions + general topics)
+    guideTransport.js         built-in answers from the field guide (no AI, no network)
     privacy.js                redaction
     events.js                 analytics hook
     adapters/
@@ -184,6 +186,17 @@ The test page is generated from our own field map, so the **final check must hap
 
 ### 4. Staff hand-off ("Talk to a person")
 Not built. The reply contract already has `needs_staff`, and issues have `requires_staff`. A hand-off would send only what the applicant chooses to share, through an approved channel.
+
+## Chat answers today: the field guide
+
+`ASSISTANT.mode` is `'guide'`. The chat answers in the browser from `fieldGuide.js`, with no AI and no network, using the same request and reply contract as a real AI endpoint:
+
+1. **The "?" button** sends `intent: 'explain_field'` and gets that question's entry: explanation, example, common mistakes and source.
+2. **Eligibility, approval, rates, fees and timelines** always get "only the Invest Detroit team can answer", plus contact details. This is checked before anything else (brief: never guess).
+3. **Otherwise** the reply is the entry whose keywords best match the message, with a small preference for the question the applicant is on. Phrases like "what does this mean?" use the current question. Keywords include common Spanish, Arabic, Bengali and Chinese terms.
+4. **No good match** gets "I don't have an approved answer for that yet", with contact details. The chat never makes up an answer.
+
+The guide is a **draft written from the public form**. It explains what questions ask, and says nothing about policy (what counts as equity, rates, fees, how a "Yes" on legal questions is treated). Invest Detroit should review and own it. It is English only: on other languages, the chat shows a translated note saying so. When a real AI is connected, the same entries become the approved material it answers from (retrieval). `tests/fieldGuide.test.js` checks routing, the staff-only rule, and that the guide states no rates, fees or approval odds.
 
 ## Languages
 

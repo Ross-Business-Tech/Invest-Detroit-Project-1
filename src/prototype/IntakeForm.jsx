@@ -11,6 +11,8 @@ import { useReviewSession } from '../components/useReviewSession.js'
 import { useI18n } from '../components/i18nContext.js'
 import { SAMPLE_APPLICANT } from './sampleApplicant.js'
 import { goToField } from './goToField.js'
+import BeforeYouStart from './BeforeYouStart.jsx'
+import DocSuggestionDemo from './DocSuggestionDemo.jsx'
 
 /** Inline error text for each field a finished review blocks on. */
 function errorsFrom(issues) {
@@ -20,9 +22,9 @@ function errorsFrom(issues) {
 }
 
 /**
- * @param {{ onActiveFieldChange?: (fieldId: string) => void }} props
+ * @param {{ onActiveFieldChange?: (fieldId: string) => void, onHelp?: (fieldId: string) => void }} props
  */
-export default function IntakeForm({ onActiveFieldChange = () => {} }) {
+export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
   const { t } = useI18n()
   const [values, setValues] = useState({})
   const valuesRef = useRef(values)
@@ -91,6 +93,8 @@ export default function IntakeForm({ onActiveFieldChange = () => {} }) {
 
   return (
     <>
+      <BeforeYouStart />
+
       <div className="proto-tools">
         <span>{t('Prototype tools:')}</span>
         <button type="button" className="btn small" onClick={fillSample}>{t('Fill with sample applicant')}</button>
@@ -115,9 +119,17 @@ export default function IntakeForm({ onActiveFieldChange = () => {} }) {
             {section.intro && <p className={`section-paragraph${section.introBold ? ' bold' : ''}`}>{t(section.intro)}</p>}
             <div className="field-grid">
               {section.fields.map((f) => (
-                <Field key={f.id} field={f} value={values[f.id]} error={errors[f.id]} onChange={onChange} />
+                <Field key={f.id} field={f} value={values[f.id]} error={errors[f.id]} onChange={onChange} onHelp={onHelp} />
               ))}
             </div>
+            {section.id === 'required_docs' && values.doc_dev_budget && (
+              <DocSuggestionDemo
+                key={values.doc_dev_budget}
+                fileName={values.doc_dev_budget}
+                onAccept={(amount) => onChange('total_budget', amount)}
+                onEdit={() => goToField('total_budget')}
+              />
+            )}
           </fieldset>
         ))}
 

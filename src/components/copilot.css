@@ -129,3 +129,13 @@
   .chat-panel ~ .chat-launcher { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .chat-panel { animation: none; } }
+
+/* Field-guide answers, notes and the "Talk to a person" card */
+.msg { white-space: pre-line; }
+.msg-note { display: block; font-size: 12px; color: var(--muted); font-style: italic; margin-bottom: 4px; }
+.chat-actions { display: flex; justify-content: flex-end; padding: 6px 12px 0; }
+.handoff-btn { font: 700 13px var(--font); background: none; border: 0; color: var(--dark); text-decoration: underline; cursor: pointer; padding: 6px 4px; }
+.handoff-card { display: flex; flex-direction: column; gap: 6px; white-space: normal; }
+.handoff-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.handoff-row > span:first-child { color: var(--muted); min-width: 48px; }
+.handoff-value { font-weight: 700; user-select: all; }

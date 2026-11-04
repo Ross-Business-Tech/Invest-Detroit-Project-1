@@ -57,12 +57,13 @@ export const SOURCES = {
 
 /**
  * How the assistant gets its answers.
- *   'placeholder': no AI; replies say the assistant isn't connected yet (current prototype).
+ *   'guide':       no AI; answers from the draft field guide in the browser (current prototype).
+ *   'placeholder': no AI; replies say the assistant isn't connected yet.
  *   'http':        POST to `endpoint` (a here.now proxy route, or an Invest Detroit backend).
  * Never put an API key here: this file ships to every visitor's browser.
  */
 export const ASSISTANT = {
-  mode: 'placeholder',
+  mode: 'guide',
   endpoint: './.herenow/proxy/assistant',
   history_window: 6, // most recent messages sent with each question, not the whole chat
 }

@@ -27,6 +27,8 @@ function Page({ locale, onLocaleChange }) {
   const { t } = useI18n()
   const [assistant] = useState(() => createAssistant({ onEvent: track }))
   const [activeFieldId, setActiveFieldId] = useState(null)
+  const [helpRequest, setHelpRequest] = useState(null)
+  const askForHelp = (fieldId) => setHelpRequest((r) => ({ fieldId, n: (r?.n || 0) + 1 }))
 
   return (
     <>
@@ -69,7 +71,7 @@ function Page({ locale, onLocaleChange }) {
         <section className="band form-band" id="form">
           <div className="band-title"><span>{t('Get In Touch')}</span></div>
           <div className="form-holder">
-            <IntakeForm onActiveFieldChange={setActiveFieldId} />
+            <IntakeForm onActiveFieldChange={setActiveFieldId} onHelp={askForHelp} />
           </div>
         </section>
 
@@ -90,7 +92,7 @@ function Page({ locale, onLocaleChange }) {
         </div>
       </footer>
 
-      <ChatAssistant assistant={assistant} activeFieldId={activeFieldId} />
+      <ChatAssistant assistant={assistant} activeFieldId={activeFieldId} helpRequest={helpRequest} />
     </>
   )
 }

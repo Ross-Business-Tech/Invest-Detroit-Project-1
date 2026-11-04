@@ -166,7 +166,34 @@ Result:
 **23. Keep this file current** *(sent while the language work was being built)*
 > After you are done, update our Prompt History md.
 
-Result: entries 20–23 were added to this file.
+Result: entries 20–23 were added to this file (and later entries are added the same way).
+
+**24. Add Chinese**
+> You forgot a Chinese option.
+
+Result: **简体中文 (Simplified Chinese)** was added to the language dropdown, with a full translation of every piece of text, like the other languages. Invest Detroit's own site offers English, Spanish, Arabic and Bengali; Chinese is the team's addition.
+
+## 8. Building everything we can
+
+**25. Build what's realistic now** *(sent while Chinese was being added)*
+> Build as much of this application as you realistically can right now, given our current technical constraints, available resources, and existing codebase.
+
+Result: everything in the plan that doesn't need an AI key or Invest Detroit's approval.
+- **Field guide (draft):** plain-language help for about 40 questions (explanation, example, common mistakes, source) plus general topics. It never states policy like eligibility, rates or fees. English only for now.
+- **A chat that answers without AI:** it answers from the field guide. Eligibility, rate and fee questions always go to staff, and unrelated questions get an honest "I don't have an approved answer".
+- **"?" buttons** on the questions the guide covers. They open the chat already explaining that question.
+- **More review checks:**
+  - a "Yes" to the 10% contribution that the loan amount contradicts;
+  - owner counts that don't add up;
+  - a CDO share over 100% (blocks Submit);
+  - a budget that seems to be missing zeros;
+  - a tip for very short summaries.
+- **"Before you start" checklist** of the documents and numbers to gather first.
+- **"Talk to a person"** in the chat, with Invest Detroit's public contact details. It sends nothing.
+- **Document-upload preview:** a clearly labeled demo with Accept / Edit / Leave blank that never opens your file.
+- All new text was translated into all five languages.
+
+Still needs other people: an AI key (instructor), approval of the field guide and translations (Invest Detroit), and installing the add-on on their site.
 
 ## Tips from this build
 

@@ -7,5 +7,5 @@ export const SUGGESTIONS = [
 ]
 
 export const WELCOME_TEXT = 'Hi! I can explain any question on this form in plain language, point you to official Invest Detroit resources, or connect you with the team. I can’t approve loans or decide eligibility.'
-export const DEFAULT_SUBTITLE = 'AI helper · Preview, not connected yet'
+export const DEFAULT_SUBTITLE = 'Answers from a draft field guide · AI not connected yet'
 export const CONNECTED_SUBTITLE = 'AI helper · Answers from official Invest Detroit sources'
