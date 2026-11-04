@@ -204,11 +204,29 @@ Not built. ("Talk to a person" was removed from the chat at the team's request.)
 `ASSISTANT.mode` is `'guide'`. The chat answers in the browser from `fieldGuide.js`, with no AI and no network, using the same request and reply contract as a real AI endpoint:
 
 1. **The "?" button** sends `intent: 'explain_field'` and gets that question's entry: explanation, example, common mistakes and source.
-2. **Before the guide is consulted, the guardrails run** (see Guardrails). Then **eligibility, approval, rates, fees and timelines** always get "only the Invest Detroit team can answer", plus contact details. This is checked before anything else (brief: never guess).
+2. **Before the guide is consulted, the guardrails run** (see Guardrails). Then questions about **approval or whether the project qualifies** ("Will I be approved?", "Do I qualify?", "What rate will I get?") always get "only the Invest Detroit team decides that", plus contact details (brief: never guess). Published rate, fee, loan-size and timeline ranges are ordinary knowledge entries.
 3. **Otherwise** the reply is the entry whose keywords best match the message, with a small preference for the question the applicant is on. Phrases like "what does this mean?" use the current question. Keywords include common Spanish, Arabic, Bengali and Chinese terms.
 4. **No good match** gets "I don't have an approved answer for that yet", with contact details. The chat never makes up an answer.
 
-The guide is a **draft written from the public form**. It explains what questions ask, and says nothing about policy (what counts as equity, rates, fees, how a "Yes" on legal questions is treated). Invest Detroit should review and own it. It is English only: on other languages, the chat shows a translated note saying so. When a real AI is connected, the same entries become the approved material it answers from (retrieval). `tests/fieldGuide.test.js` checks routing, the staff-only rule, and that the guide states no rates, fees or approval odds.
+The guide is a **draft written from the public form and four Invest Detroit documents**. It is English only: on other languages, the chat shows a translated note saying so. When a real AI is connected, the same entries become the approved material it answers from. Invest Detroit should review and own it.
+
+### Knowledge entries (`knowledge.js`)
+
+Facts from Invest Detroit's documents, written as short entries with keywords and sources, appended to `TOPICS`. The corpus is about 3,000 words, so hand-checked entries beat a vector search (RAG): every answer is reviewable and testable. Revisit RAG if the corpus grows past a few dozen documents.
+
+| Source id | Document | Notes |
+| --- | --- | --- |
+| `re_flyer` | Real Estate Support flyer | This form's program: $150K–$2.5M, 8%–9.5%, 1%–3% fees, terms, collateral, eligible borrowers |
+| `sb_flyer` | Small Business Support flyer | A **different program**. Only shown in `which_program`, labeled "do not apply to this form" |
+| `lending_guide` | Lending Process & Closing Guide | Draft, no public URL (`url: null`, shown as plain text). Staff should confirm |
+| `about_id` | Who is Invest Detroit? | Lists an older address (600 Renaissance Center); the flyers' 950 Selden St is used |
+
+Rules, enforced by `tests/fieldGuide.test.js`:
+- Any entry that states a rate, fee or loan-size range must cite an Invest Detroit source and say "subject to change".
+- Small Business numbers must cite `sb_flyer` and say they don't apply to this form.
+- "Golden questions" taken from the documents must reach the right entry.
+
+The review also has four information-only tips that cite these sources (`loan_outside_range`, `equipment_program`, `construction_before_closing`, `summary_experience`). The success pop-up shows the four lending-guide stages as "What happens next".
 
 ## Guardrails
 

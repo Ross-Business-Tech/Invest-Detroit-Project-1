@@ -125,6 +125,13 @@
 .modal h2 { margin: 0 0 var(--sp-3); font-weight: 900; font-size: 24px; }
 .modal p { margin: 0 0 var(--sp-3); }
 .modal-note { font-size: 13px; color: var(--muted); }
+.modal { max-height: calc(100dvh - 2 * var(--sp-4)); overflow-y: auto; }
+.next-steps { text-align: start; background: var(--bg-soft, #f6f6f4); padding: var(--sp-3) var(--sp-4); margin: var(--sp-4) 0 var(--sp-3); }
+.next-steps h3 { margin: 0 0 var(--sp-2); font-size: 16px; font-weight: 800; }
+.next-steps ol { margin: 0 0 var(--sp-2); padding-inline-start: 1.3em; font-size: 14px; line-height: 1.45; }
+.next-steps li { margin-bottom: var(--sp-2); }
+.next-time { color: var(--muted); font-size: 13px; white-space: nowrap; }
+.modal .next-note { font-size: 13px; color: var(--muted); margin: 0; }
 .modal-actions { display: flex; gap: var(--sp-2); justify-content: center; flex-wrap: wrap; margin-top: var(--sp-4); }
 
 @media (max-width: 640px) {

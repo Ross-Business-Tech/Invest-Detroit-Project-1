@@ -4,7 +4,8 @@
 //
 // How it picks an answer:
 //   1. "Explain this question" (the ? button) -> that question's guide entry.
-//   2. Eligibility, rates, fees, timelines -> always "only staff can answer" (brief: never guess).
+//   2. "Will I be approved / do I qualify / what will my rate be" -> always "only staff can decide".
+//      Published rate, fee and loan-size ranges are ordinary knowledge entries (knowledge.js).
 //   3. Otherwise the guide entry whose keywords best match the message, preferring the question
 //      the applicant is on. Short or vague messages ("what does this mean?") use that question.
 //   4. No good match -> say so and point to staff instead of guessing.

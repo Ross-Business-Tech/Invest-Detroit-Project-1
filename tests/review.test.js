@@ -121,3 +121,30 @@ test('the complete sample applicant still passes with no new warnings', () => {
   const ids = runReview(complete).map((i) => i.id)
   for (const id of ['equity_conflict', 'owner_count_eth', 'owner_count_gender', 'budget_units', 'summary_short', 'cdo_pct_range']) assert.ok(!ids.includes(id), id)
 })
+
+test('tips from Invest Detroit documents are information only and cite their source', () => {
+  const cases = [
+    [{ loan_amount: '100000' }, 'loan_outside_range', 're_flyer'],
+    [{ loan_amount: '3000000', total_budget: '9000000' }, 'loan_outside_range', 're_flyer'],
+    [{ use_of_funds: 'Machinery & Equipment' }, 'equipment_program', 'sb_flyer'],
+    [{ use_of_funds: 'Constructed Improvements' }, 'construction_before_closing', 'lending_guide'],
+    [{ executive_summary: 'We will turn a vacant building on Grand River into six apartments above two new shops.' }, 'summary_experience', 're_flyer'],
+  ]
+  for (const [change, id, source] of cases) {
+    const issues = runReview({ ...complete, ...change })
+    const i = issues.find((x) => x.id === id)
+    assert.ok(i, id)
+    assert.equal(i.level, 'info', id)
+    assert.equal(i.blocking, false, id)
+    assert.ok(i.source_ids.includes(source), id)
+    assert.equal(canSubmitWith(issues), true, id)
+  }
+})
+
+test('document tips stay quiet when they do not apply', () => {
+  const issues = ids(runReview({
+    ...complete, loan_amount: '600000', use_of_funds: 'Refinance',
+    executive_summary: 'Our team has completed three similar rehabs in Detroit. We will renovate a vacant building into six apartments.',
+  }))
+  for (const id of ['loan_outside_range', 'equipment_program', 'construction_before_closing', 'summary_experience']) assert.ok(!issues.includes(id), id)
+})

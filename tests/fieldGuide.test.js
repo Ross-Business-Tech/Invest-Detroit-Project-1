@@ -12,7 +12,7 @@ const ask = (message, activeFieldId = null, extra = {}) => answerFromGuide(build
 test('the ? button explains the question the applicant is on', () => {
   const r = ask('Explain this question', 'total_budget', { intent: 'explain_field' })
   assert.match(r.text, /full cost of the whole project/)
-  assert.deepEqual(r.sources.map((s) => s.id), ['intake_form_v59'])
+  assert.deepEqual(r.sources.map((s) => s.id), ['intake_form_v59', 're_flyer', 'lending_guide'])
 })
 
 test('a vague question uses the current question', () => {
@@ -32,11 +32,21 @@ test('questions in other languages still match the main topics', () => {
   assert.equal(ask('¿Qué significa AMI?', null, { locale: 'es-US' }).english_only, true)
 })
 
-test('eligibility, rates and fees always go to staff, never a guess', () => {
-  for (const q of ['Will I be approved?', 'What is the interest rate?', 'Are there fees?', 'Do I qualify?', '¿Me aprobarán?']) {
+test('approval and qualification questions always go to staff, never a guess', () => {
+  for (const q of ['Will I be approved?', 'Do I qualify?', '¿Me aprobarán?', 'What are my chances?', 'What rate will I get?', 'Am I eligible?']) {
     const r = ask(q, 'loan_amount')
-    assert.match(r.text, /only the Invest Detroit team can answer/, q)
-    assert.equal(r.needs_staff, true)
+    assert.match(r.text, /Only the Invest Detroit team decides that/, q)
+    assert.equal(r.needs_staff, true, q)
+  }
+})
+
+test('published rates and fees are quoted with their source and "subject to change"', () => {
+  for (const q of ['What is the interest rate?', 'Are there fees?', 'What closing costs should I expect?', '¿Cuál es la tasa de interés?', '利率是多少？']) {
+    const r = ask(q, 'loan_amount')
+    assert.match(r.text, /8%–9\.5%/, q)
+    assert.match(r.text, /1%–3%/, q)
+    assert.match(r.text, /subject to change/, q)
+    assert.ok(r.sources.some((s) => s.id === 're_flyer'), q)
   }
 })
 
@@ -56,9 +66,57 @@ test('guide entries point at real fields and known sources', () => {
   for (const t of TOPICS) for (const id of t.source_ids || []) assert.ok(SOURCES[id], `${t.id}: unknown source ${id}`)
 })
 
-test('the guide never states rates, fees or approval odds', () => {
-  const all = JSON.stringify([FIELD_GUIDE, TOPICS])
-  assert.ok(!/\d+(\.\d+)?\s?% (interest|apr)|\$\d[\d,]* fee|guaranteed approval/i.test(all))
+test('rates, fees and loan sizes appear only in entries that cite an official source and say "subject to change"', () => {
+  const entries = [...Object.entries(FIELD_GUIDE), ...TOPICS.map((t) => [t.id, t])]
+  const TERMS = /\d+(\.\d+)?%\s?[–-]\s?\d+(\.\d+)?%|\$\d[\d,]*\s?(to|–|-)\s?\$\d|\$\d[\d,]* (fee|assessment)/i
+  for (const [id, e] of entries) {
+    if (!TERMS.test(e.explain)) continue
+    assert.match(e.explain, /subject to change/, id)
+    assert.ok((e.source_ids || []).some((s) => SOURCES[s]?.category === 'official_policy' && SOURCES[s].provider === 'Invest Detroit'), id)
+  }
+  assert.ok(!/guaranteed approval|(?<!whether )you will be approved|(?<!whether )you qualify/i.test(JSON.stringify([FIELD_GUIDE, TOPICS])))
+})
+
+test('Small Business numbers are always labeled as a different program', () => {
+  for (const t of TOPICS) {
+    if (!/8%–10%|\$50,000|\$250/.test(t.explain)) continue
+    assert.ok(t.source_ids.includes('sb_flyer'), t.id)
+    assert.match(t.explain, /do not apply to this form/, t.id)
+  }
+})
+
+// Golden questions from Invest Detroit's documents: each must reach the right entry.
+const GOLDEN = [
+  ['How long does the lending process take?', /four stages/],
+  ['What happens after I submit?', /Screening \(1–2 weeks\)/],
+  ['How can I speed up my loan?', /fastest closings/],
+  ['What is underwriting?', /management capacity/],
+  ['Will there be a site visit?', /visit the site/],
+  ['What is a term sheet?', /commitment letter/],
+  ['What happens after my loan is approved?', /commitment letter is issued/],
+  ['What due diligence will you need?', /title commitment, survey, appraisal/],
+  ['Can I start construction before closing?', /Don't start construction before the loan closes/],
+  ['How are loan funds disbursed for construction?', /draws/],
+  ['What happens after closing?', /financial reporting/],
+  ['How much can I borrow?', /\$150,000 to \$2,500,000/],
+  ['How many years is the loan term?', /6 months to 7 years/],
+  ['What collateral do you need?', /senior or subordinate mortgage/],
+  ['I am a new developer. Who can apply?', /New developers and startups can be eligible/],
+  ['I need a loan for equipment for my bakery. Is this the right form?', /Small Business program may fit better/],
+  ['Who is Invest Detroit?', /Community Development Financial Institution/],
+  ['Who should I contact with questions?', /Business Development Officer/],
+]
+test('golden questions from Invest Detroit documents reach the right answer', () => {
+  for (const [q, want] of GOLDEN) assert.match(ask(q).text, want, q)
+})
+
+test('every source a reply cites has a title, and links only when a url exists', () => {
+  const r = ask('How long does the lending process take?')
+  assert.deepEqual(r.sources, [{ id: 'lending_guide', title: SOURCES.lending_guide.title, url: null }])
+})
+
+test('new help tips exist for the remaining document and yes/no questions', () => {
+  for (const id of ['doc_tax_returns', 'doc_bank_statements', 'previous_client', 're_team_contact']) assert.ok(FIELD_GUIDE[id], id)
 })
 
 test('SSNs are still blocked before the guide sees them', async () => {

@@ -268,6 +268,30 @@ Result: the paused fix from entry 31 passed all 144 tests and was saved and push
 
 Result: entries 31–34 were updated and added.
 
+**35. Team dev site and pull request**
+> I have added the development branch. You may proceed with any deployment/production workflow run issues.
+
+Result: the work was combined with the team's `development` branch and opened as a pull request for teammates to review. The automatic dev-site deploy was stuck waiting because the here.now key (`HERENOW_API_KEY`) hasn't been added to the repository's GitHub settings yet. Only the instructor can add it. Follow-ups ("Where is the HERENOW_API_KEY located?", "Is the issue that we are deploying manually?") were answered: test links are fine; only the automatic dev-site deploy needs the key.
+
+**36. Use Invest Detroit's own documents**
+> I've now gathered four Invest Detroit documents (Lending Process & Closing Guide, Real Estate Support flyer, Small Business Support flyer, Who is Invest Detroit) ... I'm considering using RAG ... recommend ...
+
+Result: Claude recommended against a full RAG search system for now. The four documents total only about 3,000 words, so short, hand-checked "knowledge entries" with sources are more accurate and easier for staff to approve. Claude also suggested tagging each fact by program, so Small Business rules are never shown as Real Estate rules. Other suggestions: review tips, a "What happens next" timeline, a program finder, and test questions with known answers.
+
+**37. Quote published rates and improve every help tip**
+> You may quote published rate and fees, and you can assume these are public documents. Something extra you can do with it is also editing our info tips for each question to make them more relevant with the extra information we have now.
+
+Result:
+- The chat now answers about 20 new kinds of questions from the documents, each with its source. Examples: how long the process takes, underwriting, site visits, term sheets and commitment letters, the closing checklist, construction timing, how money is paid out, and what happens after closing. It also covers loan sizes, terms, collateral, who can apply, which program fits, and who Invest Detroit is.
+- Asking about rates or fees now gives the published ranges: 8%–9.5% pricing and 1%–3% fees for Real Estate, labeled "subject to change". "Will I be approved?" and "What rate will I get?" still go to the team.
+- The help tips for each question were rewritten with the new facts, keeping the official form wording unchanged. There are new tips for tax returns, bank statements, "previous client" and "Real Estate team member".
+- Review My Application has four new "Good to know" tips: a loan outside $150K–$2.5M, equipment loans (which may suit the Small Business program), not starting construction before closing, and mentioning the team's experience.
+- The success pop-up now shows a four-step "What happens next" timeline. All new text is in all five languages.
+- Things to confirm with Invest Detroit:
+  - The lending guide is a draft.
+  - The two flyers have no direct links yet.
+  - The "Who is Invest Detroit?" sheet lists an older address (600 Renaissance Center). The flyers' 950 Selden Street is used instead.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

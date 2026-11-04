@@ -109,7 +109,7 @@ export default function ChatAssistant({ assistant, activeFieldId, subtitle = DEF
                   <span className="msg-sources">
                     {t('Source:')}{' '}
                     {m.sources.map((s, j) => (
-                      <span key={s.id}>{j > 0 && ', '}<a href={s.url} target="_blank" rel="noreferrer">{s.title}</a></span>
+                      <span key={s.id}>{j > 0 && ', '}{s.url ? <a href={s.url} target="_blank" rel="noreferrer">{s.title}</a> : s.title}</span>
                     ))}
                   </span>
                 )}

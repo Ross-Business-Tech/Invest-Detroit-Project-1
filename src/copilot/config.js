@@ -46,6 +46,40 @@ export const SOURCES = {
     category: 'official_policy',
     last_verified: '2026-11-01',
   },
+  // The four documents below were shared by Invest Detroit with the student team (Nov 2026) and
+  // are treated as public. Rates and fees in them are published ranges, "subject to change".
+  re_flyer: {
+    title: 'Real Estate Support (program flyer)',
+    url: 'https://investdetroit.com/program-overviews/',
+    provider: 'Invest Detroit',
+    category: 'official_policy',
+    program: 'real_estate',
+    last_verified: '2026-11-04',
+  },
+  sb_flyer: {
+    title: 'Small Business Support (program flyer)',
+    url: 'https://investdetroit.com/program-overviews/',
+    provider: 'Invest Detroit',
+    category: 'official_policy',
+    program: 'small_business',
+    last_verified: '2026-11-04',
+  },
+  lending_guide: {
+    // No public link yet. Draft document: staff should confirm it before real use.
+    title: 'Lending Process Overview, Closing Checklist & Client Guide',
+    url: null,
+    provider: 'Invest Detroit',
+    category: 'official_policy',
+    status: 'draft',
+    last_verified: '2026-11-04',
+  },
+  about_id: {
+    title: 'Who is Invest Detroit?',
+    url: 'https://investdetroit.com/',
+    provider: 'Invest Detroit',
+    category: 'official_policy',
+    last_verified: '2026-11-04',
+  },
   mi_entity_search: {
     title: 'Michigan business entity search (LARA)',
     url: 'https://cofs.lara.state.mi.us/searchapi/search/search',

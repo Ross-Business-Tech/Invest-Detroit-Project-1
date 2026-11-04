@@ -85,6 +85,15 @@ export const REVIEW_TEXT = {
   tinyBudgetMessage: 'You entered {budget} as the total budget. That is unusually small for a real estate project. Did you mean to enter it in thousands, or leave out some zeros?',
   shortSummaryTitle: 'Your summary could say more',
   shortSummaryMessage: 'A clearer summary helps the team understand your project faster. Try to include what you will build or do, where, and roughly when.',
+  // Tips based on Invest Detroit's program flyers and lending guide. Information only: never blocking.
+  loanRangeTitle: 'Your loan request is outside the typical range',
+  loanRangeMessage: 'You asked for {loan}. Invest Detroit’s Real Estate Support flyer gives a typical loan size of $150,000 to $2,500,000 (subject to change). You can still submit. It may help to talk with the team first about how your request fits.',
+  equipmentTitle: 'Equipment loans may fit another program',
+  equipmentMessage: 'You chose Machinery & Equipment. This form is for Real Estate and C&I lending. If the money is mainly for your own business’s equipment, Invest Detroit’s Small Business program may fit better. You can still submit, and the team can tell you which program fits.',
+  constructionTitle: 'Please don’t start construction before closing',
+  constructionMessage: 'Invest Detroit’s lending guide asks borrowers not to start construction before the loan closes unless Invest Detroit approves it, because starting early can affect lien rights, costs and the financing. Screening to closing typically takes several months, so plan your start date with that in mind.',
+  experienceTitle: 'Consider mentioning your team’s experience',
+  experienceMessage: 'Invest Detroit’s Real Estate flyer says financing typically goes to borrowers with relevant experience and a viable plan. One sentence about similar projects you or your team have done can help. New developers are welcome to apply.',
 }
 const R = REVIEW_TEXT
 
@@ -268,10 +277,58 @@ function shortSummary({ values }) {
   })]
 }
 
+// ---- Tips from Invest Detroit's documents. Information only; they never block Submit. --------
+
+const FLYER = ['re_flyer']
+const LOAN_MIN = 150000
+const LOAN_MAX = 2500000
+
+function loanRange({ values }) {
+  const loan = num(values.loan_amount)
+  if (loan === null || loan <= 0 || (loan >= LOAN_MIN && loan <= LOAN_MAX)) return []
+  return [issue({
+    id: 'loan_outside_range', field_id: 'loan_amount', check: 'project_details', level: 'info',
+    category: 'program_guidance', source_ids: FLYER,
+    title: R.loanRangeTitle, message: R.loanRangeMessage, params: { loan: money(loan) },
+  })]
+}
+
+function equipmentProgram({ values, visibleIds }) {
+  if (!visibleIds.has('use_of_funds') || values.use_of_funds !== 'Machinery & Equipment') return []
+  return [issue({
+    id: 'equipment_program', field_id: 'use_of_funds', check: 'project_details', level: 'info',
+    category: 'program_guidance', source_ids: ['sb_flyer', 'program_overviews'], requires_staff: true,
+    title: R.equipmentTitle, message: R.equipmentMessage,
+  })]
+}
+
+function constructionTiming({ values, visibleIds }) {
+  if (!visibleIds.has('use_of_funds') || values.use_of_funds !== 'Constructed Improvements') return []
+  return [issue({
+    id: 'construction_before_closing', field_id: 'use_of_funds', check: 'project_details', level: 'info',
+    category: 'program_guidance', source_ids: ['lending_guide'],
+    title: R.constructionTitle, message: R.constructionMessage,
+  })]
+}
+
+const EXPERIENCE = /experien|track record|\b(have|has|we've|i've|already) (completed|built|developed|renovated|rehabbed|managed|owned|done|led)\b|\bcompleted (\d+|two|three|four|five|several|many)\b|\b(previous|prior|past) (project|projects|development|developments|work|deals?)\b|\b\d+\+? years|\bsince (19|20)\d\d|portfolio/i
+
+function summaryExperience({ values }) {
+  const text = String(values.executive_summary || '').trim()
+  // Short summaries already get the "could say more" tip.
+  if (text.length < 60 || EXPERIENCE.test(text)) return []
+  return [issue({
+    id: 'summary_experience', field_id: 'executive_summary', check: 'project_details', level: 'info',
+    category: 'clarity', source_ids: FLYER,
+    title: R.experienceTitle, message: R.experienceMessage,
+  })]
+}
+
 /** Add, remove or reorder checks here. Each runs independently on the same snapshot. */
 export const RULES = [
   requiredAndFormat, loanVsBudget, affordableUnits, netVsGross, emptyTypeSections, equityGuidance, useOfFunds,
   equityConflict, ownerCounts, percentRange, tinyBudget, shortSummary,
+  loanRange, equipmentProgram, constructionTiming, summaryExperience,
 ]
 
 /**

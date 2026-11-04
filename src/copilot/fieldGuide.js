@@ -1,19 +1,26 @@
 // Field guide: plain-language help for the questions applicants most often get wrong.
 //
-// STATUS: DRAFT written by the student team from the public form. It explains what each
-// question asks. It must not state Invest Detroit policy (eligibility, rates, fees, what counts
-// as equity): those questions go to staff. Invest Detroit should review and own this content
-// before real use (brief: "staff-owned set of canonical field definitions").
+// STATUS: DRAFT written by the student team from the public form and four Invest Detroit
+// documents (Real Estate and Small Business flyers, the lending process guide, "Who is Invest
+// Detroit?"). It explains what each question asks and what happens later in the process.
+// Published rates, fees and loan sizes may be quoted as ranges with their source and "subject
+// to change" (see knowledge.js). It must never decide approval or whether a project qualifies:
+// those questions go to staff (TOPICS.staff_only). Invest Detroit should review and own this
+// content before real use (brief: "staff-owned set of canonical field definitions").
 //
 // Used today by the chat's built-in answers (assistant.js guideTransport), and later as the
 // approved source material a real AI model answers from.
 //
 // English only for now. The chat says so when another language is selected.
 
+import { KNOWLEDGE } from './knowledge.js'
+
 export const GUIDE_STATUS = 'draft'
 
 const CONTACT = 'You can reach the Invest Detroit team at info@investdetroit.com or 313.259.6368.'
 const INTAKE = ['intake_form_v59']
+const RE = ['intake_form_v59', 're_flyer']
+const GUIDE = ['intake_form_v59', 'lending_guide']
 
 const sqft = {
   explain: 'Gross square footage is the whole floor area inside the outside walls, including hallways, stairs, walls and shared spaces. Net square footage is only the usable or rentable space, so it is usually smaller.',
@@ -32,15 +39,15 @@ const jobs = {
 }
 
 const ami = {
-  explain: 'AMI means Area Median Income: the middle household income for the region, published each year by the U.S. Department of Housing and Urban Development (HUD). A unit "at 60% AMI" is priced to be affordable for a household earning 60% of that income. Enter how many units you expect at each level.',
+  explain: 'AMI means Area Median Income: the middle household income for the region, published each year by the U.S. Department of Housing and Urban Development (HUD). A unit "at 60% AMI" is priced to be affordable for a household earning 60% of that income. Enter how many units you expect at each level. Keeping housing affordable is one of Invest Detroit\'s stated goals, so these numbers matter.',
   example: 'A 6-unit building with 2 units at 60% AMI, 2 at 80% and 2 at 100% would enter 2, 2 and 2 in those boxes.',
   mistakes: ['Entering percentages instead of numbers of units.', 'Counts that don\'t add up to the total housing units.'],
   keywords: ['ami', 'area median income', 'affordable', 'affordability', 'asequibilidad', 'دخل', 'القدرة', 'সাশ্রয়ী', '收入中位数', '可负担'],
-  source_ids: INTAKE,
+  source_ids: ['intake_form_v59', 'about_id'],
 }
 
 const owners = {
-  explain: 'These questions describe the business owners together. Answer for the owners who hold 50% or more of the business. "Prefer not to say" is always an option. The form explains that some of Invest Detroit\'s funders require this reporting.',
+  explain: 'These questions describe the business owners together. Answer for the owners who hold 50% or more of the business. "Prefer not to say" is always an option. The form explains that some of Invest Detroit\'s funders require this reporting. Invest Detroit\'s stated goals include making sure minorities, women and immigrants share in Detroit\'s growth. Your answers here describe who owns the business; they are not a test you pass or fail.',
   mistakes: ['Answering only for yourself when there are several owners.'],
   keywords: ['owners', 'ownership', '50%', 'veteran', 'immigrant', 'lgbtq', 'returning citizen', 'propietarios', 'مالكي', 'মালিক', '所有人'],
   source_ids: INTAKE,
@@ -64,55 +71,56 @@ const legal = {
 /** Help for specific questions, keyed by field id (see formDefinition.js). */
 export const FIELD_GUIDE = {
   total_budget: {
-    explain: 'The full cost of the whole project, from every source combined: buying the property, construction or renovation, soft costs (design, permits, legal and financing fees) and a contingency. It is not just the amount you are asking Invest Detroit for.',
-    example: 'Buying a building for $400,000, renovating it for $1,000,000 and $50,000 in fees is a total budget of $1,450,000.',
-    mistakes: ['Entering only the loan amount you want.', 'Leaving out soft costs like design, permits and fees.', 'Typing a dollar sign or commas. The box only takes numbers.'],
+    explain: 'The full cost of the whole project, from every source combined: buying the property, construction or renovation, soft costs (design, permits, legal and financing fees) and a contingency. It is not just the amount you are asking Invest Detroit for. It should match the total of the Development Budget (sources and uses) you upload, which is reviewed again before closing. Remember to include financing costs: the Real Estate flyer lists fees of 1%–3%, and closing can add legal, appraisal, environmental, title and recording costs (published ranges, subject to change).',
+    example: 'Buying a building for $400,000, renovating it for $1,000,000, $50,000 in soft costs and a $70,000 contingency is a total budget of $1,520,000.',
+    mistakes: ['Entering only the loan amount you want.', 'Leaving out soft costs, loan fees and closing costs, or a contingency.', 'A total that doesn\'t match the development budget you upload.', 'Typing a dollar sign or commas. The box only takes numbers.'],
     keywords: ['budget', 'total budget', 'total cost', 'project cost', 'presupuesto', 'ميزانية', 'الميزانية', 'বাজেট', '预算'],
-    source_ids: INTAKE,
+    source_ids: ['intake_form_v59', 're_flyer', 'lending_guide'],
   },
   loan_amount: {
-    explain: 'How much you are asking Invest Detroit to lend. It is usually one part of the total budget. Other lenders, grants and your own money cover the rest.',
-    example: 'Total budget $1,450,000, asking Invest Detroit for $600,000.',
-    mistakes: ['Entering the total budget here.', 'Including money you are asking other lenders for.'],
+    explain: 'How much you are asking Invest Detroit to lend. It is usually one part of the total budget: Invest Detroit often lends alongside banks and other funders, and your own money and grants cover the rest. The Real Estate Support flyer gives a typical loan size of $150,000 to $2,500,000 (subject to change). If your request is outside that range, it is worth talking to the team first.',
+    example: 'Total budget $1,520,000, asking Invest Detroit for $600,000, with $160,000 of your own equity and the rest from a bank.',
+    mistakes: ['Entering the total budget here.', 'Including money you are asking other lenders for.', 'A loan plus your equity and other funding that doesn\'t add up to the total budget.'],
     keywords: ['loan', 'loan amount', 'borrow', 'requesting', 'préstamo', 'قرض', 'القرض', 'ঋণ', '贷款'],
-    source_ids: INTAKE,
+    source_ids: RE,
   },
   equity_10pct: {
-    explain: 'Asks whether you can put in at least 10% of the total expected project cost yourself, as cash or equity. Check the number against your total budget before answering. Exactly what counts as equity for your project is decided by the Invest Detroit team, so if you are unsure, answer as best you can and ask them.',
-    example: 'For a $1,450,000 project, 10% is $145,000.',
-    mistakes: ['Answering Yes without working out 10% of your total budget.'],
+    explain: 'Asks whether you can put in at least 10% of the total expected project cost yourself, as cash or equity. Check the number against your total budget before answering. Before closing you will be asked for proof of your equity contribution (it is on the lending guide\'s closing checklist), so answer based on money you can show. Exactly what counts as equity for your project is decided by the Invest Detroit team, so if you are unsure, answer as best you can and ask them.',
+    example: 'For a $1,520,000 project, 10% is $152,000.',
+    mistakes: ['Answering Yes without working out 10% of your total budget.', 'Counting money you expect to borrow from someone else as your own equity.'],
     keywords: ['10%', 'equity', 'contribution', 'cash', 'down payment', 'aporte', 'capital propio', 'مساهمة', 'ইকুইটি', '出资', '股权'],
-    source_ids: INTAKE,
+    source_ids: GUIDE,
   },
   executive_summary: {
-    explain: 'A short description of your business or project (up to 500 characters): what you will build or do, where, and why it matters.',
-    example: 'Renovating a vacant two-story building into 6 apartments above 2 shops. Construction starts spring 2027.',
-    mistakes: ['Writing only a business name or one vague sentence.', 'Going past 500 characters. The box stops accepting text.'],
+    explain: 'A short description of your business or project (up to 500 characters): what you will build or do, where, your team\'s experience, and why it matters for the neighborhood. Invest Detroit\'s Real Estate flyer says financing typically goes to borrowers with relevant prior experience and a viable plan, and its goals are more people living in Detroit, jobs, thriving neighborhoods and affordable housing, so mention the ones your project supports.',
+    example: 'Renovating a vacant two-story building on Grand River into 6 apartments (2 affordable at 60% AMI) above 2 shops. Our team has completed 3 similar rehabs in Detroit. Construction would start spring 2027, after closing.',
+    mistakes: ['Writing only a business name or one vague sentence.', 'Leaving out your team\'s experience.', 'Going past 500 characters. The box stops accepting text.'],
     keywords: ['summary', 'executive summary', 'describe', 'description', 'resumen', 'الملخص', 'সারসংক্ষেপ', '概要'],
-    source_ids: INTAKE,
+    source_ids: ['intake_form_v59', 're_flyer', 'about_id'],
   },
   other_lenders: {
-    explain: 'Select every lender or funder you are working with, or have applied to, for this project. Choose "None" if there are none. Choose "Other (Please specify)" to type a name that isn\'t listed.',
+    explain: 'Select every lender or funder you are working with, or have applied to, for this project. Choose "None" if there are none. Choose "Other (Please specify)" to type a name that isn\'t listed. Invest Detroit often lends alongside other lenders (its loans can sit behind a bank\'s first mortgage), so listing them helps the team see how the project is financed. Tell the team right away if this changes later.',
     keywords: ['other lenders', 'funders', 'lender', 'prestamistas', 'جهات إقراض', 'ঋণদাতা', '贷款方'],
-    source_ids: INTAKE,
+    source_ids: ['intake_form_v59', 're_flyer', 'lending_guide'],
   },
   community_partners: {
-    explain: 'Select any community organizations you are working with on this project, such as a neighborhood development group or business association. Choose "None" if there are none, or "Other (Please specify)" to type a name.',
+    explain: 'Select any community organizations you are working with on this project, such as a neighborhood development group or business association. Choose "None" if there are none, or "Other (Please specify)" to type a name. Invest Detroit works with neighborhood partners and the City of Detroit on its "thriving neighborhoods" goal, so real partnerships are worth listing.',
     keywords: ['community partners', 'partner', 'partners', 'socio comunitario', 'شركاء', 'অংশীদার', '合作伙伴'],
-    source_ids: INTAKE,
+    source_ids: ['intake_form_v59', 'about_id'],
   },
   real_estate_type: {
-    explain: 'The main use of the property after the project. Choose Mixed Use if it combines more than one, like apartments above shops. You will then be asked about each part.',
+    explain: 'The main use of the property after the project. Choose Mixed Use if it combines more than one, like apartments above shops. You will then be asked about each part. The Real Estate program focuses on multi-family residential, mixed-use and commercial projects, especially in targeted Detroit neighborhoods.',
     keywords: ['type of real estate', 'real estate type', 'mixed use', 'retail', 'residential', 'office', 'commercial', 'uso mixto', 'نوع العقار', 'মিশ্র', '房地产类型', '混合用途'],
-    source_ids: INTAKE,
+    source_ids: RE,
   },
   use_of_funds: {
-    explain: 'How the loan money would be spent. Bridge: short-term money until longer-term funding arrives. Predev/Real Estate Acquisition: costs before construction, or buying the property. Constructed Improvements: building or renovation work. Tenant Improvement: building out space for a tenant. Working Capital: day-to-day operating costs. Refinance: replacing an existing loan.',
+    explain: 'How the loan money would be spent. Select every use that applies.\n• Bridge: short-term money until longer-term funding arrives (typically 1–3 years).\n• Predev/Real Estate Acquisition: costs before construction such as design and permits, or buying the property (typically 1–3 years).\n• Constructed Improvements: building or renovation work (construction loans run 6 months to 7 years; money is usually paid out in draws as work is completed).\n• Tenant Improvement: building out space for a tenant.\n• Working Capital: day-to-day operating costs.\n• Refinance: replacing an existing loan.\nTerms are from the Real Estate Support flyer and are subject to change. If the money is mainly for equipment, inventory or your own business\'s space, ask the team whether the Small Business program fits better.',
+    mistakes: ['Starting construction before the loan closes. The lending guide says not to unless Invest Detroit approves it.'],
     keywords: ['use of funds', 'funds be used', 'bridge', 'refinance', 'working capital', 'tenant improvement', 'acquisition', 'predev', 'fondos', 'أموال', 'অর্থ', '资金'],
-    source_ids: INTAKE,
+    source_ids: ['intake_form_v59', 're_flyer', 'lending_guide'],
   },
   construction_jobs: {
-    explain: 'Your best estimate of how many construction jobs the build will create. These are counted here only, so leave them out of the direct and indirect job questions.',
+    explain: 'Your best estimate of how many construction jobs the build will create. These are counted here only, so leave them out of the direct and indirect job questions. A contractor\'s estimate is a good source. Creating jobs for Detroit residents is one of Invest Detroit\'s goals.',
     keywords: ['construction jobs', 'construction', 'construcción', 'البناء', 'নির্মাণ', '建筑'],
     source_ids: INTAKE,
   },
@@ -121,7 +129,7 @@ export const FIELD_GUIDE = {
     keywords: ['rent', 'rental rate', 'renta', 'إيجار', 'ভাড়া', '租金'],
     source_ids: INTAKE,
   },
-  housing_units: { ...ami, explain: 'How many homes (apartments or houses) the project will create. Below it, split that total by affordability level. ' + ami.explain },
+  housing_units: { ...ami, explain: 'How many homes (apartments or houses) the project will create. Below it, split that total by affordability level; the counts should add up to this number. ' + ami.explain },
   retail_gross_sqft: sqft, retail_net_sqft: sqft, office_gross_sqft: sqft, office_net_sqft: sqft,
   commercial_gross_sqft: sqft, commercial_net_sqft: sqft, residential_gross_sqft: sqft, residential_net_sqft: sqft,
   current_pt: jobs, current_ft: jobs, new_pt: jobs, new_ft: jobs,
@@ -136,38 +144,61 @@ export const FIELD_GUIDE = {
   owner_count: owners,
   ethnicities: counts, genders: counts,
   mi_entity_id: {
-    explain: 'The ID number the State of Michigan (LARA) gave your business when it registered. You can look it up with the Michigan business entity search linked under the question.',
+    explain: 'The ID number the State of Michigan (LARA) gave your business when it registered. You can look it up with the Michigan business entity search linked under the question. Use the entity that will borrow and own the project. Before closing you will also need a Certificate of Good Standing and organization documents (articles and operating agreement) for this entity.',
     keywords: ['entity', 'entity id', 'michigan business', 'lara', 'identification number', 'entidad', 'الكيان', 'প্রতিষ্ঠানের শনাক্তকরণ', '实体识别'],
-    source_ids: ['mi_entity_search'],
+    source_ids: ['mi_entity_search', 'lending_guide'],
   },
   criminal: legal, judgments: legal, bankruptcy_7yr: legal, bankruptcy_24mo: legal,
   in_detroit: {
-    explain: 'Only addresses inside Detroit\'s city limits count. Highland Park and Hamtramck are separate cities, even though Detroit surrounds them. If you are unsure, check the property tax bill or ask the city.',
-    keywords: ['city limits', 'highland park', 'hamtramck', 'located', 'detroit city'],
-    source_ids: INTAKE,
+    explain: 'Only addresses inside Detroit\'s city limits count. Highland Park and Hamtramck are separate cities, even though Detroit surrounds them. If you are unsure, check the property tax bill or ask the city. The Real Estate program also has target neighborhoods (including the Strategic Neighborhood Fund areas); the team can tell you whether your address is in one.',
+    keywords: ['city limits', 'highland park', 'hamtramck', 'located', 'detroit city', 'target neighborhoods', 'strategic neighborhood fund', 'snf'],
+    source_ids: RE,
   },
   home_state: { explain: 'Use the two-letter state abbreviation in capital letters, like MI for Michigan.', keywords: ['state abbreviation'], source_ids: INTAKE },
   business_state: { explain: 'Use the two-letter state abbreviation in capital letters, like MI for Michigan.', keywords: [], source_ids: INTAKE },
   project_state: { explain: 'Use the two-letter state abbreviation in capital letters, like MI for Michigan.', keywords: [], source_ids: INTAKE },
   doc_project_plan: {
-    explain: 'A written description of the project: what you will build, the timeline, the team and how it will be paid for. A business plan or project narrative you already have usually works.',
+    explain: 'A written description of the project: what you will build, where, the timeline, your team and its experience, how it will be paid for, and what it does for the neighborhood (homes, affordable units, jobs). A business plan or project narrative you already have usually works. In screening, Invest Detroit looks at mission fit and feasibility, so this is the place to explain both.',
+    mistakes: ['A timeline that starts construction before the loan could close. Screening to closing typically takes several months.'],
     keywords: ['project plan', 'narrative', 'business plan'],
-    source_ids: INTAKE,
+    source_ids: GUIDE,
   },
   doc_dev_budget: {
-    explain: 'A table of every project cost ("uses") and where the money comes from ("sources"), such as your equity, this loan, other loans and grants. The two totals should match, and should match the total budget you entered.',
+    explain: 'A table of every project cost ("uses") and where the money comes from ("sources"), such as your equity, this loan, other loans and grants. The two totals should match, and should match the total budget you entered. Include soft costs, loan fees, closing costs and a contingency. The same budget and sources/uses is checked again before closing.',
+    example: 'Uses: purchase $400,000, construction $1,000,000, soft costs and fees $50,000, contingency $70,000 = $1,520,000. Sources: your equity $160,000, Invest Detroit $600,000, bank $760,000 = $1,520,000.',
+    mistakes: ['Sources and uses that don\'t add up to the same total.', 'Listing a loan from another lender without naming it in "other lenders".'],
     keywords: ['development budget', 'sources and uses', 'sources & uses', 'sources', 'uses', 'fuentes y usos', 'مصادر', 'উৎস ও ব্যবহার', '来源与用途'],
-    source_ids: INTAKE,
+    source_ids: GUIDE,
   },
   doc_team_list: {
-    explain: 'Names and roles of the key people on the project, such as the developer, architect, general contractor and property manager.',
+    explain: 'Names and roles of the key people on the project, such as the developer, architect, general contractor, property manager, lawyer and accountant, with a line on each one\'s relevant experience. Underwriting looks at management capacity, and the lending guide says naming your legal and accounting contacts early helps the loan move faster.',
     keywords: ['team members', 'team list', 'team'],
-    source_ids: INTAKE,
+    source_ids: GUIDE,
   },
   doc_pfs: {
-    explain: 'A Personal Financial Statement lists what you own (assets) and what you owe (debts). Invest Detroit offers a template, linked under the question.',
+    explain: 'A Personal Financial Statement lists what you own (assets) and what you owe (debts). Invest Detroit offers a template, linked under the question. Real Estate loans usually include guarantees from the principals (main owners), which is why each one\'s personal finances matter.',
     keywords: ['personal financial statement', 'pfs', 'financial statement'],
-    source_ids: ['pfs_template'],
+    source_ids: ['pfs_template', 're_flyer'],
+  },
+  doc_tax_returns: {
+    explain: 'Your personal tax returns and the business\'s tax returns for the past 3 years, if you have them. Full returns with all schedules are most useful. If the business is new, upload what you have and say so in your project plan.',
+    keywords: ['tax return', 'tax returns', 'declaración de impuestos', 'الإقرار الضريبي', 'ট্যাক্স রিটার্ন', '纳税申报'],
+    source_ids: GUIDE,
+  },
+  doc_bank_statements: {
+    explain: 'Personal and business bank statements for the past 3 months, if you have them. They can help show the cash for your equity contribution. Black out full account numbers before uploading; the team can ask for anything else they need.',
+    keywords: ['bank statement', 'bank statements', 'estados de cuenta', 'كشف حساب', 'ব্যাংক স্টেটমেন্ট', '银行对账单'],
+    source_ids: GUIDE,
+  },
+  previous_client: {
+    explain: 'Answer Yes if you, or anyone who owns most of the project, has borrowed from Invest Detroit before or has ever applied for an Invest Detroit loan, even if it wasn\'t approved.',
+    keywords: ['previous client', 'applied before', 'past client', 'cliente anterior', 'عميل سابق', 'আগের গ্রাহক', '老客户'],
+    source_ids: INTAKE,
+  },
+  re_team_contact: {
+    explain: 'If someone on Invest Detroit\'s Real Estate team (for example a Business Development Officer or loan officer) has already been talking with you about this project, choose them so your application reaches the right person. Leave it blank if not.',
+    keywords: ['business development officer', 'loan officer', 'team member', 'who i have been working with'],
+    source_ids: ['intake_form_v59', 'lending_guide'],
   },
 }
 
@@ -175,10 +206,11 @@ export const FIELD_GUIDE = {
 export const TOPICS = [
   {
     id: 'staff_only',
-    // Brief: never guess eligibility, terms or fees; abstain and route to staff.
-    keywords: ['approve', 'approved', 'approval', 'eligible', 'eligibility', 'qualify', 'interest rate', 'rate', 'fee', 'fees', 'terms', 'how long', 'timeline', 'decision', 'credit score', 'aprob', 'elegib', 'tasa', 'موافقة', 'أهلية', 'فائدة', 'অনুমোদন', 'যোগ্য', 'সুদ', '批准', '资格', '利率', '费用'],
-    explain: 'I can\'t decide eligibility or tell you loan terms, interest rates, fees or timelines. Those depend on your project and can change, so only the Invest Detroit team can answer them. ' + CONTACT,
-    source_ids: ['program_overviews'],
+    // Brief: never predict approval or whether this project qualifies; route to staff.
+    // Published rates, fees and loan sizes are answered from knowledge.js instead.
+    keywords: ['will i be approved', 'will we be approved', 'will i get approved', 'will we get approved', 'will my loan be approved', 'will my project be approved', 'be approved', 'get approved', 'chance of approval', 'chances', 'odds', 'am i eligible', 'are we eligible', 'is my project eligible', 'do i qualify', 'do we qualify', 'will i qualify', 'would i qualify', 'does my project qualify', 'qualify', 'guaranteed', 'my rate', 'my interest rate', 'rate will i get', 'rate would i get', 'what rate will', 'my fees', 'credit score', 'aprob', 'califico', 'calificar', 'elegible', 'سأحصل على الموافقة', 'موافقة', 'هل أنا مؤهل', 'অনুমোদন', 'আমি কি যোগ্য', '批准', '我有资格', '能通过'],
+    explain: 'I can\'t tell you whether you will be approved, whether your project qualifies, or what your own rate and fees would be. Only the Invest Detroit team decides that, after reviewing your application (screening, then underwriting and a committee). Submitting the form means you are being considered, not guaranteed financing. I can share the published rate and fee ranges, the typical loan sizes and the steps of the process if that helps. ' + CONTACT,
+    source_ids: ['lending_guide', 'intake_form_v59'],
     needs_staff: true,
   },
   {
@@ -215,8 +247,8 @@ export const TOPICS = [
   {
     id: 'no_financial_statements',
     keywords: ["don't have financial statements", 'no financial statements', 'without financial statements', 'financial statements', 'estados financieros', 'البيانات المالية', 'আর্থিক বিবরণী', '财务报表'],
-    explain: 'On this form, personal financial statements, tax returns and bank statements are under Supporting Documents, which asks for them "if you have" them. The required documents are the project plan or narrative, the development budget with sources and uses, and the team list. If you don\'t have financial statements yet, Invest Detroit offers a Personal Financial Statement template, and the team can tell you what they will need later in the process.',
-    source_ids: ['intake_form_v59', 'pfs_template'],
+    explain: 'On this form, personal financial statements, tax returns and bank statements are under Supporting Documents, which asks for them "if you have" them. The required documents are the project plan or narrative, the development budget with sources and uses, and the team list. If you don\'t have financial statements yet, Invest Detroit offers a Personal Financial Statement template, and the team can tell you what they will need later in the process. The lending guide says that, depending on the loan, Invest Detroit may later ask for historical financial statements, business and personal tax returns, personal financial statements, cash flow projections, a project budget with sources and uses, and evidence of your equity.',
+    source_ids: ['intake_form_v59', 'pfs_template', 'lending_guide'],
   },
   {
     id: 'estimate_cost',
@@ -228,16 +260,16 @@ export const TOPICS = [
   },
   {
     id: 'talk_to_person',
-    keywords: ['person', 'human', 'staff', 'someone', 'call', 'phone', 'email', 'contact', 'persona', 'شخص', 'موظف', 'মানুষ', 'যোগাযোগ', '人工', '联系'],
-    explain: 'You can talk to the Invest Detroit team directly. ' + CONTACT + ' Mention that you are applying through the Real Estate/C&I In-Take Form, and don\'t send Social Security or bank account numbers by email.',
-    source_ids: [],
+    keywords: ['person', 'human', 'staff', 'someone', 'call', 'phone', 'email', 'contact', 'who should i contact', 'who do i contact', 'contact information', 'loan officer', 'office address', 'persona', 'شخص', 'موظف', 'মানুষ', 'যোগাযোগ', '人工', '联系'],
+    explain: 'You can talk to the Invest Detroit team directly. ' + CONTACT + ' The office is at 950 Selden Street, Suite 360, Detroit, MI 48201. Once your application moves forward, your assigned Business Development Officer or loan officer becomes your main contact. Mention that you are applying through the Real Estate/C&I In-Take Form, and don\'t send Social Security or bank account numbers by email.',
+    source_ids: ['re_flyer', 'lending_guide'],
     needs_staff: true,
   },
   {
     id: 'documents',
     keywords: ['documents', 'document', 'upload', 'attach', 'paperwork', 'documentos', 'مستندات', 'المستندات', 'কাগজপত্র', 'কাগজ', '文件'],
-    explain: 'Required: a project plan or project narrative, a development budget with sources and uses, and a list of the team members working on the project. If you have them, also add personal financial statements (past 3 years), personal and business tax returns (past 3 years), and personal and business bank statements (past 3 months).',
-    source_ids: ['intake_form_v59', 'pfs_template'],
+    explain: 'Required: a project plan or project narrative, a development budget with sources and uses, and a list of the team members working on the project. If you have them, also add personal financial statements (past 3 years), personal and business tax returns (past 3 years), and personal and business bank statements (past 3 months).\nLater, before closing, Invest Detroit asks for more, such as organization documents, a good standing certificate, title, survey, appraisal and (for construction) plans, contracts and permits. Ask me about the closing checklist to see the full list.',
+    source_ids: ['intake_form_v59', 'pfs_template', 'lending_guide'],
   },
   {
     id: 'saving',
@@ -253,4 +285,6 @@ export const TOPICS = [
     explain: 'Use the language menu at the top of the page to switch between English, Spanish, Arabic, Bengali and Chinese. Invest Detroit also publishes a Language Assistance Plan describing the help it offers.',
     source_ids: ['language_assistance'],
   },
+  // Lending process, programs, published rates and fees, and about Invest Detroit.
+  ...KNOWLEDGE,
 ]
