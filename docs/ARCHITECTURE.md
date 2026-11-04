@@ -54,6 +54,13 @@ src/
     review.js                 rule-based checks (RULES list) → ReviewIssue[]
     reviewSession.js          review state machine (run / invalidate / reset)
     assistant.js              assistant client + transports
+    guardrails/               decides allow / reject / clarify / integrity before any answer
+      index.js                decision order, follow-up context, optional classifier hook
+      lexicon.js              tunable word lists and patterns
+      messages.js             fixed replies (exact out-of-scope wording)
+      documents.js            screens uploaded-document text; wraps it as untrusted data
+      normalize.js            undoes l33t, s p a c i n g, odd Unicode before checks
+    feedback.js               chat rating: record shape, when to ask, save client
     fieldGuide.js             draft field guide (help for ~40 questions + general topics)
     guideTransport.js         built-in answers from the field guide (no AI, no network)
     privacy.js                redaction
@@ -76,6 +83,11 @@ src/
     sampleApplicant.js        fictional demo data
     goToField.js
   App.jsx                     the replica page
+server/                       reference backend (Node built-ins only; NOT deployed on here.now)
+  assistantHandler.js         validate -> redact -> guardrails -> answer -> output check
+  httpServer.js               POST /api/assistant wrapper: JSON only, origin allowlist, rate limit
+  systemPrompt.js             fixed instructions for a future model, with a leak canary
+public/.herenow/data.json     here.now Site Data collection for chat ratings
 tests/                        node --test, no extra packages
 tools/build-embed-test-page.mjs  generates public/embed-test/index.html
 ```
@@ -178,25 +190,79 @@ The test page is generated from our own field map, so the **final check must hap
 **Keep the map current.** If Invest Detroit edits the form, compare the new page source with `formAssemblyMap.js` and `formDefinition.js`, update `PROGRAM.form_version`, regenerate the test page and run `npm test`.
 
 ### 2. Connect a real AI model
-- **Prototype:** set `ASSISTANT.mode = 'http'` and add a here.now proxy route in `public/.herenow/proxy.json` that injects the key from a here.now variable. The instructor adds the key in here.now; it never goes in code.
+- **Never point the chat straight at a model.** A here.now proxy route forwards requests unchanged, so a proxy route to a model would let a direct request skip the guardrails. Route through `server/assistantHandler.js` (hosted wherever Invest Detroit runs code), and let that handler call the model.
 - **Production:** Invest Detroit hosts an endpoint that takes the request above and answers from **approved** content only. The brief recommends retrieval (RAG) over their official pages, PDFs and the staff field guide, rather than training a model. It returns the reply above. The browser code doesn't change: only `ASSISTANT.endpoint`.
 
 ### 3. Re-run the checks on the server
 `review.js` and `formDefinition.js` are plain JavaScript with no browser dependencies. Invest Detroit's backend, or a FormAssembly or Salesforce workflow step, can run `runReview(snapshot)` on each submission and store the issue summary with it. Browser checks can be bypassed, so anything that truly must block should also be checked server-side.
 
-### 4. Staff hand-off ("Talk to a person")
-Not built. The reply contract already has `needs_staff`, and issues have `requires_staff`. A hand-off would send only what the applicant chooses to share, through an approved channel.
+### 4. Staff hand-off
+Not built. ("Talk to a person" was removed from the chat at the team's request.) The reply contract already has `needs_staff`, and issues have `requires_staff`. A hand-off would send only what the applicant chooses to share, through an approved channel.
 
 ## Chat answers today: the field guide
 
 `ASSISTANT.mode` is `'guide'`. The chat answers in the browser from `fieldGuide.js`, with no AI and no network, using the same request and reply contract as a real AI endpoint:
 
 1. **The "?" button** sends `intent: 'explain_field'` and gets that question's entry: explanation, example, common mistakes and source.
-2. **Eligibility, approval, rates, fees and timelines** always get "only the Invest Detroit team can answer", plus contact details. This is checked before anything else (brief: never guess).
+2. **Before the guide is consulted, the guardrails run** (see Guardrails). Then **eligibility, approval, rates, fees and timelines** always get "only the Invest Detroit team can answer", plus contact details. This is checked before anything else (brief: never guess).
 3. **Otherwise** the reply is the entry whose keywords best match the message, with a small preference for the question the applicant is on. Phrases like "what does this mean?" use the current question. Keywords include common Spanish, Arabic, Bengali and Chinese terms.
 4. **No good match** gets "I don't have an approved answer for that yet", with contact details. The chat never makes up an answer.
 
 The guide is a **draft written from the public form**. It explains what questions ask, and says nothing about policy (what counts as equity, rates, fees, how a "Yes" on legal questions is treated). Invest Detroit should review and own it. It is English only: on other languages, the chat shows a translated note saying so. When a real AI is connected, the same entries become the approved material it answers from (retrieval). `tests/fieldGuide.test.js` checks routing, the staff-only rule, and that the guide states no rates, fees or approval odds.
+
+## Guardrails
+
+The chatbot only helps with the application and business financing. Guardrails decide, **before any answer is produced**, whether a message may be answered. They live in `src/copilot/guardrails/`, separate from the answering logic.
+
+**Where they run.** The same `evaluateRequest()` runs:
+- in the browser, inside `createAssistant().ask()`, before any transport;
+- on the server, inside `server/assistantHandler.js`. This is the copy that counts: a direct API request can skip the browser but not the handler.
+
+The handler first rebuilds the request from known fields only, with size limits. A caller-supplied field label is ignored; the label comes from our field definition by id. Unknown keys, roles and intents are dropped. It then removes sensitive numbers, runs the guardrails, answers, and checks the answer on the way out. Nothing is stored.
+
+**Decision order (first match wins):**
+
+| Step | Catches | Result |
+|---|---|---|
+| 1. Protected | Hidden prompt or configuration, API keys, other applicants' data | Out-of-scope message |
+| 2. Integrity | Help leaving out, changing or making up information ("Should I lie about my revenue?", "Can I leave out my bankruptcy?") | Fixed accuracy message offering to help report figures correctly |
+| 3. Injection | "Ignore previous instructions", "you are now…", roleplay, hypotheticals, "I'm the developer", `SYSTEM:` lines | Injected sentences are ignored. If an on-topic question remains, it is answered; otherwise out-of-scope |
+| 4. Off-topic task | Jokes, stories, essays and homework, trivia, programming, general-chatbot use | Out-of-scope message (exact approved wording) |
+| 5. On-topic | Application and finance terms (including guide keywords in 4 languages), "explain this question" | Answer |
+| 6. Follow-up | A short message right after an on-topic, answered turn, or a vague question while a form question is open | Answer |
+| 7. Repeated | Two or more recent redirects | Out-of-scope message |
+| 8. Unclear | Greetings, "can you help me?", one weak term, non-Latin text with no match | Short clarifying question. Several words with nothing application-related get the out-of-scope message |
+
+**Fixed replies** are in `guardrails/messages.js`, never generated, and translated like all other text. Rejections return a structured reply: `{ kind: 'out_of_scope' | 'clarify' | 'integrity', text, guardrail: { action, category, version } }`.
+
+**Hardening:**
+- Text is normalized before checks: odd Unicode, zero-width characters, l33t spelling and s p a c e d letters are undone.
+- The optional semantic classifier (`evaluateWithClassifier`) is only consulted for unclear cases. It can never override a protected, integrity or injection decision, which keeps model calls rare.
+- The future system prompt (`server/systemPrompt.js`) contains a canary token. Any answer containing it, the prompt text or a key-like string is replaced with the out-of-scope message.
+
+**Uploaded documents** are data, never instructions:
+- `screenDocument()` removes instruction-like lines and hides sensitive numbers.
+- `wrapUntrustedDocument()` escapes markup and puts the text in an `<untrusted_document>` block that the system prompt tells the model to treat as data.
+- The guardrail decision never reads document text, so a document can't make an off-topic request allowed.
+- The prototype itself never reads uploaded files.
+
+**Tests:** `tests/guardrails.test.js` (74 cases) covers allowed questions, exact rejections, follow-ups, ambiguous messages, falsification, injection and obfuscation, direct HTTP requests, fake field labels, leaked output, poisoned documents, and the review being unaffected.
+
+**Known limits** (not solved by rules alone):
+- Keyword and pattern matching can be fooled by unusual paraphrases. New tricks need new patterns, or the optional classifier.
+- Languages other than English are covered only for the main terms. Anything else gets a clarifying question rather than an answer.
+- A determined user can bypass the browser copy. That is harmless today (there is no model behind it) but is why production must route through the server handler.
+- Pattern lists can occasionally misfire, such as a legitimate message containing "password". Tune `lexicon.js` from real, anonymized usage.
+- Once a real model is connected, its answers still need the output check and periodic review. The guardrail controls what gets answered, not every word of an answer.
+
+## Chat rating card
+
+After the assistant has answered two of the applicant's questions (refusals don't count), a card attached under the chat asks "How was your AI assistant experience?". The card:
+- asks only once per chat session;
+- saves only `{ feedback_id, rating, submitted_at }` to here.now Site Data (`public/.herenow/data.json`), where visitors can add ratings but not read them;
+- shows an error and allows a retry if saving fails.
+
+It works on account-owned here.now sites only. The add-on keeps it off unless given `data-feedback-endpoint`.
 
 ## Languages
 

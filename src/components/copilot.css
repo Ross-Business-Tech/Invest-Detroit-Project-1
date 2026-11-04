@@ -179,12 +179,6 @@
 }
 @media (prefers-reduced-motion: reduce) { .feedback-star svg { transition: none; } }
 
-/* Field-guide answers, notes and the "Talk to a person" card */
+/* Field-guide answers and notes */
 .msg { white-space: pre-line; }
 .msg-note { display: block; font-size: 12px; color: var(--muted); font-style: italic; margin-bottom: var(--sp-1); }
-.chat-actions { display: flex; justify-content: flex-end; padding: var(--sp-2) var(--sp-4) 0; }
-.handoff-btn { font: 700 13px var(--font); background: none; border: 0; color: var(--dark); text-decoration: underline; cursor: pointer; padding: var(--sp-1) 0; }
-.handoff-card { display: flex; flex-direction: column; gap: var(--sp-2); white-space: normal; }
-.handoff-row { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
-.handoff-row > span:first-child { color: var(--muted); min-width: 48px; }
-.handoff-value { font-weight: 700; user-select: all; }

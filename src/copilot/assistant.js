@@ -12,6 +12,7 @@ import { PROGRAM, SOURCES, ASSISTANT } from './config.js'
 import { fieldContext } from './formDefinition.js'
 import { redactSensitive } from './privacy.js'
 import { guideTransport } from './guideTransport.js'
+import { evaluateRequest, guardrailReply } from './guardrails/index.js'
 
 /**
  * @typedef {{ role: 'user' | 'assistant', text: string }} ChatTurn
@@ -108,9 +109,16 @@ export function createAssistant({ transport = transportFromConfig(), onEvent = (
         onEvent({ type: 'assistant_privacy_block', kinds: found })
         return { shownMessage, reply: { kind: 'privacy_warning', text: PRIVACY_WARNING, sources: [], needs_staff: false } }
       }
+      // Guardrails run before any answer is produced. In 'http' mode the server runs them again
+      // (server/assistantHandler.js), so skipping this browser check gains nothing.
+      const decision = evaluateRequest({ message, history, fieldId: activeFieldId, intent })
+      if (decision.action !== 'allow') {
+        onEvent({ type: 'assistant_guardrail', action: decision.action, category: decision.category })
+        return { shownMessage, reply: guardrailReply(decision) }
+      }
       onEvent({ type: 'assistant_question', field_id: activeFieldId })
       try {
-        const reply = await transport.send(buildRequest({ message, activeFieldId, history, locale, intent }))
+        const reply = await transport.send(buildRequest({ message: decision.message_for_answer ?? message, activeFieldId, history, locale, intent }))
         return { shownMessage, reply }
       } catch {
         onEvent({ type: 'assistant_error', field_id: activeFieldId })

@@ -6,6 +6,7 @@ import { REVIEW_TEXT, REVIEW_CHECKS, REVIEW_GROUPS } from '../src/copilot/review
 import { PRIVACY_WARNING, CANNED_REPLIES } from '../src/copilot/assistant.js'
 import { SUGGESTIONS, WELCOME_TEXT, DEFAULT_SUBTITLE, CONNECTED_SUBTITLE } from '../src/components/chatText.js'
 import { NO_MATCH } from '../src/copilot/guideTransport.js'
+import { OUT_OF_SCOPE_MESSAGE, INTEGRITY_MESSAGE, CLARIFY_MESSAGE } from '../src/copilot/guardrails/messages.js'
 import { NUMBERS } from '../src/prototype/beforeYouStartText.js'
 
 // Organization names stay in their original form in every language.
@@ -44,7 +45,7 @@ export function reviewStrings() {
 }
 
 export function assistantStrings() {
-  return new Set([...NUMBERS, PRIVACY_WARNING, NO_MATCH, ...Object.values(CANNED_REPLIES), ...SUGGESTIONS, WELCOME_TEXT, DEFAULT_SUBTITLE, CONNECTED_SUBTITLE])
+  return new Set([...NUMBERS, OUT_OF_SCOPE_MESSAGE, INTEGRITY_MESSAGE, CLARIFY_MESSAGE, PRIVACY_WARNING, NO_MATCH, ...Object.values(CANNED_REPLIES), ...SUGGESTIONS, WELCOME_TEXT, DEFAULT_SUBTITLE, CONNECTED_SUBTITLE])
 }
 
 /** Static strings passed to t('…') in the screen code. */

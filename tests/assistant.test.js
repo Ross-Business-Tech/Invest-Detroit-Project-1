@@ -47,7 +47,7 @@ test('http transport keeps only known sources', async () => {
 
 test('a failed request becomes a friendly error that offers staff help', async () => {
   const failing = httpTransport('/assistant', async () => ({ ok: false, status: 502 }))
-  const { reply } = await createAssistant({ transport: failing }).ask({ message: 'hello' })
+  const { reply } = await createAssistant({ transport: failing }).ask({ message: 'What does AMI mean?' })
   assert.equal(reply.kind, 'error')
   assert.equal(reply.needs_staff, true)
 })

@@ -203,6 +203,44 @@ Result:
 - The whole app now uses one spacing scale (4, 8, 12, 16, 24, 32, 48, 64 pixels) in place of dozens of one-off numbers.
 - Every box in the form column has the same inside padding. Boxes with a colored edge stripe compensate for it, so their text starts in exactly the same place, measured on desktop and phone, in English and in right-to-left Arabic.
 
+## 9. Feedback and guardrails
+
+**27. Rating card under the chat**
+> Add a compact, rectangular 5-star feedback extension directly beneath our existing Invest Detroit AI chatbot window… *(13 detailed requirements: position, stars, Submit disabled until a star is picked, X to dismiss, save rating + ID + time, thank-you, hide after about 2 seconds, only after real interaction, once per session, retry on failure, responsive, don't disturb the chat.)*
+
+Result:
+- After the assistant has answered two questions, a card attached flush under the chat window asks "How was your AI assistant experience?".
+- Five yellow stars; Submit stays disabled until one is chosen; an X dismisses it.
+- Ratings are saved to here.now Site Data with only the star value, a random feedback ID and the time. Visitors can add ratings but not read them.
+- On success it shows "Thank you for your feedback!" with a checkmark and disappears after about 2 seconds, while the chat stays open.
+- If saving fails, it shows an error and lets you retry. One rating per chat session.
+- The message list shortens and still scrolls, so nothing is covered.
+- Tested on desktop and phone, including failure, retry, and dismissing.
+
+**28. Guardrails** *(two follow-ups sent while it was being built)*
+> Implement Chatbot Guardrails and Off-Topic Request Handling… *(scope, exact rejection message, don't be over-restrictive, ask when unclear, block prompt injection and document injection, enforce server-side, tests.)*
+>
+> I'd make sure the system distinguishes off-topic requests from risky financial advice… "Should I lie about my revenue to qualify for a loan?"…
+
+Result: a guardrail layer, kept separate from the answering logic, decides before any answer whether a message may be answered.
+- **Allowed:** application questions and plain-language finance (net income, operating expenses, revenue vs. profit), plus follow-ups like "explain that more simply".
+- **Exact approved rejection:** jokes, essays, trivia, programming.
+- **Clarifying question:** unclear messages.
+- **Accuracy reminder:** requests to falsify or hide information get a fixed reminder that applications must be accurate, with an offer to help report figures correctly.
+- **Injection and probing blocked:** "ignore your instructions", roleplay, "I'm the developer", requests for the system prompt or keys, and l33t or s p a c e d tricks. Uploaded-document text is screened and treated as data, never instructions.
+- **Enforced on the server, not just the browser:** the same checks run in the browser and in a new reference server handler (`server/`). That handler is what blocks direct API requests. It isn't deployed, because here.now only hosts static files.
+- **Tests:** 74 guardrail tests with representative prompts. New field-guide entries were added for the finance terms the brief lists.
+
+**29. Remove "Talk to a person"** *(sent while the guardrails were being built)*
+> As you work on the AI chatbot, remove "Talk to a person" option.
+
+Result: the button and contact card were removed. The chat still gives Invest Detroit's contact details when it can't answer.
+
+**30. Keep this file current**
+> After you are done, update prompt history.
+
+Result: entries 27–30.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

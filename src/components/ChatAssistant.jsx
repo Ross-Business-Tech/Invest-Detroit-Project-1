@@ -49,7 +49,8 @@ export default function ChatAssistant({ assistant, activeFieldId, subtitle = DEF
     if (!text.trim() || waiting) return
     setDraft('')
     setWaiting(true)
-    const history = messages.filter((m) => m.role === 'user' || m.kind === 'answer').map(({ role, text: t }) => ({ role, text: t }))
+    // Recent turns (English text) for follow-ups and repeated off-topic attempts. Fixed guardrail replies are included.
+    const history = messages.filter((m) => m.role === 'user' || ['answer', 'no_answer', 'out_of_scope', 'clarify', 'integrity'].includes(m.kind)).map(({ role, text: t }) => ({ role, text: t }))
     const { shownMessage, reply } = await assistant.ask({ message: text.trim(), activeFieldId: fieldId, history, locale: info.bcp47, intent })
     setMessages((m) => [...m, { role: 'user', text: shownMessage, sources: [] }, { role: 'assistant', ...reply }])
     setWaiting(false)
@@ -77,7 +78,6 @@ export default function ChatAssistant({ assistant, activeFieldId, subtitle = DEF
     setFeedback('sent')
   }, [feedbackClient])
 
-  const talkToPerson = () => setMessages((m) => [...m, { role: 'assistant', kind: 'handoff', text: '', sources: [] }])
 
   return (
     <>
@@ -102,7 +102,6 @@ export default function ChatAssistant({ assistant, activeFieldId, subtitle = DEF
           <ol className="chat-messages" ref={listRef} aria-live="polite">
             {messages.map((m, i) => (
               <li key={i} className={`msg ${m.role === 'user' ? 'user' : 'bot'} ${m.kind || ''}`}>
-                {m.kind === 'handoff' && <Handoff t={t} />}
                 {m.english_only && <span className="msg-note">{t('This answer is only available in English for now.')}</span>}
                 {/* Fixed messages are translated here; user messages and answers are shown as they are. */}
                 {m.role === 'user' || m.kind === 'answer' ? m.text : t(m.text)}
@@ -126,10 +125,6 @@ export default function ChatAssistant({ assistant, activeFieldId, subtitle = DEF
               ))}
             </div>
           )}
-
-          <div className="chat-actions">
-            <button type="button" className="handoff-btn" onClick={talkToPerson}>{t('Talk to a person')}</button>
-          </div>
 
           <form className="chat-input" onSubmit={(e) => { e.preventDefault(); send(draft) }}>
             <label htmlFor="chat-draft" className="sr-only">{t('Type your question')}</label>
@@ -169,18 +164,5 @@ export default function ChatAssistant({ assistant, activeFieldId, subtitle = DEF
         {!open && <span className="launcher-label">{t('Need help?')}</span>}
       </button>
     </>
-  )
-}
-
-/** Contact card for "Talk to a person". Uses Invest Detroit's public contact details; sends nothing. */
-function Handoff({ t }) {
-  return (
-    <span className="handoff-card">
-      <strong>{t('You can reach the Invest Detroit team directly:')}</strong>
-      <span className="handoff-row"><span>{t('Email')}</span> <span className="handoff-value" dir="ltr">info@investdetroit.com</span></span>
-      <span className="handoff-row"><span>{t('Phone')}</span> <span className="handoff-value" dir="ltr">313.259.6368</span></span>
-      <span>{t('When you contact them, mention that you are applying through the Real Estate/C&I In-Take Form, and the question you have. Don’t send Social Security or bank account numbers by email.')}</span>
-      <span className="msg-note">{t('This prototype does not send anything to Invest Detroit staff.')}</span>
-    </span>
   )
 }

@@ -13,10 +13,11 @@ The app is a practice copy of Invest Detroit's **"Need Support?"** page, which h
 | **Practice intake form** | Every section and question from the real form, in the same order. Follow-up questions appear only when they apply (for example, choosing "Mixed Use" opens the Retail and Residential sections). | Done |
 | **Review My Application** | A button above Submit runs 5 checks with a progress bar. It lists anything to fix, each with a "Go to field" link. A clean review shows a green "✓ Review successful". | Done |
 | **Submit locked until review passes** | Submit stays greyed out until a successful review and locks again if an answer changes. Submitting shows a "Submitted successfully" pop-up. | Done |
-| **Chat assistant** | A "Need help?" button in the corner opens a chat that knows which question you're on. It answers from the field guide with a source link. Questions about eligibility, rates or fees always go to staff, and it says when it doesn't know. "Talk to a person" shows Invest Detroit's contact details. It hides and warns about anything that looks like a Social Security Number. | Works without AI; a real AI can be connected later |
+| **Chat assistant** | A "Need help?" button in the corner opens a chat that knows which question you're on. It answers from the field guide with a source link. Questions about eligibility, rates or fees always go to staff, and it says when it doesn't know. **Guardrails** keep it on the application: unrelated requests (jokes, essays, trivia, code) get a fixed polite redirect, requests to falsify information get an accuracy reminder, and attempts to change its rules are ignored. It hides and warns about anything that looks like a Social Security Number. | Works without AI; a real AI can be connected later |
 | **"?" on each question** | The questions people most often get wrong have a "?" button that opens the chat already explaining that question. | Done |
 | **Field guide** | Plain-language explanation, example, common mistakes and source for about 40 questions, plus general topics like documents and saving. Written by the team as a draft for Invest Detroit to approve. English only for now. | Draft |
 | **Before you start** | A checklist above the form of the documents and numbers to gather first, since the form can't be saved partway through. | Done |
+| **Rating card** | After two answered questions, a small card under the chat asks for a 1–5 star rating. Only the rating, a random ID and the time are saved. | Done (saves on here.now sites) |
 | **Document-upload preview** | After you attach a development budget, a clearly labeled demo card shows how a future version could suggest an answer from your file, with Accept / Edit / Leave blank. It never opens your file. | Mock-up |
 | **Language dropdown** | Switch the whole page between English, Español, العربية, বাংলা and 简体中文 (Invest Detroit's site offers the first four; Chinese is our addition). Arabic reads right to left. The translations are AI-drafted and not yet professionally reviewed, and the page says so. | Done |
 | **Add-on for the real website** | One script file that adds the review panel and chat to Invest Detroit's real FormAssembly form. It turns itself off safely if anything goes wrong. Try it on `/embed-test/`. | Built; not yet on their site |
@@ -62,7 +63,8 @@ To see the review catch mistakes, change the loan amount to more than the total 
 3. Field guide and "Before you start" checklist — done (the guide is a draft for Invest Detroit to approve, English only)
 4. Chat assistant — answers from the field guide today; connecting a real AI needs an AI key added by the instructor in here.now
 5. "Possible misunderstanding" checks — the ones plain rules can do are done; AI-based checks need the AI key and must never block Submit
-6. Mock-ups (document upload, "Talk to a person") — done
+6. Mock-up of document upload — done ("Talk to a person" was removed)
+8. Guardrails — done in the browser and in a reference server handler; production needs that handler hosted by Invest Detroit
 7. Add-on for Invest Detroit's real form — built and tested on a copy; needs Invest Detroit to install it
 
 ## For the team
@@ -76,4 +78,6 @@ To see the review catch mistakes, change the loan amount to more than the total 
   - `src/components/`: the review panel and chat window
   - `src/copilot/fieldGuide.js`: the draft field guide the chat answers from
   - `src/prototype/`: our copy of the form, the checklist, the upload demo and the fictional sample applicant
+  - `src/copilot/guardrails/`: what the chat will and won't answer
+  - `server/`: reference backend that enforces the guardrails for direct API requests (not deployed on here.now)
   - `tests/`: automated checks; run `npm test`
