@@ -161,7 +161,7 @@ export const SECTIONS = [
         type: 'text',
         required: true,
         showIf: (v) => v.criminal === 'Yes' || v.judgments === 'Yes' || v.bankruptcy_7yr === 'Yes',
-        hintLink: { before: 'Use the ', text: 'Michigan business entity search', href: 'https://cofs.lara.state.mi.us/searchapi/search/search', after: ' to look up the Michigan business entity ID number.' },
+        hintLink: { before: 'Use the ', text: 'Michigan business entity search', href: 'https://www.michigan.gov/corpentitysearch' /* the official form links cofs.lara.state.mi.us, which no longer loads */, after: ' to look up the Michigan business entity ID number.' },
       },
     ],
   },

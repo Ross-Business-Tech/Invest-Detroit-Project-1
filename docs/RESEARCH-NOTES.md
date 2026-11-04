@@ -1,32 +1,60 @@
-# Research notes: online sources for the assistant (Nov 2026)
+# Research notes: sources for the assistant (Nov 2026)
 
-**How this was researched.** The build session's network settings block investdetroit.com and huduser.gov, so their pages couldn't be opened directly. Everything below comes from web-search excerpts of those pages. Invest Detroit staff should confirm it before real use. To check the pages directly next time, add `investdetroit.com` and `huduser.gov` under *Allowed domains* in the cloud environment's network settings.
+## Priority rule
 
-## Added to the assistant
+**The four documents Invest Detroit shared win.** These are the Real Estate Support flyer, the Small Business Support flyer, the Lending Process & Closing Guide, and "Who is Invest Detroit?". Web research only fills gaps they don't cover and never replaces them. `tests/fieldGuide.test.js` checks this ("the four Invest Detroit documents keep priority").
 
-| Finding | Source | Where it shows up |
-| --- | --- | --- |
-| The intake form is a pre-qualification step. "The first step in our financing process is a discussion with an Invest Detroit team member about your project." | [Need Support?](https://investdetroit.com/need-support/), [Developer info sheet (2021)](https://investdetroit.com/wp-content/uploads/2021/02/Developer-Info-Sheet_v21.pdf) | Chat: "What happens after I submit / how long does it take?" |
-| Commercial & Industrial covers secured business credit: working capital advances, term business loans and equipment financing. It has its own intake form, which asks for a business plan or pitch deck and financial projections. | [Commercial and Industrial](https://investdetroit.com/commercial-industrial/) | Chat: "Which program / right form?"; review tip for Machinery & Equipment |
-| Invest Detroit works with established and emerging developers, and the 2021 sheet says it prioritizes teams led by developers of color or Detroit residents. | [Developer info sheet (2021)](https://investdetroit.com/wp-content/uploads/2021/02/Developer-Info-Sheet_v21.pdf) | Chat: "Who can apply?" |
-| It offers technical assistance with community engagement, permitting and city requirements. | Same sheet | Chat: "Can you help with permits?" |
-| The Strategic Neighborhood Fund began in 2016 in three neighborhoods and later covered about 11 (as of 2023). | [Knight Foundation](https://legacy.knightfoundation.org/articles/strategic-neighborhood-fund-harnesses-the-power-of-partnerships-to-revitalize-detroit-neighborhoods/), [Crain's Detroit](https://prod.crainsdetroit.com/node/870571) | Chat: "What is the Strategic Neighborhood Fund?" |
+## How the research was done
 
-## Conflicts found: staff should confirm
+1. **Web search from the build session.** That session couldn't open investdetroit.com or huduser.gov directly.
+2. **A research brief from a second agent (4 Nov 2026).** It read Invest Detroit's website and PDFs plus official government pages. It's self-contained and pasted into the build chat. Staff should still confirm anything marked below.
 
-1. **Real Estate pricing.** The 2023 [Real Estate Overview PDF](https://investdetroit.com/wp-content/uploads/2023/11/Invest-Detroit-Real-Estate-Overview.pdf) shows **6%–8%**. The newer flyer the team received shows **8%–9.5%**. The assistant uses the newer flyer.
-2. **Small Business fees.** An older [loan process infographic (2020)](https://investdetroit.com/wp-content/uploads/2020/07/Small-Business-Loan-Process-Infographic.pdf) lists "$0–$250 or 1%". The newer flyer lists "minimum $1,500 or 1% plus third-party costs" and a $250 assessment fee. The assistant uses the newer flyer.
-3. **Address.** The flyers list 950 Selden St, Suite 360. "Who is Invest Detroit?" lists 600 Renaissance Center. The assistant uses 950 Selden.
-4. **Contacts.** The 2021 developer sheet names a staff contact and a direct number. The assistant uses only the general line, 313.259.6368, and does not name staff.
+## Where research and the documents disagree (documents used)
 
-## Found but not added (yet)
+| Topic | Four documents (used) | Research found | Note for staff |
+| --- | --- | --- | --- |
+| Lending process timeline | Lending guide: Screening 1–2 wks, Term sheet 2–6, Commitment 5–10, Closing 4–6 | Website publishes only a 2020 small business process (6–12 weeks); the brief calls the lending guide "internal" | Team was told to treat the guide as public. Confirm it can be shared with applicants |
+| 501(c)(3) status | "Who is Invest Detroit?" says Non-Profit (501c3) | Website text says "nonprofit lender" only | – |
+| Impact figures | Sheet: $593.4M deployed, $3.88B leveraged, 5,622 housing units, 984 projects, 16,610 jobs | Homepage (undated): $661M, $4.7B, 6,072 units, 1,094 projects, 18,073 jobs | Website numbers look newer. Staff may want the newer figures |
+| Real Estate pricing | Flyer (2026): 8%–9.5% | 2023 overview PDF: 6%–8% | Older PDF still linked from What We Do |
+| Small Business pricing and fees | Flyer: 8%–10%; ≥$1,500 or 1%; $250 assessment fee | 2023–24 sheets 7%–8%; 2020 infographic fees "$0–$250 or 1%" | Older sheets still linked from Small Business page |
+| Address | Flyers: 950 Selden St, Suite 360 | 600 Renaissance Center appears only in third-party directories (and on the "Who is" sheet) | – |
+| SNF neighborhoods | Not covered | 10 neighborhoods since 2018 (Invest Detroit); Knight/Crain's reported 3 → 11 | Invest Detroit's page used. No official list of the ten is published |
 
-- **Detroit Area Median Income (AMI).** A city page reproducing HUD's figures lists FY2025 median family income for Detroit–Warren–Livonia as **$101,000** for a family of 4 ([City of Westland](https://cityofwestland.com/220/HUD-Income-Limits)). FY2024 was $95,900 ([City of Detroit](https://devtraining.detroitmi.gov/sites/training.detroitmi/files/2024-07/Worker%20Income%20Limit%20By%20Fiscal%20Year%2007%2001%202024.pdf)). These weren't added because they should come straight from HUD (huduser.gov), and they change every spring. Once confirmed, they would let the AMI help tip give an example such as "60% AMI for a family of 4 is about $60,600".
-- **Small Business intake questions** (own or lease the space, required business plan and projections) are already covered by `which_program` and don't apply to this form.
-- **Property Owner Fund** ([page](https://investdetroit.com/propertyownerfund/)) appeared in results, but its terms weren't visible in the excerpt. Worth reading when the site can be opened.
+## Added from research (documents are silent)
 
-## Suggested next steps
+- **Commercial & Industrial.** It has its own two-step intake form, and Invest Detroit doesn't say who should use which form. The only published C&I fact sheet (Feb 2023, labeled possibly outdated) lists $150K–$2.5M, 7%–9% pricing, 1%–3% fees and terms. Venture capital goes to ID Ventures.
+- **Other funds.** The Property Owner Rental Relief Fund is closed. The Motor City Contractor Fund has no published terms. SNF grants have no application process.
+- **Later documents.** Invest Detroit's 2020 checklist lists what may be requested after the intake.
+- **Personal Financial Statement.** What the template asks for.
+- **Michigan and Detroit how-tos from official sources.**
+  - The new LARA entity search is at michigan.gov/corpentitysearch. The official form's link to `cofs.lara.state.mi.us` no longer loads, so the prototype's link now points to the new search.
+  - Getting a Certificate of Good Standing.
+  - Why a Detroit ZIP code isn't proof of city limits, and checking with the Parcel Viewer.
+  - BSEED building permit steps.
+- **HUD FY2026 income limits** for Detroit-Warren-Livonia, effective May 1, 2026. Median family income is $104,800. MTSP limits for 4 people: 50% $52,400, 60% $62,880, 80% $83,840. HUD doesn't publish 10/100/110/120% tables.
+- **Glossary** (`src/copilot/glossary.js`). Sources are the OCC, FDIC, CFPB, EPA, ALTA, SBA and the CDFI Fund. Terms: DSCR, NOI, LTV/LTC, hard and soft costs, contingency (5–10%), pro forma, title commitment, ALTA survey, Phase I ESA, borrowing resolution, amortization, and the CDFI definition.
+- **Discrimination complaint contacts.** Already on both flyers.
 
-1. Allow `investdetroit.com` and `huduser.gov` in the environment's network settings. Then re-check the pages above and add HUD's AMI table.
-2. Ask Invest Detroit staff which pricing sheet is current, and whether the lending guide can be published with a link.
-3. Ask whether the "Real Estate/C&I" form and the separate C&I intake form serve different applicants. The help text currently says equipment and working-capital loans may belong on the C&I form.
+## Corrections made because of the research
+
+- The owner-demographics tip no longer says the answers "are not a test". Only the Small Business page says impact questions are for reporting only; this form doesn't say.
+- The equity tip says what counts as equity isn't published.
+
+## Not used
+
+- The brief suggested writing the executive summary "in a few short paragraphs", but the box is limited to 500 characters, so the tip keeps the short version.
+- An unconfirmed $10 Good Standing fee and exact LARA restoration fees were left out. The chat says "check current fees on LARA's site".
+- A second Invest Detroit phone number (313.259.6393), because its purpose isn't stated.
+
+## Still unknown: ask Invest Detroit
+
+- Current C&I pricing.
+- Maximum LTV, minimum DSCR, required contingency, and the guarantor ownership threshold.
+- What counts toward the 10% equity.
+- The official list of the ten SNF neighborhoods.
+- Which HUD table the AMI boxes use.
+- Whether demographic answers on this form are used in underwriting.
+- Motor City Contractor Fund terms.
+- Office hours and details of language assistance.
+- What happens after a "Yes" on a screening question.

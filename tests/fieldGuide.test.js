@@ -12,7 +12,7 @@ const ask = (message, activeFieldId = null, extra = {}) => answerFromGuide(build
 test('the ? button explains the question the applicant is on', () => {
   const r = ask('Explain this question', 'total_budget', { intent: 'explain_field' })
   assert.match(r.text, /full cost of the whole project/)
-  assert.deepEqual(r.sources.map((s) => s.id), ['intake_form_v59', 're_flyer', 'lending_guide'])
+  assert.deepEqual(r.sources.map((s) => s.id), ['intake_form_v59', 're_flyer', 'lending_guide', 'occ_cre'])
 })
 
 test('a vague question uses the current question', () => {
@@ -77,6 +77,14 @@ test('rates, fees and loan sizes appear only in entries that cite an official so
   assert.ok(!/guaranteed approval|(?<!whether )you will be approved|(?<!whether )you qualify/i.test(JSON.stringify([FIELD_GUIDE, TOPICS])))
 })
 
+test('the four Invest Detroit documents keep priority over web research', () => {
+  // Rates, timeline, address and impact figures come from the documents, not older web sheets.
+  const all = JSON.stringify([FIELD_GUIDE, TOPICS])
+  assert.ok(!/6%–8%|7%–8%|600 Renaissance|\$661 million|6–12 weeks/.test(all))
+  assert.match(ask('How long does the lending process take?').text, /Screening \(1–2 weeks\)/)
+  assert.match(ask('Who is Invest Detroit?').text, /501\(c\)\(3\).*\$593 million/s)
+})
+
 test('Small Business numbers are always labeled as a different program', () => {
   for (const t of TOPICS) {
     if (!/8%–10%|\$50,000|\$250/.test(t.explain)) continue
@@ -105,7 +113,22 @@ const GOLDEN = [
   ['I need a loan for equipment for my bakery. Is this the right form?', /Small Business program may fit better/],
   ['Who is Invest Detroit?', /Community Development Financial Institution/],
   ['Who should I contact with questions?', /Business Development Officer/],
-  ['What is the Strategic Neighborhood Fund?', /began in 2016/],
+  ['What is the Strategic Neighborhood Fund?', /March 29, 2016/],
+  ['What is DSCR?', /net operating income \(NOI\) divided by/],
+  ['What does loan-to-value mean?', /LTV/],
+  ['What are soft costs?', /Soft costs are/],
+  ['How big should my contingency be?', /5% to 10%/],
+  ['What is a pro forma?', /SBA suggests five years/],
+  ['What is a title commitment?', /title insurance company/],
+  ['Do I need a Phase I environmental report?', /All Appropriate Inquiries/],
+  ['What does fully amortizing mean?', /balloon/],
+  ['How do I get a certificate of good standing?', /michigan\.gov\/fileonline/],
+  ['How do I get a building permit in Detroit?', /BSEED/],
+  ['How do I file a discrimination complaint?', /crcomplaints@treasury\.gov/],
+  ['Is the Property Owner Fund open?', /is closed/],
+  ['What other documents will you ask for in the formal application?', /2020 small business checklist/],
+  ['My ZIP code says Detroit. Is that inside Detroit city limits?', /Parcel Viewer/],
+  ['What are the AMI income limits for Detroit?', /\$104,800/],
   ['Can you help with permitting?', /technical assistance/],
   ['Does Invest Detroit do equipment financing for industrial businesses?', /Commercial and Industrial page/],
   ['What happens after I submit the form?', /discussion with a team member/],

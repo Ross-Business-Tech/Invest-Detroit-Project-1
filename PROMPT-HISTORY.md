@@ -304,6 +304,22 @@ Result: the cloud session can't open investdetroit.com or huduser.gov directly (
 - The equipment review tip now mentions both the C&I and Small Business programs.
 - `docs/RESEARCH-NOTES.md` lists every source and what was added. It also lists conflicts for staff to confirm, such as a 2023 sheet showing 6%–8% pricing versus 8%–9.5% on the newer flyer. Detroit's AMI figures were found but held back until they can be checked at HUD.
 
+**39. A research prompt for another agent**
+> Generate a prompt, and I'll have another agent conduct the research.
+
+Result: Claude wrote a self-contained research brief for a second agent. It covered what we already knew, the conflicts to resolve, priority questions (programs, HUD income limits, financial terms, Michigan and Detroit how-tos), source rules, and an output format that plugs into the assistant.
+
+**40. Add the research, with the four documents first**
+> (Pasted the other agent's knowledge base.) ... Note: 4 document I sent should have priority.
+
+Result:
+- New chat answers:
+  - **How-tos:** Commercial & Industrial terms (from a 2023 sheet, labeled possibly outdated), ID Ventures, other funds (some closed), documents asked for later, getting a Certificate of Good Standing, Detroit building permits, and how to file a discrimination complaint.
+  - **Glossary:** DSCR, NOI, loan-to-value, hard and soft costs, contingency, pro forma, title commitment, ALTA survey, Phase I environmental report, borrowing resolution and amortization.
+- Help tips now include HUD's 2026 Detroit income limits (AMI) and the new Michigan entity search link (the old one no longer opens). They also explain why a Detroit ZIP code doesn't prove city limits, what the Personal Financial Statement template asks for, and a 5–10% contingency.
+- Two claims were corrected: we can't say demographic answers "aren't a test", and what counts as equity isn't published.
+- Where the research disagreed with the four documents, the documents were kept: timeline, 501(c)(3), impact figures, rates and address. A test now checks this. `docs/RESEARCH-NOTES.md` lists every conflict for Invest Detroit staff.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

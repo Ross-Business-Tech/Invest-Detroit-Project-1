@@ -14,6 +14,7 @@
 // English only for now. The chat says so when another language is selected.
 
 import { KNOWLEDGE } from './knowledge.js'
+import { GLOSSARY } from './glossary.js'
 
 export const GUIDE_STATUS = 'draft'
 
@@ -39,15 +40,15 @@ const jobs = {
 }
 
 const ami = {
-  explain: 'AMI means Area Median Income: the middle household income for the region, published each year by the U.S. Department of Housing and Urban Development (HUD). A unit "at 60% AMI" is priced to be affordable for a household earning 60% of that income. Enter how many units you expect at each level. Keeping housing affordable is one of Invest Detroit\'s stated goals, so these numbers matter.',
-  example: 'A 6-unit building with 2 units at 60% AMI, 2 at 80% and 2 at 100% would enter 2, 2 and 2 in those boxes.',
+  explain: 'AMI means Area Median Income: the middle household income for the region, published each year by the U.S. Department of Housing and Urban Development (HUD). A unit "at 60% AMI" is priced to be affordable for a household earning 60% of that income. Enter how many units you expect at each level. Keeping housing affordable is one of Invest Detroit\'s stated goals, so these numbers matter.\nFor Detroit (the Detroit-Warren-Livonia area), HUD\'s FY2026 median family income is $104,800 for a family of 4. HUD\'s tax-credit (MTSP) limits for a household of 4 are $52,400 at 50% AMI, $62,880 at 60% and $83,840 at 80%. Limits change every May. HUD doesn\'t publish 10%, 100%, 110% or 120% tables, and the form doesn\'t say which table Invest Detroit uses, so ask the team if you\'re unsure where a unit belongs.',
+  example: 'A 6-unit building with 2 units at 60% AMI, 2 at 80% and 2 at 100% would enter 2, 2 and 2 in those boxes. Count each unit once, at the level it is restricted to.',
   mistakes: ['Entering percentages instead of numbers of units.', 'Counts that don\'t add up to the total housing units.'],
   keywords: ['ami', 'area median income', 'affordable', 'affordability', 'asequibilidad', 'دخل', 'القدرة', 'সাশ্রয়ী', '收入中位数', '可负担'],
-  source_ids: ['intake_form_v59', 'about_id'],
+  source_ids: ['intake_form_v59', 'about_id', 'hud_income_limits'],
 }
 
 const owners = {
-  explain: 'These questions describe the business owners together. Answer for the owners who hold 50% or more of the business. "Prefer not to say" is always an option. The form explains that some of Invest Detroit\'s funders require this reporting. Invest Detroit\'s stated goals include making sure minorities, women and immigrants share in Detroit\'s growth. Your answers here describe who owns the business; they are not a test you pass or fail.',
+  explain: 'These questions describe the business owners together. Answer for the owners who hold 50% or more of the business. "Prefer not to say" is always an option. The form explains that some of Invest Detroit\'s funders require this reporting. Invest Detroit\'s stated goals include making sure minorities, women and immigrants share in Detroit\'s growth. Invest Detroit\'s Small Business page says its impact questions are for reporting only; it doesn\'t say how this form uses them, so ask the team if that matters to you.',
   mistakes: ['Answering only for yourself when there are several owners.'],
   keywords: ['owners', 'ownership', '50%', 'veteran', 'immigrant', 'lgbtq', 'returning citizen', 'propietarios', 'مالكي', 'মালিক', '所有人'],
   source_ids: INTAKE,
@@ -71,22 +72,22 @@ const legal = {
 /** Help for specific questions, keyed by field id (see formDefinition.js). */
 export const FIELD_GUIDE = {
   total_budget: {
-    explain: 'The full cost of the whole project, from every source combined: buying the property, construction or renovation, soft costs (design, permits, legal and financing fees) and a contingency. It is not just the amount you are asking Invest Detroit for. It should match the total of the Development Budget (sources and uses) you upload, which is reviewed again before closing. Remember to include financing costs: the Real Estate flyer lists fees of 1%–3%, and closing can add legal, appraisal, environmental, title and recording costs (published ranges, subject to change).',
-    example: 'Buying a building for $400,000, renovating it for $1,000,000, $50,000 in soft costs and a $70,000 contingency is a total budget of $1,520,000.',
+    explain: 'The full cost of the whole project, from every source combined: buying the property, construction or renovation, soft costs (design, permits, legal and financing fees) and a contingency. It is not just the amount you are asking Invest Detroit for. It should match the total of the Development Budget (sources and uses) you upload, which is reviewed again before closing. Remember to include financing costs: the Real Estate flyer lists fees of 1%–3%, and closing can add legal, appraisal, environmental, title and recording costs (published ranges, subject to change). Bank examiners (OCC) note contingencies usually run 5–10% of the budget.',
+    example: 'Buying a building for $400,000, renovating it for $1,000,000, $50,000 in soft costs and a $100,000 contingency is a total budget of $1,550,000.',
     mistakes: ['Entering only the loan amount you want.', 'Leaving out soft costs, loan fees and closing costs, or a contingency.', 'A total that doesn\'t match the development budget you upload.', 'Typing a dollar sign or commas. The box only takes numbers.'],
     keywords: ['budget', 'total budget', 'total cost', 'project cost', 'presupuesto', 'ميزانية', 'الميزانية', 'বাজেট', '预算'],
-    source_ids: ['intake_form_v59', 're_flyer', 'lending_guide'],
+    source_ids: ['intake_form_v59', 're_flyer', 'lending_guide', 'occ_cre'],
   },
   loan_amount: {
     explain: 'How much you are asking Invest Detroit to lend. It is usually one part of the total budget: Invest Detroit often lends alongside banks and other funders, and your own money and grants cover the rest. The Real Estate Support flyer gives a typical loan size of $150,000 to $2,500,000 (subject to change). If your request is outside that range, it is worth talking to the team first.',
-    example: 'Total budget $1,520,000, asking Invest Detroit for $600,000, with $160,000 of your own equity and the rest from a bank.',
+    example: 'Total budget $1,550,000, asking Invest Detroit for $600,000, with $160,000 of your own equity and $790,000 from a bank.',
     mistakes: ['Entering the total budget here.', 'Including money you are asking other lenders for.', 'A loan plus your equity and other funding that doesn\'t add up to the total budget.'],
     keywords: ['loan', 'loan amount', 'borrow', 'requesting', 'préstamo', 'قرض', 'القرض', 'ঋণ', '贷款'],
     source_ids: RE,
   },
   equity_10pct: {
-    explain: 'Asks whether you can put in at least 10% of the total expected project cost yourself, as cash or equity. Check the number against your total budget before answering. Before closing you will be asked for proof of your equity contribution (it is on the lending guide\'s closing checklist), so answer based on money you can show. Exactly what counts as equity for your project is decided by the Invest Detroit team, so if you are unsure, answer as best you can and ask them.',
-    example: 'For a $1,520,000 project, 10% is $152,000.',
+    explain: 'Asks whether you can put in at least 10% of the total expected project cost yourself, as cash or equity. Check the number against your total budget before answering. Before closing you will be asked for proof of your equity contribution (it is on the lending guide\'s closing checklist), so answer based on money you can show. Invest Detroit doesn\'t publish what counts as equity for real estate projects (for example land you already own, a deferred developer fee or grants). The team decides, so if you are unsure, answer as best you can, explain in your summary and ask them.',
+    example: 'For a $1,550,000 project, 10% is $155,000.',
     mistakes: ['Answering Yes without working out 10% of your total budget.', 'Counting money you expect to borrow from someone else as your own equity.'],
     keywords: ['10%', 'equity', 'contribution', 'cash', 'down payment', 'aporte', 'capital propio', 'مساهمة', 'ইকুইটি', '出资', '股权'],
     source_ids: GUIDE,
@@ -144,15 +145,15 @@ export const FIELD_GUIDE = {
   owner_count: owners,
   ethnicities: counts, genders: counts,
   mi_entity_id: {
-    explain: 'The ID number the State of Michigan (LARA) gave your business when it registered. You can look it up with the Michigan business entity search linked under the question. Use the entity that will borrow and own the project. Before closing you will also need a Certificate of Good Standing and organization documents (articles and operating agreement) for this entity.',
+    explain: 'The ID number the State of Michigan (LARA) gave your business when it registered. Search your company\'s exact legal name on LARA\'s Business Entity Search at michigan.gov/corpentitysearch (Michigan moved to the new MiBusiness Registry in June 2025, so older search links may not open). Use the entity that will borrow and own the project. Before closing you will also need a Certificate of Good Standing and organization documents (articles and operating agreement) for this entity. If the company isn\'t formed yet, say so or ask the team.',
     keywords: ['entity', 'entity id', 'michigan business', 'lara', 'identification number', 'entidad', 'الكيان', 'প্রতিষ্ঠানের শনাক্তকরণ', '实体识别'],
-    source_ids: ['mi_entity_search', 'lending_guide'],
+    source_ids: ['mi_entity_search', 'lending_guide', 'lara_filing'],
   },
   criminal: legal, judgments: legal, bankruptcy_7yr: legal, bankruptcy_24mo: legal,
   in_detroit: {
-    explain: 'Only addresses inside Detroit\'s city limits count. Highland Park and Hamtramck are separate cities, even though Detroit surrounds them. If you are unsure, check the property tax bill or ask the city. The Real Estate program also has target neighborhoods (including the Strategic Neighborhood Fund areas); the team can tell you whether your address is in one.',
-    keywords: ['city limits', 'highland park', 'hamtramck', 'located', 'detroit city'],
-    source_ids: RE,
+    explain: 'Only addresses inside Detroit\'s city limits count. Highland Park and Hamtramck are separate cities, even though Detroit surrounds them. A "Detroit" mailing address or ZIP code is not proof: ZIP codes follow mail routes, not city borders. Search the address in the City of Detroit\'s Parcel Viewer (data.detroitmi.gov), or check which city sends the property tax bill. The Real Estate program also has target neighborhoods (including the Strategic Neighborhood Fund areas); the team can tell you whether your address is in one.',
+    keywords: ['city limits', 'highland park', 'hamtramck', 'located', 'detroit city', 'detroit zip', 'parcel viewer', 'inside detroit'],
+    source_ids: ['intake_form_v59', 're_flyer', 'detroit_parcel_viewer'],
   },
   home_state: { explain: 'Use the two-letter state abbreviation in capital letters, like MI for Michigan.', keywords: ['state abbreviation'], source_ids: INTAKE },
   business_state: { explain: 'Use the two-letter state abbreviation in capital letters, like MI for Michigan.', keywords: [], source_ids: INTAKE },
@@ -164,8 +165,8 @@ export const FIELD_GUIDE = {
     source_ids: GUIDE,
   },
   doc_dev_budget: {
-    explain: 'A table of every project cost ("uses") and where the money comes from ("sources"), such as your equity, this loan, other loans and grants. The two totals should match, and should match the total budget you entered. Include soft costs, loan fees, closing costs and a contingency. The same budget and sources/uses is checked again before closing.',
-    example: 'Uses: purchase $400,000, construction $1,000,000, soft costs and fees $50,000, contingency $70,000 = $1,520,000. Sources: your equity $160,000, Invest Detroit $600,000, bank $760,000 = $1,520,000.',
+    explain: 'A table of every project cost ("uses") and where the money comes from ("sources"), such as your equity, this loan, other loans and grants. The two totals should match, and should match the total budget you entered. Include hard costs (the construction itself), soft costs (design, permits, legal, insurance, interest during construction), loan fees, closing costs and a contingency. The same budget and sources/uses is checked again before closing.',
+    example: 'Uses: purchase $400,000, construction $1,000,000, soft costs and fees $50,000, contingency $100,000 = $1,550,000. Sources: your equity $160,000, Invest Detroit $600,000, bank $790,000 = $1,550,000.',
     mistakes: ['Sources and uses that don\'t add up to the same total.', 'Listing a loan from another lender without naming it in "other lenders".'],
     keywords: ['development budget', 'sources and uses', 'sources & uses', 'sources', 'uses', 'fuentes y usos', 'مصادر', 'উৎস ও ব্যবহার', '来源与用途'],
     source_ids: GUIDE,
@@ -176,7 +177,7 @@ export const FIELD_GUIDE = {
     source_ids: GUIDE,
   },
   doc_pfs: {
-    explain: 'A Personal Financial Statement lists what you own (assets) and what you owe (debts). Invest Detroit offers a template, linked under the question. Real Estate loans usually include guarantees from the principals (main owners), which is why each one\'s personal finances matter.',
+    explain: 'A Personal Financial Statement lists what you own (assets) and what you owe (debts). Invest Detroit offers a template, linked under the question. It asks for: assets (cash, investments, retirement accounts, life insurance cash value, real estate, business interests, personal property), liabilities (bank notes, credit cards, taxes owed, mortgages), net worth, annual income and expenses, and schedules for your home (A), business ventures (B) and real estate investments (C). It also asks about taxes, bankruptcy, judgments and lawsuits. Attach account statements for cash or securities balances over $10,000. Real Estate loans usually include guarantees from the principals (main owners), which is why each one\'s personal finances matter.',
     keywords: ['personal financial statement', 'pfs', 'financial statement'],
     source_ids: ['pfs_template', 're_flyer'],
   },
@@ -287,4 +288,6 @@ export const TOPICS = [
   },
   // Lending process, programs, published rates and fees, and about Invest Detroit.
   ...KNOWLEDGE,
+  // Plain-language definitions of lending and real estate terms (general education).
+  ...GLOSSARY,
 ]

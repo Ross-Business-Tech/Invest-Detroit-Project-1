@@ -22,7 +22,7 @@ function hits(keyword, text) {
   return new RegExp(`(^|[^\\p{L}\\d])${escaped}`, 'u').test(text)
 }
 
-const score = (entry, text) => (entry.keywords || []).reduce((n, k) => n + (hits(k, text) ? (k.includes(' ') ? 2 : 1) : 0), 0)
+const score = (entry, text) => (entry.keywords || []).reduce((n, k) => n + (hits(k, text) ? (/[ -]/.test(k) ? 2 : 1) : 0), 0)
 
 // Phrases that mean "the question I'm on" ("what does this mean?", "what should I put here?").
 const VAGUE = /\b(this|here|mean|means|meaning|explain)\b|what (should|do) i (put|enter|write)|esto|esta pregunta|qué significa|هذا|ماذا يعني|এটা|এর মানে|这个|这里|什么意思/i

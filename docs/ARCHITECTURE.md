@@ -222,6 +222,10 @@ Facts from Invest Detroit's documents, written as short entries with keywords an
 | `about_id` | Who is Invest Detroit? | Lists an older address (600 Renaissance Center); the flyers' 950 Selden St is used |
 | `cni_page`, `developer_sheet` | investdetroit.com pages found by web search | Checked from search excerpts only (site blocked from the build session). See `docs/RESEARCH-NOTES.md` |
 | `snf_overview` | Knight Foundation article on the Strategic Neighborhood Fund | General education (`educational`), not Invest Detroit policy |
+| `id_website`, `cni_factsheet_2023`, `sb_process_2020`, `snf_page`, `id_ventures` | Invest Detroit pages and PDFs from the research brief | Fill gaps only |
+| `hud_income_limits`, `lara_filing`, `detroit_parcel_viewer`, `detroit_bseed`, `occ_cre`, `fdic_terms`, `cfpb_title`, `epa_aai`, `alta_standards`, `sba_plan`, `cdfi_fund` | Government and standards bodies | `educational`; used by `glossary.js` and the how-to entries |
+
+**Priority:** the four documents above win over web research. Research fills gaps only (tested). `glossary.js` holds plain-language definitions of lending terms (DSCR, LTV, soft costs, contingency, title commitment, Phase I and others), appended to `TOPICS` after the knowledge entries. Keywords containing a space or hyphen score double, so "loan-to-value" beats the plain word "loan".
 
 Rules, enforced by `tests/fieldGuide.test.js`:
 - Any entry that states a rate, fee or loan-size range must cite an Invest Detroit source and say "subject to change".

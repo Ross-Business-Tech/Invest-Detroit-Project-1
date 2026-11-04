@@ -14,6 +14,9 @@
 //   - `program` says which program a fact belongs to, so Small Business numbers are never
 //     presented as rules for this Real Estate form.
 //
+// PRIORITY: the four documents above win. Facts from the team's web research
+// (docs/RESEARCH-NOTES.md) only fill gaps the documents don't cover, and never replace them.
+//
 // Same shape as the field guide topics: { id, program, keywords, explain, example?, mistakes?,
 // source_ids, needs_staff?, published_terms? }. English only for now.
 
@@ -54,13 +57,13 @@ export const KNOWLEDGE = [
     id: 'after_approval',
     program: 'all',
     keywords: ['after approval', 'after my loan is approved', 'once approved', 'if approved', 'if i am approved', 'commitment letter', 'term sheet', 'carta de compromiso', 'خطاب الالتزام', 'কমিটমেন্ট লেটার', '承诺函', '条款清单'],
-    explain: 'A term sheet is an early, non-final outline of the proposed loan (amount, rate, fees, term and conditions). A commitment letter comes after underwriting and committee approval. After approval, the lending guide says: a commitment letter is issued, due diligence requirements are finalized, legal documents are prepared, the remaining closing conditions are met, and then the loan documents are signed and funds are disbursed.',
-    source_ids: ['lending_guide'],
+    explain: 'A term sheet is an early, non-final outline of the proposed loan (amount, rate, fees, term and conditions). It is usually not a promise to lend: the FDIC describes a term sheet as a summary of basic terms that does "not constitute a commitment to lend". A commitment letter comes after underwriting and committee approval. After approval, the lending guide says: a commitment letter is issued, due diligence requirements are finalized, legal documents are prepared, the remaining closing conditions are met, and then the loan documents are signed and funds are disbursed.',
+    source_ids: ['lending_guide', 'fdic_terms'],
   },
   {
     id: 'closing_checklist',
     program: 'all',
-    keywords: ['due diligence', 'closing checklist', 'closing documents', 'what do i need to close', 'to close', 'title commitment', 'title work', 'survey', 'appraisal', 'environmental', 'zoning', 'good standing', 'borrowing resolution', 'w-9', 'operating agreement', 'articles of incorporation', 'articles of organization', 'bylaws', 'insurance certificate', 'proof of equity', 'debida diligencia', 'العناية الواجبة', 'ডিউ ডিলিজেন্স', '尽职调查'],
+    keywords: ['due diligence', 'closing checklist', 'closing documents', 'what do i need to close', 'to close', 'title work', 'appraisal', 'zoning', 'w-9', 'operating agreement', 'articles of incorporation', 'articles of organization', 'bylaws', 'insurance certificate', 'proof of equity', 'debida diligencia', 'العناية الواجبة', 'ডিউ ডিলিজেন্স', '尽职调查'],
     explain: 'You don\'t need these to submit this form. They come later, before closing. The lending guide\'s closing checklist includes:\n• Organization: articles of incorporation or organization, bylaws or operating agreement, W-9, good standing certificate, borrowing resolution.\n• Financial: current financial statements, tax returns, personal financial statements (if applicable), proof of your equity contribution.\n• Property: title commitment, survey, appraisal, environmental reports, zoning evidence, leases and contracts.\n• Construction (if applicable): plans and specifications, construction contract, budget and sources/uses, permits, insurance certificates, draw schedule.\n• At closing: signed loan documents, payment of closing fees, wire/ACH instructions and proof of insurance.',
     source_ids: ['lending_guide'],
   },
@@ -84,8 +87,8 @@ export const KNOWLEDGE = [
     id: 'after_closing',
     program: 'all',
     keywords: ['after closing', 'after the loan closes', 'post-closing', 'reporting requirements', 'después del cierre', 'بعد الإغلاق', 'ক্লোজিংয়ের পর', '交割后'],
-    explain: 'Invest Detroit stays your financing partner for the life of the loan. The lending guide lists typical ongoing obligations: financial reporting, project progress reports, insurance renewals, compliance certifications and, for construction loans, draw submissions.',
-    source_ids: ['lending_guide'],
+    explain: 'Invest Detroit stays your financing partner for the life of the loan. The lending guide lists typical ongoing obligations: financial reporting, project progress reports, insurance renewals, compliance certifications and, for construction loans, draw submissions. Invest Detroit\'s 2020 small business process sheet adds that some borrowers take part in post-closing technical assistance.',
+    source_ids: ['lending_guide', 'sb_process_2020'],
   },
 
   // ---- Real Estate program (this form) -------------------------------------------------------
@@ -117,7 +120,7 @@ export const KNOWLEDGE = [
     id: 're_collateral',
     program: 'real_estate',
     keywords: ['collateral', 'guarantee', 'guarantees', 'guarantor', 'personal guarantee', 'mortgage', 'garantía', 'aval', 'ضمان', 'كفالة', 'জামানত', 'গ্যারান্টি', '抵押', '担保'],
-    explain: 'The Real Estate Support flyer says loans are usually secured by a senior or subordinate mortgage on the property, or a pledge of business assets, plus guarantees from the principals (the main owners). "Senior" means first in line to be repaid; "subordinate" means behind another lender. This is why a Personal Financial Statement can be requested.',
+    explain: 'The Real Estate Support flyer says loans are usually secured by a senior or subordinate mortgage on the property, or a pledge of business assets, plus guarantees from the principals (the main owners). "Senior" means first in line to be repaid; "subordinate" means behind another lender. A personal guarantee is an owner\'s promise to repay the loan personally if the business doesn\'t. Invest Detroit doesn\'t publish which owners must guarantee (for comparison, the SBA 7(a) program requires owners of 20% or more), so ask the team. This is why a Personal Financial Statement can be requested.',
     source_ids: ['re_flyer'],
   },
   {
@@ -132,14 +135,14 @@ export const KNOWLEDGE = [
     id: 'which_program',
     program: 'all',
     keywords: ['right form', 'wrong form', 'which form', 'which program', 'right program', 'what program', 'small business', 'c&i', 'commercial and industrial', 'equipment', 'inventory', 'furniture', 'fixtures', 'owner-occupied', 'storefront', 'pequeña empresa', 'pequeño negocio', 'الأعمال الصغيرة', 'ছোট ব্যবসা', '小企业'],
-    explain: 'This form is for Invest Detroit\'s Real Estate and Commercial & Industrial (C&I) lending: buying, developing, building or refinancing property such as apartments, mixed-use, retail, office or industrial space.\nInvest Detroit\'s Commercial and Industrial page describes secured business credit for commercial and industrial purposes, such as working capital advances, term business loans and equipment financing. It has its own intake form, which asks for a business plan or pitch deck and financial projections.\nIf you mainly need money for a smaller business you run (equipment, furniture, fixtures, inventory, or renovating or buying the space your own business uses), Invest Detroit\'s separate Small Business program may fit better. Its flyer lists: loans of $50,000–$750,000 (average $125,000–$200,000), pricing 8%–10%, a fee of at least $1,500 or 1% of the loan plus third-party costs, a free pre-application and a $250 non-refundable assessment fee with the formal application, at least 2 employees, a Detroit location, and at least 10% cash equity. Those Small Business terms do not apply to this form, and they are subject to change. The team can tell you which program fits: ' + CONTACT.replace('You can reach the Invest Detroit team at ', ''),
-    source_ids: ['program_overviews', 'cni_page', 'sb_flyer'],
+    explain: 'This form is for Invest Detroit\'s Real Estate and Commercial & Industrial (C&I) lending: buying, developing, building or refinancing property such as apartments, mixed-use, retail, office or industrial space.\nInvest Detroit\'s Commercial and Industrial page describes secured business credit for commercial and industrial purposes, such as working capital advances, term business loans and equipment financing. It has its own two-step intake form (a pre-application, a call with the team, then the full C&I form), which asks for a business plan or pitch deck and financial projections. As a rule of thumb (not official policy): use this form for a building or development project, and the C&I form to finance an operating business. Its only published fact sheet (February 2023, possibly outdated) lists loans of $150,000–$2,500,000, pricing 7%–9%, fees 1%–3%, and terms of 1–3 years for acquisition, equipment and working capital or 6 months–5 years for construction and term loans; subject to change, so confirm with the team.\nVenture capital goes to ID Ventures (idventures.com).\nIf you mainly need money for a smaller business you run (equipment, furniture, fixtures, inventory, or renovating or buying the space your own business uses), Invest Detroit\'s separate Small Business program may fit better. Its flyer lists: loans of $50,000–$750,000 (average $125,000–$200,000), pricing 8%–10%, a fee of at least $1,500 or 1% of the loan plus third-party costs, a free pre-application and a $250 non-refundable assessment fee with the formal application, at least 2 employees, a Detroit location, and at least 10% cash equity. Those Small Business terms do not apply to this form, and they are subject to change. The team can tell you which program fits: ' + CONTACT.replace('You can reach the Invest Detroit team at ', ''),
+    source_ids: ['program_overviews', 'cni_page', 'cni_factsheet_2023', 'sb_flyer', 'id_ventures'],
     published_terms: true,
   },
   {
     id: 'technical_assistance',
     program: 'real_estate',
-    keywords: ['technical assistance', 'technical support', 'help with permits', 'permitting', 'permits', 'community engagement', 'city requirements', 'coaching', 'mentor', 'mentorship', 'asistencia técnica', 'permisos', 'المساعدة الفنية', 'التصاريح', 'কারিগরি সহায়তা', 'অনুমতিপত্র', '技术援助', '许可证'],
+    keywords: ['technical assistance', 'technical support', 'help with permits', 'permitting', 'community engagement', 'city requirements', 'coaching', 'mentor', 'mentorship', 'asistencia técnica', 'permisos', 'المساعدة الفنية', 'التصاريح', 'কারিগরি সহায়তা', 'অনুমতিপত্র', '技术援助', '许可证'],
     explain: 'Besides lending, Invest Detroit\'s 2021 developer sheet says it offers technical assistance with community engagement, permitting, city requirements and other steps that matter for a project\'s success. The Real Estate flyer also mentions "opportunities for technical support" for newer developers. Ask the team what help is available for your project. ' + CONTACT,
     source_ids: ['developer_sheet', 're_flyer'],
   },
@@ -147,8 +150,8 @@ export const KNOWLEDGE = [
     id: 'snf',
     program: 'real_estate',
     keywords: ['strategic neighborhood fund', 'snf', 'target neighborhoods', 'targeted neighborhoods', 'which neighborhoods', 'my neighborhood', 'fondo estratégico', 'الأحياء المستهدفة', 'লক্ষ্য এলাকা', '目标社区'],
-    explain: 'The Strategic Neighborhood Fund (SNF) is a partnership between the City of Detroit, Invest Detroit and philanthropic and corporate funders that invests in selected Detroit neighborhoods. It began in 2016 with three areas (Southwest/Vernor, Livernois/McNichols and Islandview/Greater Villages) and later expanded; by 2023 it was reported to cover 11 neighborhoods. Invest Detroit\'s flyers say some loan programs are limited to these areas and others are open across Detroit. The team can tell you whether your address is in one.',
-    source_ids: ['re_flyer', 'snf_overview'],
+    explain: 'The Strategic Neighborhood Fund (SNF) is led by the Mayor\'s office, the City of Detroit and Invest Detroit, with philanthropic funders. It was established on March 29, 2016 and expanded to 10 neighborhoods on April 26, 2018. Its five pillars are neighborhood framework plans, commercial and mixed-use development, streetscapes, parks and open space, and housing stabilization. Invest Detroit\'s page names areas such as Livernois-McNichols, East Warren, Gratiot/7-Mile and Grand River, but doesn\'t publish an official list of the ten. Invest Detroit\'s flyers say some loan programs are limited to these areas. Developers seeking financing use this form; the team can tell you whether your address is in an SNF area.',
+    source_ids: ['re_flyer', 'snf_page', 'snf_overview'],
   },
 
   // ---- About Invest Detroit -----------------------------------------------------------------
@@ -156,7 +159,45 @@ export const KNOWLEDGE = [
     id: 'about_id',
     program: 'all',
     keywords: ['who is invest detroit', 'what is invest detroit', 'about invest detroit', 'cdfi', 'nonprofit', 'non-profit', '501(c)(3)', 'quién es invest detroit', 'qué es invest detroit', 'من هي', 'কারা', '是什么机构'],
-    explain: 'Invest Detroit is a nonprofit (501(c)(3)) Community Development Financial Institution (CDFI) that has supported economic growth in Detroit and Michigan for over 25 years. It lends to and invests in real estate and business projects that struggle to find traditional financing. It has four programs: Real Estate, Small Business, Commercial and Industrial, and Venture Investment. Its goals are density (attracting people to Detroit), jobs for Detroit residents, thriving neighborhoods, and inclusivity (affordable housing, and making sure minorities, women and immigrants share in economic growth).',
-    source_ids: ['about_id'],
+    explain: 'Invest Detroit is a nonprofit (501(c)(3)) Community Development Financial Institution (CDFI) that has supported economic growth in Detroit and Michigan for over 25 years. It lends to and invests in real estate and business projects that struggle to find traditional financing. It has four programs: Real Estate, Small Business, Commercial and Industrial, and Venture Investment. Its goals are density (attracting people to Detroit), jobs for Detroit residents, thriving neighborhoods, and inclusivity (affordable housing, and making sure minorities, women and immigrants share in economic growth). Its "Who is Invest Detroit?" sheet reports, since inception: $593 million deployed, $3.9 billion leveraged, 5,622 housing units, 984 projects and 16,610 jobs created or retained. A CDFI is a lender certified by the U.S. Treasury\'s CDFI Fund: its main mission is community development, it serves low-income or underserved communities, and it offers help such as technical assistance along with financing. It is not a bank. Venture investment is run by ID Ventures (idventures.com).',
+    source_ids: ['about_id', 'cdfi_fund', 'id_ventures'],
+  },
+
+  // ---- Filled from research (documents are silent on these) ---------------------------------
+  {
+    id: 'other_funds',
+    program: 'all',
+    keywords: ['property owner fund', 'rental relief', 'motor city contractor fund', 'contractor fund', 'grants', 'grant', 'spark grant', 'developer engagement grant', 'other funds', 'subvención', 'منحة', 'অনুদান', '补助'],
+    explain: 'Invest Detroit\'s lending programs are loans. Other funds you may see mentioned:\n• The Property Owner Rental Relief Fund was a 2020 COVID-19 grant and is closed.\n• The Motor City Contractor Fund is named on Invest Detroit\'s website, but no terms or application are published, and this form is not its application.\n• The Strategic Neighborhood Fund page mentions Spark Grants and Developer Engagement Grants without an application process.\nAsk the team about any of these. ' + CONTACT,
+    source_ids: ['id_website', 'snf_page'],
+    needs_staff: true,
+  },
+  {
+    id: 'later_documents',
+    program: 'all',
+    keywords: ['document checklist', 'other documents', 'what else will you need', 'what else do you need', 'more documents', 'additional documents', 'formal application', 'full application', 'after the intake', 'what will you ask for'],
+    explain: 'This form only needs the three required documents. Later, Invest Detroit asks for more, depending on the loan. The lending guide\'s closing checklist is the main list for real estate. Invest Detroit\'s 2020 small business checklist gives a sense of the rest: business plan (with organization chart and marketing plan), project or construction budget, all funding sources, proof of your equity, 1–3 years of historical financial statements and tax returns, 1–3 months of bank statements, 1–3 years of projections with assumptions, personal financial statements for guarantors, operating agreement or bylaws, articles, general contractor agreement, lease or letter of intent, and (if applicable) environmental report, appraisal and architect drawings.',
+    source_ids: ['lending_guide', 'sb_process_2020'],
+  },
+  {
+    id: 'good_standing',
+    program: 'general_education',
+    keywords: ['certificate of good standing', 'good standing', 'restore good standing', 'annual statement', 'annual report', 'mibusiness registry', 'milogin'],
+    explain: 'A Certificate of Good Standing from Michigan LARA shows your company is active and up to date on state filings. It is on the lending guide\'s closing checklist. To get one: go to michigan.gov/fileonline, sign in with a MiLogin for Business account, search for your entity, choose "Request Certificate", then the Certificate of Good Standing, and pay by card; it is emailed to you. LLCs must file an annual statement and corporations an annual report each year after formation. A company that missed filings can restore its good standing by filing the missing reports and a restoration certificate (fees apply). Check current fees on LARA\'s site.',
+    source_ids: ['lara_filing', 'lending_guide'],
+  },
+  {
+    id: 'detroit_permits',
+    program: 'general_education',
+    keywords: ['building permit', 'building permits', 'permit', 'permits', 'bseed', 'certificate of occupancy', 'certificate of acceptance', 'elaps', 'projectdox', 'inspections', 'permiso de construcción', 'تصريح البناء', 'বিল্ডিং পারমিট', '建筑许可'],
+    explain: 'In Detroit, building permits come from the city\'s Buildings, Safety Engineering and Environmental Department (BSEED). The steps: check whether you need a permit (the city has an online tool), find the permit type, apply and pay online through the city\'s eLAPS portal (commercial plans go through ProjectDox and must be sealed by a Michigan-registered architect or engineer), answer reviewers\' comments, post the permit on the property, schedule inspections, and get a Certificate of Acceptance or Occupancy at the end. Help lines: (313) 224-3179 for applications, (313) 224-2372 for BSEED\'s Development Resource Center. The lending guide says not to start construction before the loan closes unless Invest Detroit approves it.',
+    source_ids: ['detroit_bseed', 'lending_guide'],
+  },
+  {
+    id: 'discrimination',
+    program: 'all',
+    keywords: ['discrimination', 'discriminate', 'discriminated', 'civil rights', 'file a complaint', 'discrimination complaint', 'treated unfairly', 'discriminación', 'queja', 'تمييز', 'شكوى', 'বৈষম্য', 'অভিযোগ', '歧视', '投诉'],
+    explain: 'Invest Detroit\'s flyers say that, under federal law and U.S. Department of the Treasury policy, it may not discriminate on the basis of race, color, national origin, sex, age or disability. To file a complaint, write to the U.S. Department of the Treasury, Director, Office of Civil Rights and Equal Employment Opportunity, 1500 Pennsylvania Avenue N.W., Washington, DC 20220; call (202) 622-1160; or email crcomplaints@treasury.gov.',
+    source_ids: ['re_flyer', 'sb_flyer'],
   },
 ]
