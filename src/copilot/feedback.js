@@ -16,12 +16,14 @@ export function buildFeedbackRecord(rating, { id = newFeedbackId(), now = new Da
 }
 
 /**
- * Ask for feedback only after real use: the assistant has answered at least `minAnswers` of
- * the applicant's own questions (privacy warnings and connection errors don't count).
+ * Ask for feedback only after real use: the applicant has sent at least `minUserMessages`
+ * messages and received at least `minAnswers` real answers (clarifying questions, refusals,
+ * privacy warnings and connection errors don't count as answers).
  */
-export function hasMeaningfulInteraction(messages, minAnswers = FEEDBACK.min_answers_before_asking) {
+export function hasMeaningfulInteraction(messages, { minUserMessages = FEEDBACK.min_user_messages, minAnswers = FEEDBACK.min_answers } = {}) {
+  const userMessages = messages.filter((m) => m.role === 'user').length
   const answered = messages.filter((m) => m.role === 'assistant' && ['answer', 'no_answer', 'placeholder'].includes(m.kind)).length
-  return answered >= minAnswers
+  return userMessages >= minUserMessages && answered >= minAnswers
 }
 
 export function createFeedbackClient({ endpoint = FEEDBACK.endpoint, fetchImpl = (...a) => fetch(...a), onEvent = () => {} } = {}) {

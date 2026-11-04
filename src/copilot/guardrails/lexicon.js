@@ -78,7 +78,7 @@ const WEAK_TERMS = [
   'estimate', 'calculate', 'plan', 'describe', 'description', 'section', 'upload', 'attach', 'error', 'missing', 'required', 'total', 'amount', 'percent', 'percentage',
 ]
 // Phrases that mean "help me with what's on the screen"
-export const HELP_PHRASES = /\b(this (question|field|section|box|part|one)|more simply|simpler|plain (language|english)|explain (this|that|it|again)|what does (this|that|it) mean|i don'?t (understand|get it)|go to field|the review|review (said|says|found|flagged)|flagged|warning|why (is|does|did) (it|this|that)|what should i (put|enter|write|include|choose|select)|which (box|option|one) (should|do) i)\b/
+export const HELP_PHRASES = /\b((where|how) (do|should|can) (i|we) (start|begin|get started)|get(ting)? started|what (do|should) (i|we) do (first|next|now)|(first|next) steps?|how does (this|it) work|what is this (form|page) for|how do (i|we) (fill|complete) (this|it|the form)( out| in)?|this (question|field|section|box|part|one)|more simply|simpler|plain (language|english)|explain (this|that|it|again)|what does (this|that|it) mean|i don'?t (understand|get it)|go to field|the review|review (said|says|found|flagged)|flagged|warning|why (is|does|did) (it|this|that)|what should i (put|enter|write|include|choose|select)|which (box|option|one) (should|do) i)\b/
 
 // Field guide keywords (several languages) also count as strong application terms.
 const GUIDE_TERMS = [...new Set([...Object.values(FIELD_GUIDE), ...TOPICS].flatMap((e) => e.keywords || []))]

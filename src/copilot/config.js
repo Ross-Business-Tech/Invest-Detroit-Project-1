@@ -76,5 +76,7 @@ export const ASSISTANT = {
  */
 export const FEEDBACK = {
   endpoint: './.herenow/data/assistant_feedback',
-  min_answers_before_asking: 2, // "meaningful interaction": the assistant has answered two questions
+  // "Meaningful interaction": the applicant has sent at least 2 messages and received at least 1 real answer.
+  min_user_messages: 2,
+  min_answers: 1,
 }

@@ -181,6 +181,12 @@ export const TOPICS = [
     source_ids: ['program_overviews'],
     needs_staff: true,
   },
+  {
+    id: 'getting_started',
+    keywords: ['where do i start', 'where should i start', 'how do i start', 'get started', 'getting started', 'first step', 'first steps', 'next step', 'what do i do first', 'how does this work', 'how do i fill', 'how do i apply', 'por dónde empiezo', 'cómo empiezo', 'من أين أبدأ', 'كيف أبدأ', 'কোথা থেকে শুরু', 'কীভাবে শুরু', '从哪里开始', '怎么开始'],
+    explain: 'Here is the order that works best:\n1. Check the "Before you start" list above the form and gather the 3 required documents and the numbers you will need. The form can\'t be saved partway through.\n2. Fill in the form from top to bottom: contact details, your development company, the project address, the yes/no questions, business and budget information, construction details, impact, documents and the 3 acknowledgements.\n3. Press "Review My Application" to catch anything missing or mistyped, fix what it lists, then press Submit.\nTap the ? next to any question if you\'d like it explained.',
+    source_ids: ['intake_form_v59'],
+  },
   // General business and finance terms (plain-language education, not Invest Detroit policy).
   {
     id: 'net_income',

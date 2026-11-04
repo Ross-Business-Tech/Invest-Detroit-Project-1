@@ -32,6 +32,10 @@ const ALLOWED = [
   ['Help me write my executive summary', /short description/],
   ['¿Qué significa AMI?', /Area Median Income/],
   ['我需要哪些文件？', /Required: a project plan/],
+  ['Where do I start?', /order that works best/, { field: { field_id: 'home_state' } }],
+  ['How does this work?', /order that works best/],
+  ['What do I do first?', /order that works best/],
+  ['¿Por dónde empiezo?', /order that works best/],
 ]
 for (const [message, expected, extra] of ALLOWED) {
   test(`allowed: "${message}"`, async () => {

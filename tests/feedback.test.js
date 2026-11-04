@@ -43,11 +43,14 @@ test('no endpoint means no feedback card', () => {
   assert.equal(createFeedbackClient({ endpoint: null }), null)
 })
 
-test('the card waits for two real answers', () => {
+test('the card waits for two messages and at least one real answer', () => {
   const user = { role: 'user', text: 'q' }
   const answer = { role: 'assistant', kind: 'answer' }
-  assert.equal(hasMeaningfulInteraction([{ role: 'assistant', kind: 'welcome' }, user, answer]), false)
-  assert.equal(hasMeaningfulInteraction([user, answer, user, { role: 'assistant', kind: 'privacy_warning' }]), false)
+  const clarify = { role: 'assistant', kind: 'clarify' }
+  assert.equal(hasMeaningfulInteraction([{ role: 'assistant', kind: 'welcome' }, user, answer]), false) // only 1 message
+  assert.equal(hasMeaningfulInteraction([user, clarify, user, clarify]), false) // no real answer yet
+  assert.equal(hasMeaningfulInteraction([user, { role: 'assistant', kind: 'out_of_scope' }, user, { role: 'assistant', kind: 'privacy_warning' }]), false)
+  assert.equal(hasMeaningfulInteraction([user, clarify, user, answer]), true)
   assert.equal(hasMeaningfulInteraction([user, answer, user, { role: 'assistant', kind: 'no_answer' }]), true)
 })
 
