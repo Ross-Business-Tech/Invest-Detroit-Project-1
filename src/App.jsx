@@ -54,8 +54,12 @@ function Page({ locale, onLocaleChange }) {
       </header>
 
       <section className="hero">
-        <div className="container">
-          <h2>{t('Need Support?')}</h2>
+        {/* Photo from Invest Detroit's "Need Support?" page (2016 student service day). */}
+        <img className="hero-img" src="/images/need-support-hero.webp" alt="" width="1600" height="900" fetchPriority="high" />
+        <div className="hero-title">
+          <div className="container">
+            <h2>{t('Need Support?')}</h2>
+          </div>
         </div>
       </section>
 

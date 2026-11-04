@@ -241,6 +241,16 @@ Result: the button and contact card were removed. The chat still gives Invest De
 
 Result: entries 27–30.
 
+**31. Rating card not showing** *(with a screenshot)*
+> currently i do not see the rating feature added
+
+Result: the card only appeared after two real answers, and the screenshot's replies were both clarifying questions. "Where do I start?" was also wrongly treated as unclear. A fix was started (answer "getting started" questions; show the card after 2 messages and 1 real answer), then paused at the team's request. It is kept aside, unpublished.
+
+**32. New banner** *(with the original photo and a mockup)*
+> Update our need support banner to look like the above.
+
+Result: the banner is now the full-width photo of volunteers painting a Detroit street, with "Need Support?" in white, bold condensed type (Barlow Condensed) on a yellow box. The box sits at the bottom left, overlapping the photo's lower edge and lined up with the page content. Checked on desktop, phone and right-to-left Arabic.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.
