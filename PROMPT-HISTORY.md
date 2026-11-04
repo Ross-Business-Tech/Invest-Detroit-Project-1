@@ -320,6 +320,28 @@ Result:
 - Two claims were corrected: we can't say demographic answers "aren't a test", and what counts as equity isn't published.
 - Where the research disagreed with the four documents, the documents were kept: timeline, 501(c)(3), impact figures, rates and address. A test now checks this. `docs/RESEARCH-NOTES.md` lists every conflict for Invest Detroit staff.
 
+**41. Should the AI review uploaded PDFs?**
+> Do you think it would be a good idea to enhance our existing AI assistant so it can review PDFs uploaded by applicants? ... Don't implement anything yet.
+
+Follow-ups: "What if we just have the AI check if there's a mismatch, but never save anything?", "Is there a better alternative?", "What is the point of this, if we already have a box asking for total budget?"
+
+Result: no code was written. Claude's assessment:
+- Document checks are valuable.
+- Sending personal financial documents to an AI is a decision for Invest Detroit's compliance staff. "Never save" isn't enough, because sending a file is already sharing it.
+- PDFs are often unreliable to read.
+- Asking applicants to retype budget totals would mostly repeat questions the form already has.
+- The agreed approach is a short reminder before each upload that uses the numbers the applicant already entered.
+
+**42. Reminders before each upload**
+> Okay, I like this idea. Just add the reminders and warnings for users before they upload. ... Just make it a warning style text, don't need a checklist. ... Add a small warning label right before the text starts.
+
+Result: each required upload now has a short yellow "Warning" note above its button.
+- **Project plan:** what to cover, including that construction starts only after closing.
+- **Development budget:** uses the applicant's own numbers ("make sure this budget totals $1,450,000 ... and shows the Invest Detroit loan as $600,000"). If the total budget is blank, it asks them to enter it first.
+- **Team list:** each person's name, role and experience.
+- **Supporting documents:** one note asking applicants to check every page is readable, and never to send tax returns or bank statements by email.
+- Nothing reads the files. Every warning is in all five languages.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

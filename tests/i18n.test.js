@@ -1,10 +1,10 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { DICTIONARIES, makeT, localeFromLang } from '../src/copilot/i18n/index.js'
-import { formStrings, reviewStrings, assistantStrings, screenStrings } from './i18nCatalog.js'
+import { formStrings, reviewStrings, assistantStrings, screenStrings, uploadStrings } from './i18nCatalog.js'
 import { runReview } from '../src/copilot/review.js'
 
-const ALL = new Set([...formStrings(), ...reviewStrings(), ...assistantStrings(), ...screenStrings()])
+const ALL = new Set([...formStrings(), ...reviewStrings(), ...assistantStrings(), ...screenStrings(), ...uploadStrings()])
 const placeholders = (s) => (String(s).match(/\{\w+\}/g) || []).sort()
 
 for (const [locale, dict] of Object.entries(DICTIONARIES)) {

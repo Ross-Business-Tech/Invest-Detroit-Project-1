@@ -8,6 +8,7 @@ import { SUGGESTIONS, WELCOME_TEXT, DEFAULT_SUBTITLE, CONNECTED_SUBTITLE } from 
 import { NO_MATCH } from '../src/copilot/guideTransport.js'
 import { OUT_OF_SCOPE_MESSAGE, INTEGRITY_MESSAGE, CLARIFY_MESSAGE } from '../src/copilot/guardrails/messages.js'
 import { NUMBERS } from '../src/prototype/beforeYouStartText.js'
+import { UPLOAD_TEXT } from '../src/copilot/uploadTips.js'
 
 // Organization names stay in their original form in every language.
 const PROPER_NOUN_LISTS = new Set(['other_lenders', 'community_partners'])
@@ -42,6 +43,10 @@ export function reviewStrings() {
     else if (key !== 'fieldOnly' && key !== 'fieldProblem') out.add(v)
   }
   return out
+}
+
+export function uploadStrings() {
+  return new Set(Object.values(UPLOAD_TEXT))
 }
 
 export function assistantStrings() {

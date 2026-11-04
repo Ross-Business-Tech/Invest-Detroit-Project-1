@@ -339,4 +339,11 @@ export default {
   "Closing": "交割",
   "Closing checklist, loan documents and funding.": "交割清单、贷款文件和放款。",
   "Typical times from Invest Detroit’s lending guide. Every project is different. Please don’t start construction before your loan closes.": "以上为 Invest Detroit 贷款指南中的常见时间。每个项目都不同。请不要在贷款交割前开工。",
+  "Before uploading, make sure your plan covers what you will build and where, the timeline (with construction starting only after the loan closes), your team’s experience, how it will be paid for, and what it does for the neighborhood.": "上传前，请确认您的计划说明了建设内容和地点、时间表（须在贷款交割后才开工）、团队经验、资金来源，以及项目对社区的贡献。",
+  "Before uploading, make sure this budget totals {total} (your total budget above) and shows the Invest Detroit loan as {loan}. Sources and uses should add up to the same total and include a contingency.": "上传前，请确认此预算总额为 {total}（即您在上方填写的总预算），并将 Invest Detroit 贷款列为 {loan}。资金来源与用途的总额应一致，并包含不可预见费。",
+  "Before uploading, make sure this budget totals {total} (your total budget above). Sources and uses should add up to the same total and include a contingency.": "上传前，请确认此预算总额为 {total}（即您在上方填写的总预算）。资金来源与用途的总额应一致，并包含不可预见费。",
+  "Enter your total budget above first, so you can check that this budget file matches it.": "请先在上方填写总预算，以便核对此预算文件是否与之一致。",
+  "Before uploading, make sure the list gives each person’s name, role and relevant experience, including your lawyer and accountant if you have them.": "上传前，请确认名单列出了每个人的姓名、职责和相关经验，如有律师和会计师也请列入。",
+  "Check that every page is included and easy to read. Upload sensitive documents here only: never send tax returns or bank statements by email.": "请确认所有页面齐全且清晰可读。敏感文件只在此处上传：切勿通过电子邮件发送纳税申报表或银行对账单。",
+  "Warning": "注意",
 }

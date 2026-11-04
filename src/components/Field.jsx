@@ -5,6 +5,18 @@ import { useI18n } from './i18nContext.js'
 import RichText from './RichText.jsx'
 import { FIELD_GUIDE } from '../copilot/fieldGuide.js'
 
+/** Warning shown before an upload button (see copilot/uploadTips.js). */
+export function UploadTips({ tips, id }) {
+  const { t } = useI18n()
+  if (!tips) return null
+  return (
+    <p className="upload-warn" id={id}>
+      <span className="upload-warn-label"><span aria-hidden="true">⚠</span> {t('Warning')}</span>{' '}
+      {t(tips.text, tips.params)}
+    </p>
+  )
+}
+
 function Label({ field, htmlFor, as = 'label' }) {
   const { locale, t } = useI18n()
   const Tag = as
@@ -58,7 +70,7 @@ function Hint({ field }) {
 // Numbers, codes and email addresses stay left-to-right even on Arabic pages.
 const LTR_TYPES = new Set(['email', 'tel', 'state', 'zip', 'money', 'number', 'integer'])
 
-export default function Field({ field, value, error, onChange, onHelp }) {
+export default function Field({ field, value, error, onChange, onHelp, tips }) {
   const { t } = useI18n()
   const id = field.id
   const errId = `${id}-error`
@@ -144,7 +156,8 @@ export default function Field({ field, value, error, onChange, onHelp }) {
       return (
         <div data-field-id={id} className={cls}>
           <LabelRow field={field} htmlFor={id} onHelp={onHelp} />
-          <input {...common} type="file" onChange={(e) => onChange(id, e.target.files?.[0]?.name || '')} />
+          <UploadTips tips={tips} id={`${id}-tips`} />
+          <input {...common} aria-describedby={[tips ? `${id}-tips` : '', common['aria-describedby']].filter(Boolean).join(' ') || undefined} type="file" onChange={(e) => onChange(id, e.target.files?.[0]?.name || '')} />
           {value && <p className="hint">{t('Selected: {file} (stays on your device)', { file: value })}</p>}
           <Hint field={field} />
           {errorEl}

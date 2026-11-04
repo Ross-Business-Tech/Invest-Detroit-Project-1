@@ -148,3 +148,12 @@ test('document tips stay quiet when they do not apply', () => {
   }))
   for (const id of ['loan_outside_range', 'equipment_program', 'construction_before_closing', 'summary_experience']) assert.ok(!issues.includes(id), id)
 })
+
+test('upload warnings use the budget and loan the applicant already entered', async () => {
+  const { uploadTips } = await import('../src/copilot/uploadTips.js')
+  assert.match(uploadTips('doc_dev_budget', {}).text, /Enter your total budget above first/)
+  const both = uploadTips('doc_dev_budget', { total_budget: '1450000', loan_amount: '600000' })
+  assert.deepEqual(both.params, { total: '$1,450,000', loan: '$600,000' })
+  assert.ok(uploadTips('doc_project_plan') && uploadTips('doc_team_list') && uploadTips('supporting_docs'))
+  assert.equal(uploadTips('doc_pfs'), null)
+})

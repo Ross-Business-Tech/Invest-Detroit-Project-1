@@ -4,7 +4,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { FORM_INTRO, visibleSections, validate } from '../copilot/formDefinition.js'
-import Field from '../components/Field.jsx'
+import Field, { UploadTips } from '../components/Field.jsx'
 import ReviewPanel from '../components/ReviewPanel.jsx'
 import SuccessDialog from '../components/SuccessDialog.jsx'
 import { useReviewSession } from '../components/useReviewSession.js'
@@ -13,6 +13,7 @@ import { SAMPLE_APPLICANT } from './sampleApplicant.js'
 import { goToField } from './goToField.js'
 import BeforeYouStart from './BeforeYouStart.jsx'
 import DocSuggestionDemo from './DocSuggestionDemo.jsx'
+import { uploadTips } from '../copilot/uploadTips.js'
 
 /** Inline error text for each field a finished review blocks on. */
 function errorsFrom(issues) {
@@ -117,9 +118,10 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
           <fieldset key={section.id} className="section" id={`section-${section.id}`}>
             <legend>{t(section.title)}</legend>
             {section.intro && <p className={`section-paragraph${section.introBold ? ' bold' : ''}`}>{t(section.intro)}</p>}
+            <UploadTips tips={uploadTips(section.id, values)} />
             <div className="field-grid">
               {section.fields.map((f) => (
-                <Field key={f.id} field={f} value={values[f.id]} error={errors[f.id]} onChange={onChange} onHelp={onHelp} />
+                <Field key={f.id} field={f} value={values[f.id]} error={errors[f.id]} onChange={onChange} onHelp={onHelp} tips={f.type === 'file' ? uploadTips(f.id, values) : undefined} />
               ))}
             </div>
             {section.id === 'required_docs' && values.doc_dev_budget && (

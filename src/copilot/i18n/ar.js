@@ -339,4 +339,11 @@ export default {
   "Closing": "الإغلاق",
   "Closing checklist, loan documents and funding.": "قائمة الإغلاق، ومستندات القرض، والتمويل.",
   "Typical times from Invest Detroit’s lending guide. Every project is different. Please don’t start construction before your loan closes.": "مدد معتادة وفق دليل الإقراض لدى Invest Detroit. كل مشروع مختلف. يُرجى عدم بدء البناء قبل إغلاق قرضك.",
+  "Before uploading, make sure your plan covers what you will build and where, the timeline (with construction starting only after the loan closes), your team’s experience, how it will be paid for, and what it does for the neighborhood.": "قبل الرفع، تأكد من أن خطتك توضح ما ستبنيه وأين، والجدول الزمني (على أن يبدأ البناء فقط بعد إغلاق القرض)، وخبرة فريقك، وكيف سيُموَّل المشروع، وما الذي يقدمه للحي.",
+  "Before uploading, make sure this budget totals {total} (your total budget above) and shows the Invest Detroit loan as {loan}. Sources and uses should add up to the same total and include a contingency.": "قبل الرفع، تأكد من أن مجموع هذه الميزانية هو {total} (ميزانيتك الإجمالية أعلاه) وأنها تُظهر قرض Invest Detroit بمبلغ {loan}. يجب أن يتساوى مجموع المصادر والاستخدامات وأن تتضمن الميزانية احتياطيًا للطوارئ.",
+  "Before uploading, make sure this budget totals {total} (your total budget above). Sources and uses should add up to the same total and include a contingency.": "قبل الرفع، تأكد من أن مجموع هذه الميزانية هو {total} (ميزانيتك الإجمالية أعلاه). يجب أن يتساوى مجموع المصادر والاستخدامات وأن تتضمن الميزانية احتياطيًا للطوارئ.",
+  "Enter your total budget above first, so you can check that this budget file matches it.": "أدخل ميزانيتك الإجمالية أعلاه أولًا، حتى تتمكن من التحقق من تطابق ملف الميزانية معها.",
+  "Before uploading, make sure the list gives each person’s name, role and relevant experience, including your lawyer and accountant if you have them.": "قبل الرفع، تأكد من أن القائمة تذكر اسم كل شخص ودوره وخبرته ذات الصلة، بما في ذلك المحامي والمحاسب إن وُجدا.",
+  "Check that every page is included and easy to read. Upload sensitive documents here only: never send tax returns or bank statements by email.": "تأكد من تضمين جميع الصفحات وأنها سهلة القراءة. ارفع المستندات الحساسة هنا فقط: لا ترسل أبدًا الإقرارات الضريبية أو كشوف الحسابات المصرفية عبر البريد الإلكتروني.",
+  "Warning": "تنبيه",
 }
