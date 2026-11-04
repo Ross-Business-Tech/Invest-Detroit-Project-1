@@ -5,15 +5,18 @@ import { useI18n } from './i18nContext.js'
 import RichText from './RichText.jsx'
 import { FIELD_GUIDE } from '../copilot/fieldGuide.js'
 
-/** Warning shown before an upload button (see copilot/uploadTips.js). */
+/** Collapsible tip shown before an upload button (see copilot/uploadTips.js). Closed by default. */
 export function UploadTips({ tips, id }) {
   const { t } = useI18n()
   if (!tips) return null
   return (
-    <p className="upload-warn" id={id}>
-      <span className="upload-warn-label"><span aria-hidden="true">⚠</span> {t('Warning')}</span>{' '}
-      {t(tips.text, tips.params)}
-    </p>
+    <details className="upload-tip">
+      <summary>
+        <span className="upload-tip-label">{t('Tip')}</span>
+        <span className="upload-tip-summary">{t('What to check before uploading')}</span>
+      </summary>
+      <p id={id}>{t(tips.text, tips.params)}</p>
+    </details>
   )
 }
 

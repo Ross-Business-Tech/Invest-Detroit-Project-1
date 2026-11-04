@@ -345,5 +345,6 @@ export default {
   "Enter your total budget above first, so you can check that this budget file matches it.": "请先在上方填写总预算，以便核对此预算文件是否与之一致。",
   "Before uploading, make sure the list gives each person’s name, role and relevant experience, including your lawyer and accountant if you have them.": "上传前，请确认名单列出了每个人的姓名、职责和相关经验，如有律师和会计师也请列入。",
   "Check that every page is included and easy to read. Upload sensitive documents here only: never send tax returns or bank statements by email.": "请确认所有页面齐全且清晰可读。敏感文件只在此处上传：切勿通过电子邮件发送纳税申报表或银行对账单。",
-  "Warning": "注意",
+  "Tip": "提示",
+  "What to check before uploading": "上传前需要检查的内容",
 }

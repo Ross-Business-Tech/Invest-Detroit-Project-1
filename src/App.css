@@ -88,9 +88,16 @@
 .money input { padding-left: 26px !important; }
 .hint { font-size: 13px; color: var(--muted); margin: 0; }
 .hint.counter { text-align: right; }
-.upload-warn { background: #fff6e0; border-inline-start: 4px solid #e0a100; color: #5c3b00; padding: var(--sp-2) var(--sp-3); margin: var(--sp-1) 0 var(--sp-2); font-size: 13.5px; line-height: 1.45; }
-.section > .upload-warn { margin-bottom: var(--sp-3); }
-.upload-warn-label { display: inline-block; background: var(--yellow); color: #1d2421; font-size: 11.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; padding: 1px 7px; margin-inline-end: 4px; vertical-align: 1px; }
+.upload-tip { background: #eef5fc; border-inline-start: 4px solid #2f6fb3; color: #1b3a5c; margin: var(--sp-1) 0 var(--sp-2); font-size: 13.5px; line-height: 1.45; }
+.section > .upload-tip { margin-bottom: var(--sp-3); }
+.upload-tip summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: var(--sp-2); padding: 6px var(--sp-3); min-height: 32px; }
+.upload-tip summary::-webkit-details-marker { display: none; }
+.upload-tip summary::after { content: '▾'; margin-inline-start: auto; color: #2f6fb3; transition: transform .15s; }
+.upload-tip[open] summary::after { transform: rotate(180deg); }
+.upload-tip summary:focus-visible { outline: 2px solid #2f6fb3; outline-offset: 2px; }
+.upload-tip-label { background: #2f6fb3; color: #fff; font-size: 11px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; padding: 1px 7px; }
+.upload-tip-summary { font-weight: 700; }
+.upload-tip p { margin: 0; padding: 0 var(--sp-3) var(--sp-2); }
 .proto-note { font-style: italic; }
 .error { color: var(--error); font-size: 13px; font-weight: 700; margin: 0; }
 .has-error input, .has-error select, .has-error textarea { border-color: var(--error) !important; background: var(--error-bg) !important; }

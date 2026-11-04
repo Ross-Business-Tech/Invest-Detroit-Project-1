@@ -342,6 +342,11 @@ Result: each required upload now has a short yellow "Warning" note above its but
 - **Supporting documents:** one note asking applicants to check every page is readable, and never to send tax returns or bank statements by email.
 - Nothing reads the files. Every warning is in all five languages.
 
+**43. Make the upload notes friendlier**
+> I think the "Warning" is too alarming. Instead, I suggest rebranding it to "TIP" and make it collapsible so it's easier on the eyes. I think blue is a good color.
+
+Result: each upload note is now a single blue line, "TIP · What to check before uploading", that opens when tapped and is closed by default. The text inside is unchanged, including the applicant's own budget and loan numbers. Translated into all five languages.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

@@ -345,5 +345,6 @@ export default {
   "Enter your total budget above first, so you can check that this budget file matches it.": "আগে উপরে আপনার মোট বাজেট লিখুন, যাতে এই বাজেট ফাইলটি তার সঙ্গে মেলে কি না যাচাই করতে পারেন।",
   "Before uploading, make sure the list gives each person’s name, role and relevant experience, including your lawyer and accountant if you have them.": "আপলোডের আগে নিশ্চিত করুন যে তালিকায় প্রত্যেকের নাম, ভূমিকা ও প্রাসঙ্গিক অভিজ্ঞতা আছে, আপনার আইনজীবী ও হিসাবরক্ষক থাকলে তাঁদেরও।",
   "Check that every page is included and easy to read. Upload sensitive documents here only: never send tax returns or bank statements by email.": "সব পৃষ্ঠা আছে এবং সহজে পড়া যায় কি না দেখে নিন। সংবেদনশীল নথি শুধু এখানেই আপলোড করুন: ট্যাক্স রিটার্ন বা ব্যাংক স্টেটমেন্ট কখনো ইমেইলে পাঠাবেন না।",
-  "Warning": "সতর্কতা",
+  "Tip": "টিপ",
+  "What to check before uploading": "আপলোডের আগে কী দেখে নেবেন",
 }

@@ -210,9 +210,9 @@ Not built. ("Talk to a person" was removed from the chat at the team's request.)
 
 The guide is a **draft written from the public form and four Invest Detroit documents**. It is English only: on other languages, the chat shows a translated note saying so. When a real AI is connected, the same entries become the approved material it answers from. Invest Detroit should review and own it.
 
-### Upload warnings (`uploadTips.js`)
+### Upload tips (`uploadTips.js`)
 
-A one-line warning above each required upload, plus one for the supporting documents. The budget warning fills in the applicant's own total budget and loan amount. Nothing opens or reads the file. Sending documents to an AI was considered and deliberately not built: see PROMPT-HISTORY entries 41–42.
+A collapsible blue "Tip" (closed by default) above each required upload, plus one for the supporting documents. The budget warning fills in the applicant's own total budget and loan amount. Nothing opens or reads the file. Sending documents to an AI was considered and deliberately not built: see PROMPT-HISTORY entries 41–42.
 
 ### Knowledge entries (`knowledge.js`)
 

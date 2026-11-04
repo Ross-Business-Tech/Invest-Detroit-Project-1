@@ -1,4 +1,4 @@
-// Short warnings shown right above each upload button, so applicants check their file before
+// Short tips shown (collapsed) right above each upload button, so applicants check their file before
 // uploading. Nothing here opens or reads the file. Based on the lending guide and Real Estate
 // flyer (see knowledge.js). English text is the translation key (see i18n/).
 
@@ -19,7 +19,7 @@ export const UPLOAD_TEXT = {
 const T = UPLOAD_TEXT
 
 /**
- * The warning for one upload field, or for the whole 'supporting_docs' section (shown once above
+ * The tip for one upload field, or for the whole 'supporting_docs' section (shown once above
  * its three uploads), or null.
  * @returns {{ text: string, params?: object } | null}
  */

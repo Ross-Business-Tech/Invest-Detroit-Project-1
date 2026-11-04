@@ -345,5 +345,6 @@ export default {
   "Enter your total budget above first, so you can check that this budget file matches it.": "أدخل ميزانيتك الإجمالية أعلاه أولًا، حتى تتمكن من التحقق من تطابق ملف الميزانية معها.",
   "Before uploading, make sure the list gives each person’s name, role and relevant experience, including your lawyer and accountant if you have them.": "قبل الرفع، تأكد من أن القائمة تذكر اسم كل شخص ودوره وخبرته ذات الصلة، بما في ذلك المحامي والمحاسب إن وُجدا.",
   "Check that every page is included and easy to read. Upload sensitive documents here only: never send tax returns or bank statements by email.": "تأكد من تضمين جميع الصفحات وأنها سهلة القراءة. ارفع المستندات الحساسة هنا فقط: لا ترسل أبدًا الإقرارات الضريبية أو كشوف الحسابات المصرفية عبر البريد الإلكتروني.",
-  "Warning": "تنبيه",
+  "Tip": "نصيحة",
+  "What to check before uploading": "ما الذي يجب التحقق منه قبل الرفع",
 }

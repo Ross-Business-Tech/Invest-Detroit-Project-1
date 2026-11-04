@@ -345,5 +345,6 @@ export default {
   "Enter your total budget above first, so you can check that this budget file matches it.": "Primero escriba su presupuesto total arriba, para poder comprobar que este archivo de presupuesto coincide.",
   "Before uploading, make sure the list gives each person’s name, role and relevant experience, including your lawyer and accountant if you have them.": "Antes de subirla, asegúrese de que la lista indique el nombre, el cargo y la experiencia relevante de cada persona, incluidos su abogado y su contador, si los tiene.",
   "Check that every page is included and easy to read. Upload sensitive documents here only: never send tax returns or bank statements by email.": "Compruebe que todas las páginas estén incluidas y se lean con facilidad. Suba los documentos confidenciales solo aquí: nunca envíe declaraciones de impuestos ni estados de cuenta bancarios por correo electrónico.",
-  "Warning": "Advertencia",
+  "Tip": "Consejo",
+  "What to check before uploading": "Qué revisar antes de subir",
 }
