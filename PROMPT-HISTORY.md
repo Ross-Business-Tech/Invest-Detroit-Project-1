@@ -244,12 +244,29 @@ Result: entries 27–30.
 **31. Rating card not showing** *(with a screenshot)*
 > currently i do not see the rating feature added
 
-Result: the card only appeared after two real answers, and the screenshot's replies were both clarifying questions. "Where do I start?" was also wrongly treated as unclear. A fix was started (answer "getting started" questions; show the card after 2 messages and 1 real answer), then paused at the team's request. It is kept aside, unpublished.
+Result: the card only appeared after two real answers, and the screenshot's replies were both clarifying questions. "Where do I start?" was also wrongly treated as unclear. A fix was started, then paused at the team's request, and later saved (see entry 33).
 
 **32. New banner** *(with the original photo and a mockup)*
 > Update our need support banner to look like the above.
 
 Result: the banner is now the full-width photo of volunteers painting a Detroit street, with "Need Support?" in white, bold condensed type (Barlow Condensed) on a yellow box. The box sits at the bottom left, overlapping the photo's lower edge and lined up with the page content. Checked on desktop, phone and right-to-left Arabic.
+
+Two things to check before the public reveal:
+- White on yellow is hard to read for people with low vision, so dark text may be a better choice.
+- The photo shows identifiable people, including children, in a public repository, so it needs permission before going public.
+
+**33. Save everything** *(the repository's automatic check, not a typed prompt)*
+> There are uncommitted changes in the repository. Please commit and push these changes to the remote branch.
+
+Result: the paused fix from entry 31 passed all 144 tests and was saved and pushed.
+- The chat now answers "Where do I start?", "How does this work?" and "What do I do first?" (also in the other four languages) with a step-by-step guide.
+- The rating card now appears after 2 messages and at least 1 real answer.
+- Both are saved but not yet on the test link.
+
+**34. Keep this file current**
+> update prompt history md
+
+Result: entries 31–34 were updated and added.
 
 ## Tips from this build
 
