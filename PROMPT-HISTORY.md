@@ -1,94 +1,41 @@
 # Prompt History
 
-How we built the AI Application Copilot prototype with Claude, one request at a time. Each entry shows what we asked (lightly edited for clarity) and what came out of it. Use it to see how the app got here, or to reuse prompts that worked well.
+How we built the AI Application Copilot prototype with Claude, one change at a time. Each entry shows what we asked (lightly edited so it reads on its own) and what changed on the page. Only the prompts that changed the app are listed; planning discussions, questions and sharing steps are left out.
 
 Sign-in steps and personal details are left out on purpose, because this repository is public.
 
-## 1. Planning
+## 1. Building the replica page
 
-**1. Review the brief**
-> *(Shared our 12-page "AI Application Copilot & Pre-Submission Reviewer" brief as a PDF.)* This is what we are currently trying to build. What do you think? Any suggestions / improvements?
-
-Result: feedback on the brief. It was strong on scope, non-goals and safety, but written for a production system. The suggestions were to:
-- build a practice copy of the form instead of plugging into the live one;
-- use a team-written field guide instead of full AI search;
-- do the rule-based checks first;
-- put a "?" help button on each question;
-- leave out the SSN;
-- plan the demo around three made-up applicants.
-
-**2. Choose the form**
-> *(Shared the link to investdetroit.com/need-support.)* This is the form. Will this work?
-
-Result: flagged that this link is the **Real Estate/C&I** form, while the brief was written around the **Small Business** form. The session couldn't open the website directly, so the page source had to be pasted in later.
-
-**3. Revised plan**
-> Can you send a revised project plan?
-
-Result: a revised plan as a web page. It covered what changed from the brief, scope (build / mock-up only / not doing), a 6-step build order, the review checks, demo applicants, assumptions, and questions for Invest Detroit.
-
-**4. Plan as a PDF**
-> In PDF form please.
-
-Result: the same plan as a 6-page PDF for sharing.
-
-## 2. Building the replica page
-
-**5. Start the replica**
-> Can you start by building the replica starting page that we will be trying to integrate the AI assistant in? Show me what it would look like.
-
-Result: we stopped this attempt partway through so we could provide the real form first.
-
-**6. Paste the real form**
-> *(Pasted the full page source of investdetroit.com/need-support.)* How about now?
+**1. Build the replica from the real form**
+> Build the replica of Invest Detroit's "Need Support?" page that we will add the AI assistant to. *(Pasted the full page source of investdetroit.com/need-support.)*
 
 Result: a replica of the "Need Support?" page with every section and question of the Real Estate/C&I In-Take Form, in the original order. Follow-up questions appear only when they apply, and required fields are checked on Submit. A "Fill with sample applicant" button fills it with fictional data. Real staff names in one dropdown were replaced with placeholders.
 
-**7. Success pop-up** *(sent while it was being built)*
-> When pressed submit, can you just create like a popup that's like "submitted successfully" or something?
+**2. Success pop-up *(sent while it was being built)***
+> When Submit is pressed, show a pop-up that says "Submitted successfully".
 
 Result: Submit opens a "Submitted successfully" pop-up. Nothing is actually sent.
 
-**8. Keep the SSN field, greyed out** *(sent while it was being built)*
-> For the SSN number, just gray it out but don't remove it. I want it to be an exact replica.
+**3. Keep the SSN field, greyed out *(sent while it was being built)***
+> Grey out the SSN field but don't remove it, so the replica stays exact.
 
 Result: the Social Security Number field appears exactly where the real form has it, but it is disabled and can't be typed in.
 
-## 3. Publishing a test link
+## 2. Review My Application
 
-**9. Hosting questions**
-> How do I sign into here.now?
-> Where do we upload the website? Is it public to the group?
-> Will it save to my storage on my here.now account or into the Business+Tech group?
-> Could we do it without here.now for now and run it locally?
+**4. Build the review**
+> Add a review button at the bottom, above Submit, with a progress bar above it showing the steps of the review. When the bar is full, replace it with "Review successful" in green with a checkmark. Grey out Submit until the review has run.
 
-Result: explanations of how test links work (private to anyone with the link, they expire), the team dev site, and the public "Coming soon" site. Previews go into the class workspace, not personal storage. "Running locally" isn't possible from a cloud session.
-
-**10. Publish to the right place**
-> Can you make sure to put it in the right folder according to the instructions?
-
-Result: signed in to here.now and published the first test link into the class workspace.
-
-## 4. Review My Application
-
-**11. What's next**
-> According to our project plan, what is next?
-
-Result: Step 2 of the plan, the rule-based "Review My Application" button. The checks were adapted to the Real Estate form: loan vs. budget, affordable units vs. total units, and net vs. gross square footage.
-
-**12. Build the review**
-> Add a review button at the bottom above submit, and add a bar above it showing the progress bar with steps of the review. Once the progress bar is full, replace it and in green text with a checkmark say "review successful". Gray out submit until the review button is pressed and done.
-
-Result:
+Result: rule-based checks adapted to the Real Estate form (loan vs. budget, affordable units vs. total units, net vs. gross square footage), shown as:
 - A 5-step progress bar: required questions, formats, numbers adding up, project details, documents and acknowledgements.
 - A green "✓ Review successful" when nothing blocks the application.
 - Otherwise, a grouped list of issues with "Go to field" buttons.
 - Submit stays greyed out until a successful review, and greys out again if an answer changes.
 
-## 5. AI assistant
+## 3. AI assistant
 
-**13. Chat window**
-> Now add the AI assistant chatbot at the corner. If the user presses on it, the AI chatbot box will pop up. It doesn't have to work for now.
+**5. Chat window**
+> Add the AI assistant chatbot in the corner. When the user presses it, the chat box pops up. It doesn't have to work yet.
 
 Result:
 - A "Need help?" button in the corner that opens a chat window.
@@ -96,36 +43,9 @@ Result:
 - A Social Security Number warning that hides the number.
 - Placeholder replies until the AI is connected.
 
-## 6. Sharing with the team
+## 4. Getting ready for the real website
 
-**14. Check GitHub**
-> Is this pushed on GitHub?
-
-Result: confirmed all work was saved on our branch.
-
-**15. Pull request text**
-> What's a good title and description?
-
-Result: a pull request title and plain-language description covering what was added, the safety choices, what was tested and how to try it.
-
-**16. README**
-> Can you edit our README.md to make it relevant?
-
-Result: the README now explains the project, its features, how to try it, the safety choices and the plan.
-
-**17. Failed workflow**
-> Why did my here.now workflow fail? Is this something we should fix right now?
-
-Result: the repository's here.now publishing key and settings were never added during class setup, and there is no `development` branch yet. This isn't caused by our code. It needs the instructor to finish the setup.
-
-**18. This file**
-> Can you create a md summarizing the prompts I asked you to create what we have now, to the branch?
-
-Result: this file.
-
-## 7. Getting ready for the real website
-
-**19. Integration-ready architecture**
+**6. Integration-ready architecture**
 > Can you review and refactor our existing AI application pipeline so that it will be easy to integrate our features into Invest Detroit's actual website and loan application system in the future? Our current application is a prototype, but we want to design the architecture with real-world integration in mind.
 
 Result: no visible changes. Underneath:
@@ -135,13 +55,8 @@ Result: no visible changes. Underneath:
 - A connector reads Invest Detroit's real FormAssembly form using its actual field IDs. It never reads the SSN field.
 - 27 automated tests and an architecture guide (`docs/ARCHITECTURE.md`) were added.
 
-**20. Planning the add-on**
-> What would we need for the add-on script?
-
-Result: a plain-language list. On our side: one add-on file, styles that can't clash with Invest Detroit's site, a "fail safely" rule, a fix for translated pages, a test page, and somewhere to host the file. On Invest Detroit's side: someone to add one line to their page (in WordPress or in FormAssembly's custom-code area), privacy and security approval, a decision on what blocks Submit, an AI service, and a heads-up when they edit the form.
-
-**21. Build the add-on**
-> Build whatever pieces that we can build so far.
+**7. Build the add-on**
+> Build the add-on script that adds our features to Invest Detroit's real form page, as far as we can build it now.
 
 Result:
 - `npm run build` now also makes **one add-on file** (`dist/embed/copilot.js`). It finds Invest Detroit's FormAssembly form, adds the review panel above its Submit button and the chat button in the corner, and locks Submit until a review passes. It also blocks attempts to get around the lock.
@@ -151,8 +66,8 @@ Result:
 - A **test page** (`/embed-test/`) has a plain copy of the real form's structure. It acts out the form loading late, the form's own Submit handler, and a "Simulate Spanish translation" button.
 - A phone-layout bug where the chat button covered the form's spam-check badge was found and fixed.
 
-**22. Language dropdown** *(sent while the add-on was being built)*
-> Add a dropdown somewhere convenient on the page, perhaps on the top, that translates the page accurately into some main core languages.
+**8. Language dropdown *(sent while the add-on was being built)***
+> Add a dropdown near the top of the page that accurately translates the page into the main languages.
 
 Result:
 - A language dropdown in the header with **English, Español, العربية (Arabic) and বাংলা (Bengali)**, the same languages Invest Detroit's own site offers.
@@ -163,19 +78,14 @@ Result:
 - A note on translated pages says they were drafted with AI and not yet checked by a professional translator.
 - The add-on follows the language of whatever page it's on.
 
-**23. Keep this file current** *(sent while the language work was being built)*
-> After you are done, update our Prompt History md.
-
-Result: entries 20–23 were added to this file (and later entries are added the same way).
-
-**24. Add Chinese**
-> You forgot a Chinese option.
+**9. Add Chinese**
+> Add a Chinese option to the language dropdown.
 
 Result: **简体中文 (Simplified Chinese)** was added to the language dropdown, with a full translation of every piece of text, like the other languages. Invest Detroit's own site offers English, Spanish, Arabic and Bengali; Chinese is the team's addition.
 
-## 8. Building everything we can
+## 5. Building everything we can
 
-**25. Build what's realistic now** *(sent while Chinese was being added)*
+**10. Build what's realistic now**
 > Build as much of this application as you realistically can right now, given our current technical constraints, available resources, and existing codebase.
 
 Result: everything in the plan that doesn't need an AI key or Invest Detroit's approval.
@@ -195,7 +105,7 @@ Result: everything in the plan that doesn't need an AI key or Invest Detroit's a
 
 Still needs other people: an AI key (instructor), approval of the field guide and translations (Invest Detroit), and installing the add-on on their site.
 
-**26. Tidy the layout** *(with a screenshot of the checklist)*
+**11. Tidy the layout *(with a screenshot of the checklist)***
 > Change these from checkboxes to compact bullet points and use consistent padding and alignment throughout the app.
 
 Result:
@@ -203,9 +113,9 @@ Result:
 - The whole app now uses one spacing scale (4, 8, 12, 16, 24, 32, 48, 64 pixels) in place of dozens of one-off numbers.
 - Every box in the form column has the same inside padding. Boxes with a colored edge stripe compensate for it, so their text starts in exactly the same place, measured on desktop and phone, in English and in right-to-left Arabic.
 
-## 9. Feedback and guardrails
+## 6. Feedback and guardrails
 
-**27. Rating card under the chat**
+**12. Rating card under the chat**
 > Add a compact, rectangular 5-star feedback extension directly beneath our existing Invest Detroit AI chatbot window… *(13 detailed requirements: position, stars, Submit disabled until a star is picked, X to dismiss, save rating + ID + time, thank-you, hide after about 2 seconds, only after real interaction, once per session, retry on failure, responsive, don't disturb the chat.)*
 
 Result:
@@ -217,7 +127,7 @@ Result:
 - The message list shortens and still scrolls, so nothing is covered.
 - Tested on desktop and phone, including failure, retry, and dismissing.
 
-**28. Guardrails** *(two follow-ups sent while it was being built)*
+**13. Guardrails *(two follow-ups sent while it was being built)***
 > Implement Chatbot Guardrails and Off-Topic Request Handling… *(scope, exact rejection message, don't be over-restrictive, ask when unclear, block prompt injection and document injection, enforce server-side, tests.)*
 >
 > I'd make sure the system distinguishes off-topic requests from risky financial advice… "Should I lie about my revenue to qualify for a loan?"…
@@ -231,22 +141,19 @@ Result: a guardrail layer, kept separate from the answering logic, decides befor
 - **Enforced on the server, not just the browser:** the same checks run in the browser and in a new reference server handler (`server/`). That handler is what blocks direct API requests. It isn't deployed, because here.now only hosts static files.
 - **Tests:** 74 guardrail tests with representative prompts. New field-guide entries were added for the finance terms the brief lists.
 
-**29. Remove "Talk to a person"** *(sent while the guardrails were being built)*
+**14. Remove "Talk to a person" *(sent while the guardrails were being built)***
 > As you work on the AI chatbot, remove "Talk to a person" option.
 
 Result: the button and contact card were removed. The chat still gives Invest Detroit's contact details when it can't answer.
 
-**30. Keep this file current**
-> After you are done, update prompt history.
+**15. Fix the rating card not showing *(with a screenshot)***
+> The rating feature isn't showing up. Fix it so the card appears.
 
-Result: entries 27–30.
+Result: the card only appeared after two real answers, and the replies in the screenshot were both clarifying questions. "Where do I start?" was also wrongly treated as unclear. Fixed:
+- The chat now answers "Where do I start?", "How does this work?" and "What do I do first?" (also in the other four languages) with a step-by-step guide.
+- The rating card now appears after 2 messages and at least 1 real answer.
 
-**31. Rating card not showing** *(with a screenshot)*
-> currently i do not see the rating feature added
-
-Result: the card only appeared after two real answers, and the screenshot's replies were both clarifying questions. "Where do I start?" was also wrongly treated as unclear. A fix was started, then paused at the team's request, and later saved (see entry 33).
-
-**32. New banner** *(with the original photo and a mockup)*
+**16. New banner *(with the original photo and a mockup)***
 > Update our need support banner to look like the above.
 
 Result: the banner is now the full-width photo of volunteers painting a Detroit street, with "Need Support?" in white, bold condensed type (Barlow Condensed) on a yellow box. The box sits at the bottom left, overlapping the photo's lower edge and lined up with the page content. Checked on desktop, phone and right-to-left Arabic.
@@ -255,33 +162,12 @@ Two things to check before the public reveal:
 - White on yellow is hard to read for people with low vision, so dark text may be a better choice.
 - The photo shows identifiable people, including children, in a public repository, so it needs permission before going public.
 
-**33. Save everything** *(the repository's automatic check, not a typed prompt)*
-> There are uncommitted changes in the repository. Please commit and push these changes to the remote branch.
+## 7. Using Invest Detroit's documents
 
-Result: the paused fix from entry 31 passed all 144 tests and was saved and pushed.
-- The chat now answers "Where do I start?", "How does this work?" and "What do I do first?" (also in the other four languages) with a step-by-step guide.
-- The rating card now appears after 2 messages and at least 1 real answer.
-- Both are saved but not yet on the test link.
+**17. Answer from Invest Detroit's documents and quote published rates**
+> Use these four Invest Detroit documents (Lending Process & Closing Guide, Real Estate Support flyer, Small Business Support flyer, Who is Invest Detroit) to make the assistant more accurate. You may quote published rates and fees; treat these as public documents. Also edit the info tips for each question so they're more relevant with the new information.
 
-**34. Keep this file current**
-> update prompt history md
-
-Result: entries 31–34 were updated and added.
-
-**35. Team dev site and pull request**
-> I have added the development branch. You may proceed with any deployment/production workflow run issues.
-
-Result: the work was combined with the team's `development` branch and opened as a pull request for teammates to review. The automatic dev-site deploy was stuck waiting because the here.now key (`HERENOW_API_KEY`) hasn't been added to the repository's GitHub settings yet. Only the instructor can add it. Follow-ups ("Where is the HERENOW_API_KEY located?", "Is the issue that we are deploying manually?") were answered: test links are fine; only the automatic dev-site deploy needs the key.
-
-**36. Use Invest Detroit's own documents**
-> I've now gathered four Invest Detroit documents (Lending Process & Closing Guide, Real Estate Support flyer, Small Business Support flyer, Who is Invest Detroit) ... I'm considering using RAG ... recommend ...
-
-Result: Claude recommended against a full RAG search system for now. The four documents total only about 3,000 words, so short, hand-checked "knowledge entries" with sources are more accurate and easier for staff to approve. Claude also suggested tagging each fact by program, so Small Business rules are never shown as Real Estate rules. Other suggestions: review tips, a "What happens next" timeline, a program finder, and test questions with known answers.
-
-**37. Quote published rates and improve every help tip**
-> You may quote published rate and fees, and you can assume these are public documents. Something extra you can do with it is also editing our info tips for each question to make them more relevant with the extra information we have now.
-
-Result:
+Result: instead of a full document search system (RAG), the facts were written as short, sourced "knowledge entries" tagged by program, because the four documents total only about 3,000 words.
 - The chat now answers about 20 new kinds of questions from the documents, each with its source. Examples: how long the process takes, underwriting, site visits, term sheets and commitment letters, the closing checklist, construction timing, how money is paid out, and what happens after closing. It also covers loan sizes, terms, collateral, who can apply, which program fits, and who Invest Detroit is.
 - Asking about rates or fees now gives the published ranges: 8%–9.5% pricing and 1%–3% fees for Real Estate, labeled "subject to change". "Will I be approved?" and "What rate will I get?" still go to the team.
 - The help tips for each question were rewritten with the new facts, keeping the official form wording unchanged. There are new tips for tax returns, bank statements, "previous client" and "Real Estate team member".
@@ -292,8 +178,8 @@ Result:
   - The two flyers have no direct links yet.
   - The "Who is Invest Detroit?" sheet lists an older address (600 Renaissance Center). The flyers' 950 Selden Street is used instead.
 
-**38. Research Invest Detroit's website and other sources**
-> In addition to the four documents I've provided, please research Invest Detroit's official website and any other relevant, credible online resources that could improve our AI assistant.
+**18. Add research from Invest Detroit's website**
+> Besides the four documents, research Invest Detroit's official website and other credible online sources, and add what would improve the assistant.
 
 Result: the cloud session can't open investdetroit.com or huduser.gov directly (blocked by its network settings), so Claude researched through web search.
 - New chat answers:
@@ -304,13 +190,8 @@ Result: the cloud session can't open investdetroit.com or huduser.gov directly (
 - The equipment review tip now mentions both the C&I and Small Business programs.
 - `docs/RESEARCH-NOTES.md` lists every source and what was added. It also lists conflicts for staff to confirm, such as a 2023 sheet showing 6%–8% pricing versus 8%–9.5% on the newer flyer. Detroit's AMI figures were found but held back until they can be checked at HUD.
 
-**39. A research prompt for another agent**
-> Generate a prompt, and I'll have another agent conduct the research.
-
-Result: Claude wrote a self-contained research brief for a second agent. It covered what we already knew, the conflicts to resolve, priority questions (programs, HUD income limits, financial terms, Michigan and Detroit how-tos), source rules, and an output format that plugs into the assistant.
-
-**40. Add the research, with the four documents first**
-> (Pasted the other agent's knowledge base.) ... Note: 4 document I sent should have priority.
+**19. Add a second research brief, keeping the four documents first**
+> Add this research knowledge base (from a second research agent) to the assistant. The four documents I sent should have priority wherever they disagree.
 
 Result:
 - New chat answers:
@@ -320,71 +201,22 @@ Result:
 - Two claims were corrected: we can't say demographic answers "aren't a test", and what counts as equity isn't published.
 - Where the research disagreed with the four documents, the documents were kept: timeline, 501(c)(3), impact figures, rates and address. A test now checks this. `docs/RESEARCH-NOTES.md` lists every conflict for Invest Detroit staff.
 
-**41. Should the AI review uploaded PDFs?**
-> Do you think it would be a good idea to enhance our existing AI assistant so it can review PDFs uploaded by applicants? ... Don't implement anything yet.
+## 8. Upload tips
 
-Follow-ups: "What if we just have the AI check if there's a mismatch, but never save anything?", "Is there a better alternative?", "What is the point of this, if we already have a box asking for total budget?"
+**20. Warnings before each upload**
+> Add a short warning-style note right before each upload button, reminding applicants what to check in their file. No checklist, and add a small warning label before the text.
 
-Result: no code was written. Claude's assessment:
-- Document checks are valuable.
-- Sending personal financial documents to an AI is a decision for Invest Detroit's compliance staff. "Never save" isn't enough, because sending a file is already sharing it.
-- PDFs are often unreliable to read.
-- Asking applicants to retype budget totals would mostly repeat questions the form already has.
-- The agreed approach is a short reminder before each upload that uses the numbers the applicant already entered.
-
-**42. Reminders before each upload**
-> Okay, I like this idea. Just add the reminders and warnings for users before they upload. ... Just make it a warning style text, don't need a checklist. ... Add a small warning label right before the text starts.
-
-Result: each required upload now has a short yellow "Warning" note above its button.
+Result: instead of having an AI read uploaded files (which raises privacy questions for a lender), each required upload now has a short yellow "Warning" note above its button.
 - **Project plan:** what to cover, including that construction starts only after closing.
 - **Development budget:** uses the applicant's own numbers ("make sure this budget totals $1,450,000 ... and shows the Invest Detroit loan as $600,000"). If the total budget is blank, it asks them to enter it first.
 - **Team list:** each person's name, role and experience.
 - **Supporting documents:** one note asking applicants to check every page is readable, and never to send tax returns or bank statements by email.
 - Nothing reads the files. Every warning is in all five languages.
 
-**43. Make the upload notes friendlier**
-> I think the "Warning" is too alarming. Instead, I suggest rebranding it to "TIP" and make it collapsible so it's easier on the eyes. I think blue is a good color.
+**21. Make the upload notes friendlier**
+> "Warning" is too alarming. Rename it "TIP", make it collapsible so it's easier on the eyes, and make it blue.
 
 Result: each upload note is now a single blue line, "TIP · What to check before uploading", that opens when tapped and is closed by default. The text inside is unchanged, including the applicant's own budget and loan numbers. Translated into all five languages.
-
-**44. A one-page update for Invest Detroit**
-> I'm going to send an email over to the Invest Detroit Team. Construct a compact pdf, briefly listing all our new features, and anything you deem relevant. However, do not make it super lengthy.
-
-Follow-up: "Remove the what we need from your team because I do not want to put pressure on the team. Instead, replace it with what we already have implemented, like in the backend..."
-
-Result: a one-page PDF in Invest Detroit's yellow. It covers:
-- what the copilot does, and the test link;
-- the new features (review, assistant, five languages, smaller helpers);
-- a privacy note;
-- an "Already built behind the scenes" table: knowledge base, review engine, guardrails, readiness for a real AI, the add-on for their site, translations, and automated testing.
-
-The PDF was shared in the chat, not added to the project.
-
-**45. A fact-checking page**
-> Build an extra page, with more specifics of the facts we have used as part of our Knowledge Base so it is easier for the team to fact-check... include any more specifics of our backend, helping the team better understand what constraints are built properly or not properly.
-
-Result: a second page, "Facts the assistant uses, and how it is constrained". It lists every figure the assistant quotes, grouped by source:
-- Real Estate flyer, Small Business flyer, lending guide, and "Who is Invest Detroit?";
-- Invest Detroit's website;
-- government sources;
-- the review rule thresholds.
-
-It also has two short lists: the safeguards that are built and tested, and the known limits. For example, the chat matches keywords and isn't AI yet, and facts must be updated by hand when a flyer changes.
-
-**46. Adding new documents more easily**
-> Is there a more streamlined process for incorporating new documents
-
-Result: no code was written. Claude recommended:
-- keeping every key number in one "facts sheet", so a flyer change is a one-line update across all answers and languages;
-- a repeatable routine: drop new files in a folder, get a short report of new, changed and conflicting facts, approve, then apply and test;
-- later, letting Invest Detroit staff edit the sheet themselves.
-
-A document search system (RAG) and automatic checks for changed flyers aren't needed yet.
-
-**47. Keep this file current**
-> update our prompt history
-
-Result: entries 44–47 were added.
 
 ## Tips from this build
 
