@@ -347,6 +347,45 @@ Result: each required upload now has a short yellow "Warning" note above its but
 
 Result: each upload note is now a single blue line, "TIP · What to check before uploading", that opens when tapped and is closed by default. The text inside is unchanged, including the applicant's own budget and loan numbers. Translated into all five languages.
 
+**44. A one-page update for Invest Detroit**
+> I'm going to send an email over to the Invest Detroit Team. Construct a compact pdf, briefly listing all our new features, and anything you deem relevant. However, do not make it super lengthy.
+
+Follow-up: "Remove the what we need from your team because I do not want to put pressure on the team. Instead, replace it with what we already have implemented, like in the backend..."
+
+Result: a one-page PDF in Invest Detroit's yellow. It covers:
+- what the copilot does, and the test link;
+- the new features (review, assistant, five languages, smaller helpers);
+- a privacy note;
+- an "Already built behind the scenes" table: knowledge base, review engine, guardrails, readiness for a real AI, the add-on for their site, translations, and automated testing.
+
+The PDF was shared in the chat, not added to the project.
+
+**45. A fact-checking page**
+> Build an extra page, with more specifics of the facts we have used as part of our Knowledge Base so it is easier for the team to fact-check... include any more specifics of our backend, helping the team better understand what constraints are built properly or not properly.
+
+Result: a second page, "Facts the assistant uses, and how it is constrained". It lists every figure the assistant quotes, grouped by source:
+- Real Estate flyer, Small Business flyer, lending guide, and "Who is Invest Detroit?";
+- Invest Detroit's website;
+- government sources;
+- the review rule thresholds.
+
+It also has two short lists: the safeguards that are built and tested, and the known limits. For example, the chat matches keywords and isn't AI yet, and facts must be updated by hand when a flyer changes.
+
+**46. Adding new documents more easily**
+> Is there a more streamlined process for incorporating new documents
+
+Result: no code was written. Claude recommended:
+- keeping every key number in one "facts sheet", so a flyer change is a one-line update across all answers and languages;
+- a repeatable routine: drop new files in a folder, get a short report of new, changed and conflicting facts, approve, then apply and test;
+- later, letting Invest Detroit staff edit the sheet themselves.
+
+A document search system (RAG) and automatic checks for changed flyers aren't needed yet.
+
+**47. Keep this file current**
+> update our prompt history
+
+Result: entries 44–47 were added.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.
