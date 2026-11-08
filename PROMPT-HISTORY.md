@@ -264,6 +264,11 @@ Result:
 - **"Before you start"** now opens with a highlighted line saying the form can't be saved. Three cards follow, each with an icon: required documents, "Helpful if you have them" (marked Optional), and the numbers you'll be asked for. The "Prefer not to say" note became a small info line.
 - Works on phones (cards stack) and in all five languages, including right-to-left Arabic.
 
+**25. Start "Before you start" closed**
+> Make "Before you start" begin collapsed; right now it opens expanded.
+
+Result: the "Before you start" panel now loads closed, as a single line, and opens when tapped.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

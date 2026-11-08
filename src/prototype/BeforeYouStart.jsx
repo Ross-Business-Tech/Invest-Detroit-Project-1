@@ -26,7 +26,7 @@ function Card({ icon, title, tag, tone, items }) {
 export default function BeforeYouStart() {
   const { t } = useI18n()
   return (
-    <details className="before-you-start" open>
+    <details className="before-you-start">
       <summary>{t('Before you start')}</summary>
       <p className="bys-callout"><Icon name="clock" size={20} />{t('This form can’t be saved partway through, so it helps to have these ready before you begin.')}</p>
       <div className="bys-grid">
