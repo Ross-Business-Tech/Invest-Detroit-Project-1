@@ -2,10 +2,10 @@
 // Copilot logic lives in src/copilot (no UI); reusable screens live in src/components.
 import { useEffect, useState } from 'react'
 import IntakeForm from './prototype/IntakeForm.jsx'
+import HowItWorks from './prototype/HowItWorks.jsx'
 import ChatAssistant from './components/ChatAssistant.jsx'
 import I18nProvider from './components/I18nProvider.jsx'
 import LanguagePicker from './components/LanguagePicker.jsx'
-import RichText from './components/RichText.jsx'
 import { useI18n } from './components/i18nContext.js'
 import { localeInfo, localeFromLang } from './copilot/i18n/index.js'
 import { createAssistant } from './copilot/assistant.js'
@@ -64,15 +64,7 @@ function Page({ locale, onLocaleChange }) {
       </section>
 
       <main>
-        <section className="band how-it-works">
-          <div className="inner">
-            <h3>{t('How it works')}</h3>
-            <p>{t('Invest Detroit works with developers, business owners, entrepreneurs, and startup founders to help accomplish our mission to be a financial catalyst for economic growth in underserved communities and markets in Detroit and the region. We believe in one Detroit for all and welcome funding interest from Detroit residents, entrepreneurs of color, women, and immigrants.')}</p>
-            <p><RichText text={t('For more information on our **real estate** and **industrial** offerings, please fill out the contact form below with information about your project and someone from our team will be in touch with you.')} /></p>
-            <p><RichText text={t('For **small business inquiries**, please visit our [small business page](https://investdetroit.com/small-business/) and fill out the inquiry form.')} /></p>
-            <p><RichText text={t('For more information on **ID Ventures**, our venture capital arm, please [click here](https://idventures.com/).')} /></p>
-          </div>
-        </section>
+        <HowItWorks />
 
         <section className="band form-band" id="form">
           <div className="band-title"><span>{t('Get In Touch')}</span></div>

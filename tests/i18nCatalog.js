@@ -9,6 +9,7 @@ import { NO_MATCH } from '../src/copilot/guideTransport.js'
 import { OUT_OF_SCOPE_MESSAGE, INTEGRITY_MESSAGE, CLARIFY_MESSAGE } from '../src/copilot/guardrails/messages.js'
 import { NUMBERS } from '../src/prototype/beforeYouStartText.js'
 import { UPLOAD_TEXT } from '../src/copilot/uploadTips.js'
+import { HOW_IT_WORKS_TEXT } from '../src/prototype/howItWorksText.js'
 import { MONEY_TEXT, EQUITY_TEXT, ZIP_TEXT, FILE_TEXT, SECTION_SHORT } from '../src/copilot/formHelpers.js'
 
 // Organization names stay in their original form in every language.
@@ -49,7 +50,7 @@ export function reviewStrings() {
 export function uploadStrings() {
   return new Set([
     ...Object.values(UPLOAD_TEXT), ...Object.values(MONEY_TEXT), EQUITY_TEXT, ZIP_TEXT,
-    ...Object.values(FILE_TEXT), ...Object.values(SECTION_SHORT),
+    ...Object.values(FILE_TEXT), ...Object.values(SECTION_SHORT), ...HOW_IT_WORKS_TEXT,
   ])
 }
 

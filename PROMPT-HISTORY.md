@@ -254,6 +254,16 @@ Result: all ten were added, with one change on purpose.
 
 Result: each section now shows a small number badge instead of "8 left" (the full wording still appears on hover and for screen readers). Three names were shortened: "Project", "Business" and "Sign-off". The list fits on one row on desktop, and on phones it's one row you swipe sideways.
 
+**24. Make the top of the page easier to scan** *(with a screenshot)*
+> This section looks like an essay and is really compact. Make it more visually appealing; imagine you're someone opening this form.
+
+Result:
+- **"How it works"** keeps Invest Detroit's mission line as a short intro, then adds two parts:
+  - **Which form is right for you?** Three cards with icons. *Real estate & industrial* is marked "This form" and has a "Start the form" button that jumps to the form. *Small business* and *ID Ventures* each link to their own pages.
+  - **How applying works:** four numbered steps (gather your documents, fill in the form, review and submit, hear from the team).
+- **"Before you start"** now opens with a highlighted line saying the form can't be saved. Three cards follow, each with an icon: required documents, "Helpful if you have them" (marked Optional), and the numbers you'll be asked for. The "Prefer not to say" note became a small info line.
+- Works on phones (cards stack) and in all five languages, including right-to-left Arabic.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.
