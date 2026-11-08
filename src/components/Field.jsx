@@ -1,9 +1,11 @@
 // Draws one question from the field definition. Used by the prototype form only;
 // on Invest Detroit's site the real form draws its own questions.
 // Text is translated for display only: answers keep the English option values.
+import { useLayoutEffect, useRef } from 'react'
 import { useI18n } from './i18nContext.js'
 import RichText from './RichText.jsx'
 import { FIELD_GUIDE } from '../copilot/fieldGuide.js'
+import { formatMoneyInput, moneyNote, checkFile } from '../copilot/formHelpers.js'
 
 /** Collapsible tip shown before an upload button (see copilot/uploadTips.js). Closed by default. */
 export function UploadTips({ tips, id }) {
@@ -70,10 +72,62 @@ function Hint({ field }) {
   return field.hint ? <p className="hint" id={`${field.id}-hint`}>{t(field.hint)}</p> : null
 }
 
+/**
+ * Money box that adds thousands commas as you type ("1450000" -> "1,450,000") and keeps the
+ * cursor in place. Stores the formatted text; the review reads it as a number.
+ */
+function MoneyInput({ inputProps, value, onChange, id }) {
+  const ref = useRef(null)
+  const caret = useRef(null)
+  const shown = formatMoneyInput(value)
+  useLayoutEffect(() => {
+    if (caret.current === null || !ref.current) return
+    // Put the cursor after the same number of digits it was after before formatting.
+    let left = caret.current
+    let i = 0
+    while (i < shown.length && left > 0) { if (/[\d.]/.test(shown[i])) left--; i++ }
+    ref.current.setSelectionRange(i, i)
+    caret.current = null
+  })
+  return (
+    <input
+      {...inputProps}
+      ref={ref}
+      value={shown}
+      onChange={(e) => {
+        const el = e.target
+        caret.current = el.value.slice(0, el.selectionStart ?? el.value.length).replace(/[^\d.]/g, '').length
+        onChange(id, formatMoneyInput(el.value))
+      }}
+    />
+  )
+}
+
+/** Short notes under a field: live check results, calculations, file checks. */
+function Notes({ id, notes }) {
+  const { t } = useI18n()
+  const list = (notes || []).filter(Boolean)
+  if (!list.length) return null
+  return list.map((n, i) => (
+    <p key={i} className={`field-note ${n.level || 'calc'}`} id={i === 0 ? `${id}-note` : undefined}>
+      {n.level === 'warning' && <span aria-hidden="true">⚠ </span>}
+      {t(n.text, n.params)}
+    </p>
+  ))
+}
+
 // Numbers, codes and email addresses stay left-to-right even on Arabic pages.
 const LTR_TYPES = new Set(['email', 'tel', 'state', 'zip', 'money', 'number', 'integer'])
 
-export default function Field({ field, value, error, onChange, onHelp, tips }) {
+/**
+ * @param {object} props
+ * @param {{ level?: 'blocker'|'warning'|'calc', text: string, params?: object }[]} [props.notes]
+ *   live notes shown under the field (checked when the applicant leaves it)
+ * @param {boolean} [props.readOnly]
+ * @param {(id: string) => void} [props.onBlur]
+ * @param {{ name: string, size: number }} [props.file]  the chosen file's name and size (never its contents)
+ */
+export default function Field({ field, value, error, onChange, onHelp, tips, notes, readOnly, onBlur, file }) {
   const { t } = useI18n()
   const id = field.id
   const errId = `${id}-error`
@@ -81,11 +135,16 @@ export default function Field({ field, value, error, onChange, onHelp, tips }) {
     id,
     name: id,
     'aria-invalid': error ? 'true' : undefined,
-    'aria-describedby': [field.hint ? `${id}-hint` : '', error ? errId : ''].filter(Boolean).join(' ') || undefined,
+    'aria-describedby': [field.hint ? `${id}-hint` : '', error ? errId : '', notes?.some(Boolean) ? `${id}-note` : ''].filter(Boolean).join(' ') || undefined,
     'aria-required': field.required ? 'true' : undefined,
   }
-  const errorEl = error ? <p className="error" id={errId}>{t(error)}</p> : null
-  const cls = `field w-${field.width || 'full'}${error ? ' has-error' : ''}`
+  // A review error wins; otherwise show the live notes (an error from a live check looks the same).
+  const errorEl = error
+    ? <p className="error" id={errId}>{t(error)}</p>
+    : <Notes id={id} notes={(notes || []).map((n) => n && (n.level === 'blocker' ? { ...n, level: 'error' } : n))} />
+  const hasError = !!error || !!notes?.some((n) => n?.level === 'blocker')
+  const cls = `field w-${field.width || 'full'}${hasError ? ' has-error' : ''}`
+  const blurProps = onBlur ? { onBlur: () => onBlur(id) } : {}
 
   switch (field.type) {
     case 'subheading':
@@ -102,7 +161,7 @@ export default function Field({ field, value, error, onChange, onHelp, tips }) {
       )
     case 'textarea':
       return (
-        <div data-field-id={id} className={cls}>
+        <div data-field-id={id} className={cls} {...blurProps}>
           <LabelRow field={field} htmlFor={id} onHelp={onHelp} />
           <textarea {...common} rows={5} maxLength={field.maxLength} value={value || ''} onChange={(e) => onChange(id, e.target.value)} />
           {field.maxLength && <p className="hint counter">{(value || '').length}/{field.maxLength}</p>}
@@ -111,7 +170,7 @@ export default function Field({ field, value, error, onChange, onHelp, tips }) {
       )
     case 'radio':
       return (
-        <div data-field-id={id} className={cls} role="radiogroup" aria-labelledby={`${id}-label`} id={id}>
+        <div data-field-id={id} className={cls} {...blurProps} role="radiogroup" aria-labelledby={`${id}-label`} id={id}>
           <LabelRow field={field} as="p" onHelp={onHelp} />
           <div className={`choices ${field.layout === 'vertical' ? 'vertical' : 'horizontal'}`}>
             {field.options.map((opt) => (
@@ -128,7 +187,7 @@ export default function Field({ field, value, error, onChange, onHelp, tips }) {
       const list = Array.isArray(value) ? value : []
       const toggle = (opt) => onChange(id, list.includes(opt) ? list.filter((o) => o !== opt) : [...list, opt])
       return (
-        <div data-field-id={id} className={cls} role="group" aria-labelledby={`${id}-label`} id={id}>
+        <div data-field-id={id} className={cls} {...blurProps} role="group" aria-labelledby={`${id}-label`} id={id}>
           <LabelRow field={field} as="p" onHelp={onHelp} />
           <Hint field={field} />
           <div className="choices grid">
@@ -145,7 +204,7 @@ export default function Field({ field, value, error, onChange, onHelp, tips }) {
     }
     case 'select':
       return (
-        <div data-field-id={id} className={cls}>
+        <div data-field-id={id} className={cls} {...blurProps}>
           <LabelRow field={field} htmlFor={id} onHelp={onHelp} />
           <select {...common} value={value || ''} onChange={(e) => onChange(id, e.target.value)}>
             <option value="">{t('Please select...')}</option>
@@ -160,8 +219,9 @@ export default function Field({ field, value, error, onChange, onHelp, tips }) {
         <div data-field-id={id} className={cls}>
           <LabelRow field={field} htmlFor={id} onHelp={onHelp} />
           <UploadTips tips={tips} id={`${id}-tips`} />
-          <input {...common} aria-describedby={[tips ? `${id}-tips` : '', common['aria-describedby']].filter(Boolean).join(' ') || undefined} type="file" onChange={(e) => onChange(id, e.target.files?.[0]?.name || '')} />
+          <input {...common} aria-describedby={[tips ? `${id}-tips` : '', common['aria-describedby']].filter(Boolean).join(' ') || undefined} type="file" onChange={(e) => { const f = e.target.files?.[0]; onChange(id, f?.name || '', f ? { name: f.name, size: f.size } : null) }} />
           {value && <p className="hint">{t('Selected: {file} (stays on your device)', { file: value })}</p>}
+          {value && file?.name === value && <Notes id={`${id}-file`} notes={checkFile(id, file).map((c) => ({ ...c, level: c.level === 'blocker' ? 'error' : c.level === 'info' ? 'calc' : c.level }))} />}
           <Hint field={field} />
           {errorEl}
         </div>
@@ -179,7 +239,7 @@ export default function Field({ field, value, error, onChange, onHelp, tips }) {
     default: {
       const inputProps = {
         email: { type: 'email', autoComplete: 'email' },
-        tel: { type: 'tel', maxLength: 12 },
+        tel: { type: 'tel', maxLength: 16, inputMode: 'tel' },
         state: { type: 'text', maxLength: 2, autoCapitalize: 'characters' },
         zip: { type: 'text', maxLength: 5, inputMode: 'numeric' },
         money: { type: 'text', maxLength: 12, inputMode: 'decimal' },
@@ -187,18 +247,24 @@ export default function Field({ field, value, error, onChange, onHelp, tips }) {
         integer: { type: 'text', inputMode: 'numeric' },
       }[field.type] || { type: 'text', maxLength: field.maxLength }
       return (
-        <div data-field-id={id} className={cls}>
+        <div data-field-id={id} className={`${cls}${readOnly ? ' is-readonly' : ''}`} {...blurProps}>
           <LabelRow field={field} htmlFor={id} onHelp={onHelp} />
           <div className={field.type === 'money' ? 'money' : undefined}>
-            <input
-              {...common}
-              {...inputProps}
-              dir={LTR_TYPES.has(field.type) ? 'ltr' : undefined}
-              autoComplete={field.autoComplete || inputProps.autoComplete}
-              value={value || ''}
-              onChange={(e) => onChange(id, field.type === 'state' ? e.target.value.toUpperCase() : e.target.value)}
-            />
+            {field.type === 'money' ? (
+              <MoneyInput id={id} value={value} onChange={onChange} inputProps={{ ...common, ...inputProps, maxLength: 16, dir: 'ltr', readOnly }} />
+            ) : (
+              <input
+                {...common}
+                {...inputProps}
+                readOnly={readOnly}
+                dir={LTR_TYPES.has(field.type) ? 'ltr' : undefined}
+                autoComplete={field.autoComplete || inputProps.autoComplete}
+                value={value || ''}
+                onChange={(e) => onChange(id, field.type === 'state' ? e.target.value.toUpperCase() : e.target.value)}
+              />
+            )}
           </div>
+          {field.type === 'money' && !error && <Notes id={`${id}-amount`} notes={[moneyNote(value)]} />}
           <Hint field={field} />
           {errorEl}
         </div>

@@ -9,13 +9,14 @@ import { NO_MATCH } from '../src/copilot/guideTransport.js'
 import { OUT_OF_SCOPE_MESSAGE, INTEGRITY_MESSAGE, CLARIFY_MESSAGE } from '../src/copilot/guardrails/messages.js'
 import { NUMBERS } from '../src/prototype/beforeYouStartText.js'
 import { UPLOAD_TEXT } from '../src/copilot/uploadTips.js'
+import { MONEY_TEXT, EQUITY_TEXT, ZIP_TEXT, FILE_TEXT, SECTION_SHORT } from '../src/copilot/formHelpers.js'
 
 // Organization names stay in their original form in every language.
 const PROPER_NOUN_LISTS = new Set(['other_lenders', 'community_partners'])
 
 export const VALIDATION_MESSAGES = [
   'This field is required.', 'Please enter a valid email address.', 'Please enter a valid state abbreviation.',
-  'Please enter a 5 digit zip code.', 'Please enter a number.', 'Please enter a whole number.',
+  'Please enter a 5 digit zip code.', 'Please enter a number.', 'Please enter a whole number.', 'Please enter a 10 digit phone number.',
 ]
 
 export function formStrings() {
@@ -46,7 +47,10 @@ export function reviewStrings() {
 }
 
 export function uploadStrings() {
-  return new Set(Object.values(UPLOAD_TEXT))
+  return new Set([
+    ...Object.values(UPLOAD_TEXT), ...Object.values(MONEY_TEXT), EQUITY_TEXT, ZIP_TEXT,
+    ...Object.values(FILE_TEXT), ...Object.values(SECTION_SHORT),
+  ])
 }
 
 export function assistantStrings() {

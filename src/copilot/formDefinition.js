@@ -323,6 +323,12 @@ export function visibleSections(values) {
   }))
 }
 
+// A U.S. phone number has 10 digits; an 11-digit number starting with 1 also counts.
+export const isUSPhone = (v) => {
+  const d = String(v ?? '').replace(/\D/g, '')
+  return d.length === 10 || (d.length === 11 && d[0] === '1')
+}
+
 const isEmpty = (val) => val === undefined || val === null || val === '' || val === false || (Array.isArray(val) && val.length === 0)
 
 // Same kinds of checks the real form runs when you press Submit.
@@ -340,7 +346,9 @@ export function validate(values) {
       if (f.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)) errors[f.id] = 'Please enter a valid email address.'
       if (f.type === 'state' && !/^[A-Z]{2}$/.test(s)) errors[f.id] = 'Please enter a valid state abbreviation.'
       if (f.type === 'zip' && !/^\d{5}$/.test(s)) errors[f.id] = 'Please enter a 5 digit zip code.'
-      if ((f.type === 'money' || f.type === 'number') && !/^\d+(\.\d+)?$/.test(s.replace(/,/g, ''))) errors[f.id] = 'Please enter a number.'
+      if (f.type === 'tel' && !isUSPhone(s)) errors[f.id] = 'Please enter a 10 digit phone number.'
+      if (f.type === 'money' && !/^\d+(\.\d+)?$/.test(s.replace(/[$,\s]/g, ''))) errors[f.id] = 'Please enter a number.'
+      if (f.type === 'number' && !/^\d+(\.\d+)?$/.test(s.replace(/,/g, ''))) errors[f.id] = 'Please enter a number.'
       if (f.type === 'integer' && !/^\d+$/.test(s)) errors[f.id] = 'Please enter a whole number.'
     }
   }

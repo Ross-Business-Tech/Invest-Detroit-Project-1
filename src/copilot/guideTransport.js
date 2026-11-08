@@ -28,7 +28,7 @@ const score = (entry, text) => (entry.keywords || []).reduce((n, k) => n + (hits
 const VAGUE = /\b(this|here|mean|means|meaning|explain)\b|what (should|do) i (put|enter|write)|esto|esta pregunta|qué significa|هذا|ماذا يعني|এটা|এর মানে|这个|这里|什么意思/i
 const isVague = (text) => VAGUE.test(text)
 
-export const NO_MATCH = 'I don\'t have an approved answer for that yet. The Invest Detroit team can help: info@investdetroit.com or 313.259.6368.'
+export const NO_MATCH = 'I can only help with this form and Invest Detroit\'s lending process, and I don\'t have an approved answer for that question. For anything else about your application, the Invest Detroit team can help: info@investdetroit.com or 313.259.6368.'
 
 function compose(entry) {
   const parts = [entry.explain]

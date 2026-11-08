@@ -206,9 +206,25 @@ Not built. ("Talk to a person" was removed from the chat at the team's request.)
 1. **The "?" button** sends `intent: 'explain_field'` and gets that question's entry: explanation, example, common mistakes and source.
 2. **Before the guide is consulted, the guardrails run** (see Guardrails). Then questions about **approval or whether the project qualifies** ("Will I be approved?", "Do I qualify?", "What rate will I get?") always get "only the Invest Detroit team decides that", plus contact details (brief: never guess). Published rate, fee, loan-size and timeline ranges are ordinary knowledge entries.
 3. **Otherwise** the reply is the entry whose keywords best match the message, with a small preference for the question the applicant is on. Phrases like "what does this mean?" use the current question. Keywords include common Spanish, Arabic, Bengali and Chinese terms.
-4. **No good match** gets "I don't have an approved answer for that yet", with contact details. The chat never makes up an answer.
+4. **No good match** gets "I can only help with this form and Invest Detroit's lending process, and I don't have an approved answer for that question", with contact details. The chat never makes up an answer.
 
 The guide is a **draft written from the public form and four Invest Detroit documents**. It is English only: on other languages, the chat shows a translated note saying so. When a real AI is connected, the same entries become the approved material it answers from. Invest Detroit should review and own it.
+
+### Form helpers (`formHelpers.js`)
+
+Framework-free helpers the prototype uses (and the add-on could reuse). They cover:
+- **Money:** formatting as people type, plus an "About $1.45 million" note.
+- **10% equity:** the math, shown next to the equity question.
+- **ZIP code:** filling in the state from a Michigan ZIP (480–499). The city is never filled in, because a ZIP doesn't decide the city, and Hamtramck and Highland Park share Detroit-area ZIPs.
+- **Files:** checked by name and size only, never opened. An empty file blocks Submit; an unusual type, a large file or a vague name like "scan001.pdf" gets a note.
+- **Progress:** done and remaining required answers per section.
+
+The phone check (10 digits) lives in `formDefinition.validate`.
+
+The prototype form also adds:
+- **Live checks:** run when an applicant leaves a question, for questions already visited. They show format problems and numbers that don't fit; blank required answers wait for the final review.
+- **"Same as home address":** a checkbox for the business address.
+- **Explain a warning:** "This is correct because…" notes on "Please double-check" items. Notes are kept per issue id and counted in the success pop-up. On Invest Detroit's real form, they would need a notes field in FormAssembly.
 
 ### Upload tips (`uploadTips.js`)
 

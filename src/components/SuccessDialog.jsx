@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useI18n } from './i18nContext.js'
 
-export default function SuccessDialog({ name, onClose, onReset }) {
+export default function SuccessDialog({ name, noteCount = 0, onClose, onReset }) {
   const { t } = useI18n()
   const closeRef = useRef(null)
   useEffect(() => {
@@ -16,6 +16,7 @@ export default function SuccessDialog({ name, onClose, onReset }) {
         <div className="modal-check" aria-hidden="true">✓</div>
         <h2 id="success-title">{t('Submitted successfully')}</h2>
         <p>{name ? t('Thank you, {name}.', { name }) : t('Thank you.')} {t('Your intake form has been received. A member of the Invest Detroit team will be in touch about next steps.')}</p>
+        {noteCount > 0 && <p className="modal-notes">{noteCount === 1 ? t('Your note explaining 1 review item was included.') : t('Your notes explaining {count} review items were included.', { count: noteCount })}</p>}
         <section className="next-steps" aria-labelledby="next-steps-title">
           <h3 id="next-steps-title">{t('What happens next')}</h3>
           <ol>

@@ -2,16 +2,40 @@
 // It only displays a review session's state, so it works the same on the prototype form
 // or mounted next to Invest Detroit's real form.
 
+import { useState } from 'react'
 import { REVIEW_CHECKS, REVIEW_GROUPS as GROUPS } from '../copilot/review.js'
 import { FIELDS_BY_ID } from '../copilot/formDefinition.js'
 import { useI18n } from './i18nContext.js'
 
 
+export const NOTE_MAX = 300
+
 /**
- * @param {{ state: object, onRun: () => void, onGoToField: (fieldId: string) => void }} props
- *   state is a review session state (see copilot/reviewSession.js)
+ * "This is correct because…": lets the applicant explain a "Please double-check" item instead of
+ * changing an answer that is right. The note travels with the application.
  */
-export default function ReviewPanel({ state, onRun, onGoToField }) {
+function ExplainNote({ issueId, note = '', onNote }) {
+  const { t } = useI18n()
+  const [open, setOpen] = useState(!!note)
+  const boxId = `note-${issueId}`
+  if (!open) {
+    return <button type="button" className="explain-btn" onClick={() => setOpen(true)}>{t('My answer is correct: explain why')}</button>
+  }
+  return (
+    <div className="explain">
+      <label htmlFor={boxId}>{t('This is correct because…')}</label>
+      <textarea id={boxId} rows={2} maxLength={NOTE_MAX} value={note} onChange={(e) => onNote(issueId, e.target.value)} />
+      <span className="explain-help">{note.trim() ? <><span aria-hidden="true">✓ </span>{t('Your note will be sent with your application.')}</> : t('Add a short note. It will be sent with your application.')}</span>
+    </div>
+  )
+}
+
+/**
+ * @param {{ state: object, onRun: () => void, onGoToField: (fieldId: string) => void,
+ *   notes?: Record<string, string>, onNote?: (issueId: string, text: string) => void }} props
+ *   state is a review session state (see copilot/reviewSession.js). Without onNote, no notes.
+ */
+export default function ReviewPanel({ state, onRun, onGoToField, notes = {}, onNote }) {
   const { t } = useI18n()
   const { status, step, issues, stale, canSubmit } = state
   const blockers = issues.filter((i) => i.blocking)
@@ -61,11 +85,12 @@ export default function ReviewPanel({ state, onRun, onGoToField }) {
                 <h4><span className="badge" aria-hidden="true">{icon}</span>{t(title)} ({list.length})</h4>
                 <ul>
                   {list.map((i) => (
-                    <li key={i.id}>
+                    <li key={i.id} className={notes[i.id]?.trim() ? 'explained' : undefined}>
                       <div className="issue-text">
                         <strong>{t(i.title_template, i.params)}</strong>
                         <span>{t(i.message_template, i.params)}</span>
                         {FIELDS_BY_ID[i.field_id]?.sectionTitle && <span className="issue-section">{t(FIELDS_BY_ID[i.field_id].sectionTitle)}</span>}
+                        {onNote && key === 'warning' && <ExplainNote issueId={i.id} note={notes[i.id]} onNote={onNote} />}
                       </div>
                       <button type="button" className="go-btn" onClick={() => onGoToField(i.field_id)}>{t('Go to field')}</button>
                     </li>

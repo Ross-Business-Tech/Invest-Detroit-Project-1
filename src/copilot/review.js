@@ -23,6 +23,7 @@
 
 import { FIELDS_BY_ID, visibleSections, validate } from './formDefinition.js'
 import { fill } from './text.js'
+import { checkFile } from './formHelpers.js'
 
 export const REVIEW_CHECKS = [
   { id: 'required', label: 'Checking required questions' },
@@ -85,6 +86,7 @@ export const REVIEW_TEXT = {
   tinyBudgetMessage: 'You entered {budget} as the total budget. That is unusually small for a real estate project. Did you mean to enter it in thousands, or leave out some zeros?',
   shortSummaryTitle: 'Your summary could say more',
   shortSummaryMessage: 'A clearer summary helps the team understand your project faster. Try to include what you will build or do, where, and roughly when.',
+  fileTitle: 'Check this file: {file}',
   // Tips based on Invest Detroit's program flyers and lending guide. Information only: never blocking.
   loanRangeTitle: 'Your loan request is outside the typical range',
   loanRangeMessage: 'You asked for {loan}. Invest Detroit’s Real Estate Support flyer gives a typical loan size of $150,000 to $2,500,000 (subject to change). You can still submit. It may help to talk with the team first about how your request fits.',
@@ -324,11 +326,30 @@ function summaryExperience({ values }) {
   })]
 }
 
+// ---- Uploaded files, checked by name, size and type only (never opened) -------------------
+// The prototype passes { [fieldId]: { name, size } } as values._files. On other forms it is absent.
+
+function fileChecks({ values, visibleIds }) {
+  const files = values._files || {}
+  const out = []
+  for (const [id, file] of Object.entries(files)) {
+    if (!visibleIds.has(id) || values[id] !== file?.name) continue
+    for (const c of checkFile(id, file)) {
+      out.push(issue({
+        id: `file_${c.key}_${id}`, field_id: id, check: 'documents', level: c.level,
+        category: c.level === 'blocker' ? 'invalid_document' : 'document_quality',
+        title: R.fileTitle, message: c.text, params: { file: file.name, ...(c.params || {}) },
+      }))
+    }
+  }
+  return out
+}
+
 /** Add, remove or reorder checks here. Each runs independently on the same snapshot. */
 export const RULES = [
   requiredAndFormat, loanVsBudget, affordableUnits, netVsGross, emptyTypeSections, equityGuidance, useOfFunds,
   equityConflict, ownerCounts, percentRange, tinyBudget, shortSummary,
-  loanRange, equipmentProgram, constructionTiming, summaryExperience,
+  loanRange, equipmentProgram, constructionTiming, summaryExperience, fileChecks,
 ]
 
 /**

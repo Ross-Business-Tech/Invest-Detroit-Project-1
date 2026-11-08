@@ -14,6 +14,34 @@ import { goToField } from './goToField.js'
 import BeforeYouStart from './BeforeYouStart.jsx'
 import DocSuggestionDemo from './DocSuggestionDemo.jsx'
 import { uploadTips } from '../copilot/uploadTips.js'
+import { runReview } from '../copilot/review.js'
+import { equityMath, stateForZip, ZIP_STATE, ZIP_TEXT } from '../copilot/formHelpers.js'
+import FormProgress from './FormProgress.jsx'
+
+const HOME_TO_BUSINESS = { home_address: 'business_address', home_city: 'business_city', home_state: 'business_state', home_zip: 'business_zip' }
+const BUSINESS_FIELDS = new Set(Object.values(HOME_TO_BUSINESS))
+const filled = (v) => !(v === undefined || v === null || v === '' || v === false || (Array.isArray(v) && v.length === 0))
+
+/**
+ * Checks for one-by-one feedback as the applicant leaves each question: format problems and
+ * numbers that don't fit together, for questions they have already visited. Blank required
+ * answers and documents wait for the final review, so nobody is scolded for skipping ahead.
+ */
+function liveNotesFor(values, touched) {
+  const notes = {}
+  const fmt = validate(values)
+  for (const id of touched) if (fmt[id] && filled(values[id])) notes[id] = { level: 'blocker', text: fmt[id] }
+  for (const i of runReview(values)) {
+    if (!touched.has(i.field_id) || notes[i.field_id] || i.level === 'info') continue
+    if (/^(missing_|format_|file_)/.test(i.id)) continue
+    notes[i.field_id] = { level: i.blocking ? 'blocker' : 'warning', text: i.inline_message || i.title_template, params: i.params }
+  }
+  for (const [zipId, stateId] of Object.entries(ZIP_STATE)) {
+    const st = stateForZip(values[zipId])
+    if (touched.has(zipId) && !notes[zipId] && st && values[stateId] && values[stateId] !== st) notes[zipId] = { level: 'warning', text: ZIP_TEXT }
+  }
+  return notes
+}
 
 /** Inline error text for each field a finished review blocks on. */
 function errorsFrom(issues) {
@@ -34,6 +62,11 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
   const [showErrors, setShowErrors] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [formKey, setFormKey] = useState(0)
+  const [sameAddress, setSameAddress] = useState(false)
+  // Questions the applicant has visited and left (only these get live notes).
+  const touched = useRef(new Set())
+  const [live, setLive] = useState({})
+  const [reviewNotes, setReviewNotes] = useState({})
   const [review, session] = useReviewSession(() => valuesRef.current)
   const sections = visibleSections(values)
 
@@ -46,11 +79,54 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
     }
   }), [session])
 
-  const onChange = (id, val) => {
-    setValues((v) => ({ ...v, [id]: val }))
+  const onChange = (id, val, file) => {
+    setValues((v) => {
+      const next = { ...v, [id]: val }
+      // Keep the business address in step with the home address while the box is ticked.
+      if (sameAddress && HOME_TO_BUSINESS[id]) next[HOME_TO_BUSINESS[id]] = val
+      // Fill in the state from a Michigan ZIP code when the state is still blank.
+      const stateId = ZIP_STATE[id]
+      if (stateId && !next[stateId] && stateForZip(val)) {
+        next[stateId] = stateForZip(val)
+        if (sameAddress && HOME_TO_BUSINESS[stateId]) next[HOME_TO_BUSINESS[stateId]] = next[stateId]
+      }
+      // Remember a chosen file's name and size (never its contents) for the file checks.
+      if (file !== undefined) next._files = { ...(v._files || {}), [id]: file }
+      return next
+    })
     setErrors(({ [id]: _removed, ...rest }) => rest)
+    setLive(({ [id]: _removed, ...rest }) => rest)
+    if (file !== undefined) {
+      touched.current.add(id)
+      setTimeout(() => setLive(liveNotesFor(valuesRef.current, touched.current)), 0)
+    }
     session.invalidate()
   }
+
+  // Check a question when the applicant leaves it.
+  const onBlur = (id) => {
+    touched.current.add(id)
+    // Read the latest answers after this event's state update has landed.
+    setTimeout(() => setLive(liveNotesFor(valuesRef.current, touched.current)), 0)
+  }
+
+  const toggleSameAddress = (on) => {
+    setSameAddress(on)
+    if (on) {
+      setValues((v) => {
+        const next = { ...v }
+        for (const [home, biz] of Object.entries(HOME_TO_BUSINESS)) next[biz] = v[home] || ''
+        return next
+      })
+      setErrors((e) => Object.fromEntries(Object.entries(e).filter(([k]) => !BUSINESS_FIELDS.has(k))))
+      setLive((l) => Object.fromEntries(Object.entries(l).filter(([k]) => !BUSINESS_FIELDS.has(k))))
+      session.invalidate()
+    }
+  }
+
+  const onNote = (issueId, text) => setReviewNotes((n) => ({ ...n, [issueId]: text }))
+  // Notes for warnings in the latest review: these go in with the application.
+  const sentNotes = review.issues.filter((i) => i.level === 'warning' && reviewNotes[i.id]?.trim())
 
   const onSubmit = (e) => {
     e.preventDefault()
@@ -73,6 +149,10 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
     setErrors({})
     setShowErrors(false)
     setSubmitted(false)
+    setSameAddress(false)
+    touched.current = new Set()
+    setLive({})
+    setReviewNotes({})
     session.reset()
     setFormKey((k) => k + 1)
     document.getElementById('form')?.scrollIntoView({ behavior: 'smooth' })
@@ -80,6 +160,8 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
 
   const fillSample = () => {
     setValues(SAMPLE_APPLICANT)
+    setSameAddress(false)
+    setLive({})
     setErrors({})
     setShowErrors(false)
     session.invalidate()
@@ -103,6 +185,7 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
       </div>
 
       <form key={formKey} className="intake" onSubmit={onSubmit} onFocus={onFocusCapture} noValidate>
+        <FormProgress values={values} />
         <h1 className="form-title">{t('Real Estate/C&I In-Take Form')}</h1>
         <div className="form-intro">
           {FORM_INTRO.map((p) => <p key={p}>{t(p)}</p>)}
@@ -119,9 +202,27 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
             <legend>{t(section.title)}</legend>
             {section.intro && <p className={`section-paragraph${section.introBold ? ' bold' : ''}`}>{t(section.intro)}</p>}
             <UploadTips tips={uploadTips(section.id, values)} />
+            {section.id === 'company' && (
+              <label className="choice same-address">
+                <input type="checkbox" checked={sameAddress} onChange={(e) => toggleSameAddress(e.target.checked)} />
+                <span>{t('Business address is the same as my home address')}</span>
+              </label>
+            )}
             <div className="field-grid">
               {section.fields.map((f) => (
-                <Field key={f.id} field={f} value={values[f.id]} error={errors[f.id]} onChange={onChange} onHelp={onHelp} tips={f.type === 'file' ? uploadTips(f.id, values) : undefined} />
+                <Field
+                  key={f.id}
+                  field={f}
+                  value={values[f.id]}
+                  error={errors[f.id]}
+                  onChange={onChange}
+                  onHelp={onHelp}
+                  onBlur={onBlur}
+                  readOnly={sameAddress && BUSINESS_FIELDS.has(f.id)}
+                  file={values._files?.[f.id]}
+                  notes={[live[f.id], f.id === 'equity_10pct' ? { ...equityMath(values), level: 'calc' } : null].filter((n) => n?.text)}
+                  tips={f.type === 'file' ? uploadTips(f.id, values) : undefined}
+                />
               ))}
             </div>
             {section.id === 'required_docs' && values.doc_dev_budget && (
@@ -139,7 +240,7 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
           {t('In accordance with federal laws and U.S. Department of the Treasury policy, this organization is prohibited from discriminating on the basis of race, color, national origin, sex, age, or disability. To file a complaint of discrimination, write to: U.S. Department of the Treasury, Director, Office of Civil Rights and Equal Employment Opportunity, 1500 Pennsylvania Avenue, N.W., Washington, DC 20220; call (202) 622-1160; or send an e-mail to: crcomplaints@treasury.gov')}
         </p>
 
-        <ReviewPanel state={review} onRun={session.run} onGoToField={goToField} />
+        <ReviewPanel state={review} onRun={session.run} onGoToField={goToField} notes={reviewNotes} onNote={onNote} />
 
         <div className="actions">
           <button type="submit" className="btn submit" disabled={!review.canSubmit} aria-describedby="submit-help">{t('Submit')}</button>
@@ -147,7 +248,7 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
         {!review.canSubmit && <p className="submit-help" id="submit-help">{t('Submit unlocks after a successful review.')}</p>}
       </form>
 
-      {submitted && <SuccessDialog name={values.first_name} onClose={() => setSubmitted(false)} onReset={reset} />}
+      {submitted && <SuccessDialog name={values.first_name} noteCount={sentNotes.length} onClose={() => setSubmitted(false)} onReset={reset} />}
     </>
   )
 }

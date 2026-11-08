@@ -218,6 +218,37 @@ Result: instead of having an AI read uploaded files (which raises privacy questi
 
 Result: each upload note is now a single blue line, "TIP · What to check before uploading", that opens when tapped and is closed by default. The text inside is unchanged, including the applicant's own budget and loan numbers. Translated into all five languages.
 
+## 9. Easier form filling
+
+**22. Ten improvements from user testing**
+> Here are suggestions from testing. Implement the ones that fit the project best:
+> - make the off-topic reply clear about the assistant's limits;
+> - require a 10-digit phone number;
+> - add "same as home address" for the business address;
+> - fill in city and state from the ZIP code;
+> - show the 10% equity math;
+> - format money as people type;
+> - check files without opening them;
+> - check each question when people leave it;
+> - let applicants explain a warning instead of changing the number;
+> - add a progress bar with a section list.
+
+Result: all ten were added, with one change on purpose.
+- **Clear limits:** when the chat has no answer, it now says "I can only help with this form and Invest Detroit's lending process", instead of "I don't have an approved answer for that yet".
+- **Phone:** a phone number needs 10 digits ("313-555" is now flagged).
+- **Same address:** a "Business address is the same as my home address" checkbox copies the home address and keeps the two in step.
+- **ZIP code:** a Michigan ZIP code fills in the state ("MI") when it's blank, and warns if a different state was chosen. The **city is not filled in on purpose**: a ZIP code doesn't decide the city, and Hamtramck and Highland Park share Detroit-style ZIP codes, which this form excludes.
+- **Equity math:** "10% of $1,450,000 = $145,000" appears under the 10% equity question once a budget is entered.
+- **Money:** amounts get commas as you type (1,450,000) with an "About $1.45 million" note underneath.
+- **Files:** checked by name and size only, without opening them.
+  - An empty file blocks Submit.
+  - An unusual file type or a very large file gets a warning.
+  - A vague name like "scan001.pdf" gets a renaming tip.
+- **Checks as you go:** when you leave a question, format problems and numbers that don't fit, such as a loan bigger than the budget, show right there. Blank required answers still wait for the final review, so nobody is flagged for skipping ahead.
+- **Explain instead of changing:** each "Please double-check" item has a "My answer is correct: explain why" link with a short note box. The success pop-up confirms how many notes were included. On Invest Detroit's real form, this would need a notes field added to their form.
+- **Progress bar:** a slim bar stays at the top of the form, for example "11 of 48 required answers", with tappable sections ("Contact ✓ · Business info 7 left · Documents 0/3").
+- All new text is in all five languages.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.
