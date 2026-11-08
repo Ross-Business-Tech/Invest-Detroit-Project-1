@@ -274,6 +274,14 @@ Result: the "Before you start" panel now loads closed, as a single line, and ope
 
 Result: long checkbox lists now flow top to bottom in columns, so a long name no longer leaves an empty gap beside short ones. The spacing between items is tighter too. The community partners list is less than half its old height. On phones they stay a single list.
 
+**27. Client presentation with a measured impact number**
+> Create a Google Slides deck highlighting all our key features with screenshots, using the original website as a reference. The client should walk away knowing the problem, who it's for, how the tool works, how well it works, what difference it makes, what it can't do, and what we recommend next. Show one measured number, comparing today with our tool on the same examples, with no invented figures.
+
+Result: a 14-slide deck (`docs/slides/Invest-Detroit-Copilot-Client-Deck.pptx`, opens in Google Slides, with a PDF preview).
+- **Today vs. with the copilot:** "today" screenshots come from our first, unchanged replica of the official form. They show the same example (a $2M loan on a $1.45M budget) submitted without a warning, then caught by Review My Application.
+- **Measured impact:** we ran the same 10 example applications, each with one common mistake, through the official form's own Submit checks and through the copilot. Today catches **2 of 10**; the copilot catches **10 of 10**. The deck explains the method and that real-world frequency isn't known yet. `tools/measure-impact.mjs` re-runs it.
+- **Other slides:** who it's for, how it works, the features with screenshots, how well it works (160 automated checks, 79 sourced help entries, 0 files stored), what it can't do, and a recommendation: check our facts, pilot the add-on, then measure follow-up emails and incomplete applications.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.
