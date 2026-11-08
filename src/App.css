@@ -149,7 +149,9 @@
 
 .choices { display: flex; gap: var(--sp-2) var(--sp-5); flex-wrap: wrap; }
 .choices.vertical { flex-direction: column; gap: var(--sp-2); }
-.choices.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--sp-2) var(--sp-4); }
+.choices.grid { display: block; columns: 3 220px; column-gap: var(--sp-5); }
+/* Long checkbox lists flow down each column, so a long name doesn't leave gaps beside short ones. */
+.choices.grid .choice { break-inside: avoid; margin: 0 0 10px; font-size: 14.5px; line-height: 1.35; }
 .choice { display: flex; align-items: flex-start; gap: var(--sp-2); font-size: 15px; cursor: pointer; }
 .choice input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--yellow-dark); flex: none; }
 .ack .choice { font-size: 14.5px; }
@@ -194,7 +196,7 @@
   .header-inner { min-height: 60px; }
   .logo { font-size: 18px; }
   .btn.yellow { padding: 11px 14px; font-size: 12px; }
-  .choices.grid { grid-template-columns: 1fr; }
+  .choices.grid { columns: 1; }
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
 

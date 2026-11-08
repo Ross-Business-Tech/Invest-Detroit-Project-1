@@ -269,6 +269,11 @@ Result:
 
 Result: the "Before you start" panel now loads closed, as a single line, and opens when tapped.
 
+**26. Tighten the long checkbox lists** *(with a screenshot)*
+> The lenders and community partners lists have a lot of white space. Fix it a little.
+
+Result: long checkbox lists now flow top to bottom in columns, so a long name no longer leaves an empty gap beside short ones. The spacing between items is tighter too. The community partners list is less than half its old height. On phones they stay a single list.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.
