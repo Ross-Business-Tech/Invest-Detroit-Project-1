@@ -370,6 +370,7 @@ function IntakeForm() {
         <div className="form-intro">
           {FORM_INTRO.map((p) => <p key={p}>{p}</p>)}
         </div>
+        <BeforeYouStart />
 
         {showErrors && errorCount > 0 && (
           <div className="error-summary" role="alert">
@@ -403,6 +404,60 @@ function IntakeForm() {
 
       {submitted && <SuccessDialog name={values.first_name} onClose={() => setSubmitted(false)} onReset={reset} />}
     </>
+  )
+}
+
+const BEFORE_COLUMNS = [
+  {
+    title: 'Required documents',
+    items: [
+      'Project Plan or Project Narrative',
+      'Development Budget (with Sources & Uses)',
+      'List of team members working on the project',
+    ],
+  },
+  {
+    title: 'Helpful if you have them',
+    items: [
+      'Personal Financial Statements (past 3 years)',
+      'Personal and Business Tax Returns (past 3 years)',
+      'Personal and Business Bank Statements (past 3 months)',
+    ],
+  },
+  {
+    title: "Numbers you'll be asked for",
+    items: [
+      'Total project budget, and the loan amount you will request',
+      'Square footage (gross and net) for each type of space',
+      'Number of housing units and their affordability levels (if the project is residential)',
+      'Current employees, and the jobs the project will create',
+      'Your Michigan business entity ID number (asked only in some cases)',
+    ],
+  },
+]
+
+function BeforeYouStart() {
+  return (
+    <section className="before-start" aria-labelledby="before-start-title">
+      <h2 id="before-start-title">Before you start</h2>
+      <div className="save-warning" role="note">
+        <strong>This form cannot be saved partway through.</strong>
+        If you close this window, refresh the page, or leave for another page before you submit, everything you have entered will be lost. Have these ready before you begin.
+      </div>
+      <div className="before-columns">
+        {BEFORE_COLUMNS.map((col) => (
+          <div className="before-col" key={col.title}>
+            <h3>{col.title}</h3>
+            <ul>
+              {col.items.map((item) => <li key={item}>{item}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <p className="before-note">
+        Some questions ask about eligibility, legal history and the owners&apos; backgrounds. For the background questions you can always choose &ldquo;Prefer not to say&rdquo;.
+      </p>
+    </section>
   )
 }
 
