@@ -374,4 +374,7 @@ export default {
   "Construction": "Construcción",
   "Documents": "Documentos",
   "Supporting documents": "Documentos de respaldo",
+  "Project": "Proyecto",
+  "Business": "Negocio",
+  "Sign-off": "Firma",
 }

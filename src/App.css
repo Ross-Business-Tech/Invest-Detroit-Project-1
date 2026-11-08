@@ -112,13 +112,13 @@
 .fp-count { white-space: nowrap; }
 .fp-track { flex: 1; height: 6px; background: #e8ebe9; border-radius: 3px; overflow: hidden; }
 .fp-fill { height: 100%; background: #1e7b45; transition: width .25s; }
-.fp-sections { list-style: none; margin: var(--sp-2) 0 0; padding: 0 0 2px; display: flex; gap: var(--sp-1); overflow-x: auto; scrollbar-width: thin; }
-.fp-sections button { font: 600 12px var(--font); white-space: nowrap; border: 1px solid var(--line); background: #fff; color: var(--ink); padding: 3px 8px; border-radius: 999px; cursor: pointer; }
+.fp-sections { list-style: none; margin: var(--sp-2) 0 0; padding: 0 0 2px; display: flex; flex-wrap: nowrap; gap: 3px; overflow-x: auto; scrollbar-width: none; }
+.fp-sections::-webkit-scrollbar { display: none; }
+.fp-sections button { font: 600 12px var(--font); white-space: nowrap; border: 1px solid var(--line); background: #fff; color: var(--ink); padding: 2px 3px 2px 7px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
 .fp-sections button.complete { border-color: #b9dcc6; background: #eef7f1; color: #1e5a36; }
-.fp-status { color: var(--muted); font-weight: 700; }
-.fp-sections button.complete .fp-status { color: #1e7b45; }
+.fp-status { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: #eceeed; color: var(--ink); font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; }
+.fp-sections button.complete .fp-status { background: #d6eedf; color: #1e7b45; }
 @media (prefers-reduced-motion: reduce) { .fp-fill { transition: none; } }
-@media (min-width: 900px) { .fp-sections { flex-wrap: wrap; overflow: visible; } }
 .has-error input, .has-error select, .has-error textarea { border-color: var(--error) !important; background: var(--error-bg) !important; }
 .has-error .choices { outline: 1px solid var(--error); outline-offset: 4px; }
 

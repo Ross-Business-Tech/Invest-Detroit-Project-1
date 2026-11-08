@@ -249,6 +249,11 @@ Result: all ten were added, with one change on purpose.
 - **Progress bar:** a slim bar stays at the top of the form, for example "11 of 48 required answers", with tappable sections ("Contact ✓ · Business info 7 left · Documents 0/3").
 - All new text is in all five languages.
 
+**23. Fit the section list on one row** *(with a screenshot)*
+> Make the section list fit in one row; it's taking up too much space.
+
+Result: each section now shows a small number badge instead of "8 left" (the full wording still appears on hover and for screen readers). Three names were shortened: "Project", "Business" and "Sign-off". The list fits on one row on desktop, and on phones it's one row you swipe sideways.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

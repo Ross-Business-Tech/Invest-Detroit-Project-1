@@ -374,4 +374,7 @@ export default {
   "Construction": "施工",
   "Documents": "文件",
   "Supporting documents": "补充文件",
+  "Project": "项目",
+  "Business": "业务",
+  "Sign-off": "确认",
 }

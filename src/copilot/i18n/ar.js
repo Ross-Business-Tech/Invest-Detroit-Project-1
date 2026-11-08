@@ -374,4 +374,7 @@ export default {
   "Construction": "البناء",
   "Documents": "المستندات",
   "Supporting documents": "المستندات الداعمة",
+  "Project": "المشروع",
+  "Business": "النشاط",
+  "Sign-off": "التوقيع",
 }

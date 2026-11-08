@@ -374,4 +374,7 @@ export default {
   "Construction": "নির্মাণ",
   "Documents": "নথিপত্র",
   "Supporting documents": "সহায়ক নথি",
+  "Project": "প্রকল্প",
+  "Business": "ব্যবসা",
+  "Sign-off": "সম্মতি",
 }

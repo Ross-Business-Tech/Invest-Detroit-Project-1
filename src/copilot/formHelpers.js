@@ -116,9 +116,9 @@ export function checkFile(fieldId, file) {
 export const SECTION_SHORT = {
   contact: 'Contact',
   company: 'Company',
-  project_address: 'Project address',
+  project_address: 'Project',
   questions: 'Questions',
-  business_info: 'Business info',
+  business_info: 'Business',
   construction: 'Construction',
   retail: 'Retail',
   office: 'Office',
@@ -126,7 +126,7 @@ export const SECTION_SHORT = {
   impact: 'Impact',
   required_docs: 'Documents',
   supporting_docs: 'Supporting documents',
-  acknowledgements: 'Acknowledgements',
+  acknowledgements: 'Sign-off',
 }
 
 const filled = (v) => !(v === undefined || v === null || v === '' || v === false || (Array.isArray(v) && v.length === 0))
