@@ -1,4 +1,4 @@
-# Turning on the AI chatbot (Claude on Vercel)
+# Turning on the AI chatbot (Claude on Render or Vercel)
 
 Everything is built. Adding the key is the only step left. Until then, and if Claude is ever unreachable, the chat answers from the built-in knowledge base, so it never breaks.
 
@@ -49,7 +49,24 @@ Browser chat ──► /api/assistant (Vercel function) ──► Claude
    | `"claude_error","status":429` | Rate or spending limit reached | Wait, or raise the limit in the Anthropic Console |
    | `"claude_error","status":400` | Request not accepted | Copy the log line and send it to Claude Code |
 
-## Optional settings (Vercel environment variables)
+## On Render instead of Vercel
+
+Use a **Web Service**, not a Static Site: a static site can't run the chat endpoint, so there would be nowhere for the key to live. `server/webServer.js` serves the website and `/api/assistant` together (the same function Vercel runs).
+
+| Setting | Value |
+|---|---|
+| Language | Node |
+| Branch | `claude/amazing-heisenberg-brezgi` (or `development` once pull request #2 is merged) |
+| Root Directory | leave empty |
+| Build Command | `npm install && npm run build` |
+| Start Command | `npm start` |
+| Instance type | Free works; it sleeps after about 15 idle minutes, so the next visit takes about a minute to wake |
+| Health Check Path (under Advanced) | `/healthz` |
+| Environment variable | `ANTHROPIC_API_KEY` = the key (add it tomorrow under **Environment**, then deploy again) |
+
+Render redeploys by itself when the branch changes. Logs are under the service's **Logs** tab and use the same `{"at":"assistant",...}` lines as the table above.
+
+## Optional settings (environment variables, Render or Vercel)
 
 | Name | Default | What it does |
 |---|---|---|
@@ -66,7 +83,8 @@ Browser chat ──► /api/assistant (Vercel function) ──► Claude
 
 ## Files
 
-- `api/assistant.js`: the Vercel function (rate limit, size checks, Claude or guide)
+- `api/assistant.js`: the chat endpoint (rate limit, size checks, Claude or guide), run by Vercel directly
+- `server/webServer.js`: serves `dist/` plus `/api/assistant` for Render (`npm start`)
 - `server/claudeAnswerer.js`: the Claude call (model, safety fallback, structured reply, caching)
 - `server/knowledgeContext.js`: the knowledge base Claude answers from, built from the same files as the built-in answers
 - `server/systemPrompt.js`: Claude's instructions (public, contains no secrets)

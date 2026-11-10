@@ -247,7 +247,7 @@ export const SOURCES = {
 export const ASSISTANT = {
   mode: 'auto',
   endpoint: '/api/assistant',
-  server_hosts: ['.vercel.app', 'localhost'], // add a custom domain here if the Vercel site gets one
+  server_hosts: ['.vercel.app', '.onrender.com', 'localhost'], // Vercel and Render run the server; add a custom domain here if one is used
   history_window: 6, // most recent messages sent with each question, not the whole chat
 }
 

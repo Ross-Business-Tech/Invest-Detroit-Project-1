@@ -298,6 +298,15 @@ Result:
 - **The star rating** is hidden on Vercel, because ratings can only be saved on here.now.
 - **Tomorrow's steps:** `docs/AI-SETUP.md` covers the 5 steps, how to test, and what the error logs mean.
 
+**29. Switch hosting to Render** *(with screenshots of Render's setup page)*
+> Are these settings right? I'm switching to Render.
+
+Result:
+- **Static Site doesn't fit:** a Render Static Site can't run the chat endpoint, so the key would have nowhere to live. The team chose a **Web Service** instead.
+- **New server file:** `server/webServer.js` (started with `npm start`) serves the website and the chat endpoint together. It runs the same guardrails and Claude code as Vercel, refuses paths outside the website folder, and has a `/healthz` check for Render.
+- **Tested locally** with no key and with a fake key: the chat worked both times and fell back to built-in answers.
+- `docs/AI-SETUP.md` now lists the exact Render settings.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.
