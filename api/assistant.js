@@ -43,7 +43,9 @@ export default async function handler(req, res) {
   if (typeof body === 'string') { try { body = JSON.parse(body) } catch { return res.status(400).json({ error: { code: 'invalid_json' } }) } }
   if (JSON.stringify(body ?? null).length > MAX_BODY) return res.status(413).json({ error: { code: 'body_too_large' } })
 
-  const { status, body: out } = await handleAssistantRequest(body, { answer })
+  // With Claude connected, unclear questions go to Claude (which can still decline) instead of
+  // getting the clarifying question. Clearly off-topic or unsafe requests are refused either way.
+  const { status, body: out } = await handleAssistantRequest(body, { answer, lenientScope: !!process.env.ANTHROPIC_API_KEY })
   log({ type: 'request', status, kind: out?.reply?.kind ?? null, from: out?.reply?.from ?? null })
   return res.status(status).json(out)
 }

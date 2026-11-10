@@ -86,12 +86,15 @@ function recentContext(history = []) {
 const wordCount = (t) => normalize(t).split(' ').filter(Boolean).length
 
 /**
- * @param {{ message: string, history?: {role: string, text: string}[], fieldId?: string|null, intent?: string|null }} req
+ * @param {{ message: string, history?: {role: string, text: string}[], fieldId?: string|null, intent?: string|null, lenient?: boolean }} req
+ *   lenient: an AI model that can judge scope will answer (Claude on the server). Unclear or
+ *   unrecognized questions are then passed to it instead of getting the clarifying question;
+ *   protected, falsifying, injection and clearly off-topic requests are still refused here.
  * @returns {{ action: 'allow'|'reject'|'clarify'|'integrity', category: string, version: string,
  *             message_for_answer?: string, injection_ignored?: boolean }}
  *   message_for_answer is the text the answering step should use (injected parts removed).
  */
-export function evaluateRequest({ message, history = [], fieldId = null, intent = null }) {
+export function evaluateRequest({ message, history = [], fieldId = null, intent = null, lenient = false }) {
   const raw = String(message ?? '')
   const t = normalize(raw)
   const f = fold(raw)
@@ -139,6 +142,9 @@ export function evaluateRequest({ message, history = [], fieldId = null, intent 
 
   // 7. Repeatedly steering away from the application.
   if (ctx.redirects >= 2) return decide('reject', 'repeated_off_topic', flags)
+
+  // With a model that judges scope itself, let it decide the unclear cases (it can still decline).
+  if (lenient) return decide('allow', 'model_judged', { message_for_answer: working, ...flags })
 
   // 8. Unclear: ask, unless it is plainly unrelated (several words, none about the application).
   const nonLatin = !LATIN.test(t)

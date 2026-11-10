@@ -316,6 +316,20 @@ Result: it already worked; four improvements were added.
 - **Saved settings:** `render.yaml` records the Render settings in the repository, so the service can be recreated from it.
 - **Clean restarts:** the server finishes open requests before Render restarts it for a new version.
 
+**31. Let Claude explain more, while keeping the facts locked**
+> Since we're giving the chatbot an API key, we don't have to be so strict about the knowledge base, right? It should understand what the user needs and explain appropriately, just not outside the scope. *(Follow-up: make the two suggested changes.)*
+
+Result:
+- **Claude's instructions now split answers in two:**
+  - Invest Detroit specifics (rates, fees, loan sizes, terms, programs, eligibility, process, documents, contacts) come only from the knowledge base, with sources, and are never guessed.
+  - General guidance (finance concepts, structuring a summary or budget, math with the applicant's numbers) is welcome.
+  - It still never predicts approval, helps falsify, writes documents wholesale or invents project facts.
+- **The pre-filter is relaxed only when Claude is connected:**
+  - Unclear questions, such as "How should I present my bakery idea so it sounds credible?", which was turned away before, now go to Claude.
+  - Jokes, trivia, falsifying, rule-changing and prompt-fishing are still blocked first.
+  - Claude can also mark a question off-topic, and the chat then shows the standard reply.
+- **Checks:** 5 new automated tests, and `tools/check-chat.mjs` runs 8 live pass/fail checks on the real site once the key is in.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

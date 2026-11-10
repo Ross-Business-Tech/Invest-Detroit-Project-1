@@ -113,12 +113,15 @@ export function withFallback(primary, fallback, onFallback = () => {}) {
   }
 }
 
+/** Marks a transport whose server re-checks scope with a model, so the browser lets unclear questions through. */
+const serverJudged = (transport) => Object.assign(transport, { lenientScope: true })
+
 const onServerHost = (hosts, hostname = typeof location !== 'undefined' ? location.hostname : '') =>
   !!hostname && (hosts || []).some((h) => hostname === h.replace(/^\./, '') || hostname.endsWith(h))
 
 export function transportFromConfig(config = ASSISTANT, { hostname } = {}) {
   if (config.mode === 'auto') {
-    return onServerHost(config.server_hosts, hostname) ? withFallback(httpTransport(config.endpoint), guideTransport) : guideTransport
+    return onServerHost(config.server_hosts, hostname) ? serverJudged(withFallback(httpTransport(config.endpoint), guideTransport)) : guideTransport
   }
   if (config.mode === 'http') return httpTransport(config.endpoint)
   if (config.mode === 'guide') return guideTransport
@@ -141,8 +144,9 @@ export function createAssistant({ transport = transportFromConfig(), onEvent = (
         return { shownMessage, reply: { kind: 'privacy_warning', text: PRIVACY_WARNING, sources: [], needs_staff: false } }
       }
       // Guardrails run before any answer is produced. In 'http' mode the server runs them again
-      // (server/assistantHandler.js), so skipping this browser check gains nothing.
-      const decision = evaluateRequest({ message, history, fieldId: activeFieldId, intent })
+      // (server/assistantHandler.js), so skipping this browser check gains nothing. When the server
+      // judges scope with Claude, unclear questions go to it; without a key it applies the strict check.
+      const decision = evaluateRequest({ message, history, fieldId: activeFieldId, intent, lenient: !!transport.lenientScope })
       if (decision.action !== 'allow') {
         onEvent({ type: 'assistant_guardrail', action: decision.action, category: decision.category })
         return { shownMessage, reply: guardrailReply(decision) }

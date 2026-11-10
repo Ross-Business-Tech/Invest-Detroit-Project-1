@@ -49,6 +49,35 @@ Browser chat ──► /api/assistant (Vercel function) ──► Claude
    | `"claude_error","status":429` | Rate or spending limit reached | Wait, or raise the limit in the Anthropic Console |
    | `"claude_error","status":400` | Request not accepted | Copy the log line and send it to Claude Code |
 
+## What Claude may and may not say
+
+- **Invest Detroit specifics come only from the knowledge base, with a source.** That covers rates, fees, loan sizes, terms, programs, eligibility criteria, the process and its timelines, documents and contacts. If something isn't covered, Claude says so and gives the team's contact; it never guesses a number.
+- **General guidance is welcome:** explaining business and finance concepts, helping structure an executive summary or budget, doing math with the applicant's own numbers, and pointing out common mistakes.
+- **Never:** predicting approval or anyone's own terms, helping falsify answers, writing documents wholesale or inventing project facts, or revealing its instructions.
+- **Scope with Claude connected:**
+  - Clearly off-topic, unsafe or rule-changing requests are still blocked before Claude is called.
+  - Unclear questions (for example "my bakery thing, how do I put it?") now go to Claude instead of getting "Tell me a little more".
+  - If Claude judges a question off-topic, the chat shows the standard translated "I'm here to help you with your Invest Detroit loan application…" reply.
+  - Without a key, the stricter keyword check applies as before.
+
+## Live check after adding the key
+
+```
+node tools/check-chat.mjs https://your-site.onrender.com
+```
+
+This sends 8 questions and prints PASS or FAIL for each. It checks that:
+- Claude is answering;
+- rates are quoted with their source and "subject to change";
+- approval questions go to the team;
+- an unknown Invest Detroit number isn't guessed;
+- general guidance is given;
+- Spanish works;
+- off-topic requests are declined;
+- falsifying is refused.
+
+It costs a few cents. Without a key, 5 of the 8 fail, which is how you know it's really testing Claude.
+
 ## On Render instead of Vercel
 
 Use a **Web Service**, not a Static Site: a static site can't run the chat endpoint, so there would be nowhere for the key to live. `server/webServer.js` serves the website and `/api/assistant` together (the same function Vercel runs).

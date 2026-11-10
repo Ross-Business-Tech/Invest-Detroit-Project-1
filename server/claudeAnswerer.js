@@ -14,6 +14,7 @@ import { SYSTEM_PROMPT } from './systemPrompt.js'
 import { KNOWLEDGE_TEXT, SOURCE_IDS } from './knowledgeContext.js'
 import { SOURCES } from '../src/copilot/config.js'
 import { NO_MATCH } from '../src/copilot/guideTransport.js'
+import { OUT_OF_SCOPE_MESSAGE } from '../src/copilot/guardrails/messages.js'
 
 export const DEFAULT_MODEL = 'claude-opus-5-5'
 
@@ -26,8 +27,9 @@ export const REPLY_SCHEMA = {
     answer: { type: 'string', description: 'The reply shown to the applicant: short, friendly, plain language, in the requested language.' },
     source_ids: { type: 'array', items: { type: 'string', enum: SOURCE_IDS }, description: 'Ids of the knowledge-base sources the answer relies on.' },
     needs_staff: { type: 'boolean', description: 'True when only the Invest Detroit team can answer the rest (eligibility, approval, the applicant\'s own terms).' },
+    in_scope: { type: 'boolean', description: 'False when the question is unrelated to this application, Invest Detroit\'s lending, or preparing and financing a business or real-estate project.' },
   },
-  required: ['answer', 'source_ids', 'needs_staff'],
+  required: ['answer', 'source_ids', 'needs_staff', 'in_scope'],
   additionalProperties: false,
 }
 
@@ -71,6 +73,10 @@ export function createClaudeAnswerer({ client, model = process.env.ASSISTANT_MOD
     const text = response.content.filter((b) => b.type === 'text').map((b) => b.text).join('')
     let parsed
     try { parsed = JSON.parse(text) } catch { return fallbackReply() }
+    // Claude judged it off-topic: show the same fixed, translated reply the guardrails use.
+    if (parsed?.in_scope === false) {
+      return { kind: 'out_of_scope', text: OUT_OF_SCOPE_MESSAGE, sources: [], needs_staff: false, english_only: false, from: 'claude', guardrail: { action: 'reject', category: 'model_out_of_scope' } }
+    }
     if (typeof parsed?.answer !== 'string' || !parsed.answer.trim()) return fallbackReply()
 
     const ids = Array.isArray(parsed.source_ids) ? [...new Set(parsed.source_ids)].filter((id) => SOURCES[id]) : []

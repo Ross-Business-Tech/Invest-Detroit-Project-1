@@ -84,11 +84,12 @@ export const guideAnswerer = async ({ request, messageForAnswer }) =>
 
 /**
  * @param {unknown} body  parsed JSON from the client (untrusted)
- * @param {{ answer?: Function, classifier?: Function, onEvent?: Function }} [deps]
- *   answer({ request, messageForAnswer, modelInput }) -> reply; classifier is optional (see guardrails)
+ * @param {{ answer?: Function, classifier?: Function, onEvent?: Function, lenientScope?: boolean }} [deps]
+ *   answer({ request, messageForAnswer, modelInput }) -> reply; classifier is optional (see guardrails).
+ *   lenientScope: true when the answerer is a model that judges scope itself (Claude).
  * @returns {Promise<{ status: number, body: object }>}
  */
-export async function handleAssistantRequest(body, { answer = guideAnswerer, classifier = null, onEvent = () => {} } = {}) {
+export async function handleAssistantRequest(body, { answer = guideAnswerer, classifier = null, onEvent = () => {}, lenientScope = false } = {}) {
   const { request, error } = validateRequest(body)
   if (error) return error
 
@@ -98,7 +99,7 @@ export async function handleAssistantRequest(body, { answer = guideAnswerer, cla
   }
 
   // Documents never influence this decision: only the applicant's message and recent turns do.
-  const decision = await evaluateWithClassifier({ message: request.message, history: request.history, fieldId: request.fieldId, intent: request.intent }, classifier)
+  const decision = await evaluateWithClassifier({ message: request.message, history: request.history, fieldId: request.fieldId, intent: request.intent, lenient: lenientScope }, classifier)
   onEvent({ type: 'server_guardrail', action: decision.action, category: decision.category })
   if (decision.action !== 'allow') return { status: 200, body: { reply: guardrailReply(decision) } }
 
