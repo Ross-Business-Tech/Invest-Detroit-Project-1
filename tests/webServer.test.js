@@ -28,3 +28,17 @@ test('the Render web server serves the site, the chat endpoint and nothing outsi
     if (saved !== undefined) process.env.ANTHROPIC_API_KEY = saved
   }
 })
+
+test('text files are sent compressed when the browser accepts it', { skip: !built && 'run npm run build first' }, async () => {
+  const server = createWebServer().listen(0)
+  const base = `http://localhost:${server.address().port}`
+  try {
+    const html = await (await fetch(base + '/')).text()
+    const script = html.match(/src="(\/assets\/[^"]+\.js)"/)[1]
+    const { default: http } = await import('node:http')
+    const head = (enc) => new Promise((resolve) => http.get(base + script, { headers: { 'accept-encoding': enc } }, (r) => { r.resume(); resolve(r.headers) }))
+    assert.equal((await head('br, gzip')) ['content-encoding'], 'br')
+    assert.equal((await head('gzip'))['content-encoding'], 'gzip')
+    assert.equal((await head('identity'))['content-encoding'], undefined)
+  } finally { server.close() }
+})

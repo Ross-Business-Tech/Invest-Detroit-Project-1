@@ -307,6 +307,15 @@ Result:
 - **Tested locally** with no key and with a fake key: the chat worked both times and fell back to built-in answers.
 - `docs/AI-SETUP.md` now lists the exact Render settings.
 
+**30. Tune the repository for Render**
+> Is our repo set up and optimized for Render now?
+
+Result: it already worked; four improvements were added.
+- **Compression:** the server now sends text files compressed. The app's main file drops from 615 KB to 153 KB, which is faster on phones.
+- **Pinned Node version:** Node 22, the version it was tested with.
+- **Saved settings:** `render.yaml` records the Render settings in the repository, so the service can be recreated from it.
+- **Clean restarts:** the server finishes open requests before Render restarts it for a new version.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

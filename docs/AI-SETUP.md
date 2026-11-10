@@ -58,11 +58,13 @@ Use a **Web Service**, not a Static Site: a static site can't run the chat endpo
 | Language | Node |
 | Branch | `claude/amazing-heisenberg-brezgi` (or `development` once pull request #2 is merged) |
 | Root Directory | leave empty |
-| Build Command | `npm install && npm run build` |
+| Build Command | `npm ci && npm run build` (`npm install && npm run build` also works) |
 | Start Command | `npm start` |
 | Instance type | Free works; it sleeps after about 15 idle minutes, so the next visit takes about a minute to wake |
 | Health Check Path (under Advanced) | `/healthz` |
 | Environment variable | `ANTHROPIC_API_KEY` = the key (add it tomorrow under **Environment**, then deploy again) |
+
+The same settings are saved in `render.yaml`, so the service can also be created with **New → Blueprint**. Node is pinned to version 22 (`.node-version`, `package.json`). The server compresses text files (the main script goes from 615 KB to 153 KB) and finishes open requests before Render restarts it.
 
 Render redeploys by itself when the branch changes. Logs are under the service's **Logs** tab and use the same `{"at":"assistant",...}` lines as the table above.
 

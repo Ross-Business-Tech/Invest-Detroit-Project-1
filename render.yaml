@@ -1,0 +1,19 @@
+# Render Blueprint: the settings for the Render Web Service, kept with the code.
+# To use it: Render dashboard -> New -> Blueprint -> pick this repository.
+# (A service created by hand works too; these are the same values. See docs/AI-SETUP.md.)
+services:
+  - type: web
+    name: invest-detroit-copilot
+    runtime: node
+    plan: free                      # sleeps after ~15 idle minutes; "starter" stays awake
+    region: oregon
+    branch: claude/amazing-heisenberg-brezgi   # switch to development once pull request #2 is merged
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: ANTHROPIC_API_KEY
+        sync: false                 # Render asks for the value; it is never stored in this file

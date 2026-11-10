@@ -10,6 +10,7 @@ import http from 'node:http'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import zlib from 'node:zlib'
 import assistant from '../api/assistant.js'
 
 const DIST = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'dist')
@@ -41,6 +42,24 @@ async function runAssistant(req, res) {
   return assistant({ method: req.method, headers: req.headers, body }, out)
 }
 
+// Text files are compressed once (Brotli or gzip) and kept in memory: the app's main script
+// shrinks from about 600 KB to under 200 KB, which matters most on phones.
+const COMPRESSIBLE = /\.(html|js|css|json|svg|txt)$/
+const compressed = new Map()
+function encodedBody(file, acceptEncoding) {
+  if (!COMPRESSIBLE.test(file)) return null
+  const enc = /\bbr\b/.test(acceptEncoding) ? 'br' : /\bgzip\b/.test(acceptEncoding) ? 'gzip' : null
+  if (!enc) return null
+  const key = `${enc}:${file}`
+  if (!compressed.has(key)) {
+    const raw = fs.readFileSync(file)
+    compressed.set(key, enc === 'br'
+      ? zlib.brotliCompressSync(raw, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 9 } })
+      : zlib.gzipSync(raw, { level: 9 }))
+  }
+  return { enc, body: compressed.get(key) }
+}
+
 /** Serves a file from dist/, or index.html for unknown paths (the app has one page). */
 function serveStatic(req, res) {
   if (req.method !== 'GET' && req.method !== 'HEAD') { res.writeHead(405); return res.end() }
@@ -54,14 +73,18 @@ function serveStatic(req, res) {
     file = path.join(DIST, 'index.html')
   }
   const ext = path.extname(file).toLowerCase()
+  const packed = encodedBody(file, String(req.headers['accept-encoding'] || ''))
   res.writeHead(200, {
     'content-type': TYPES[ext] || 'application/octet-stream',
+    ...(packed ? { 'content-encoding': packed.enc, 'content-length': packed.body.length } : {}),
+    vary: 'Accept-Encoding',
     // Built assets have content hashes in their names, so they can be cached for a long time.
     'cache-control': file.includes(`${path.sep}assets${path.sep}`) ? 'public, max-age=31536000, immutable' : 'no-cache',
     'x-content-type-options': 'nosniff',
     'referrer-policy': 'strict-origin-when-cross-origin',
   })
   if (req.method === 'HEAD') return res.end()
+  if (packed) return res.end(packed.body)
   fs.createReadStream(file).pipe(res)
 }
 
@@ -80,5 +103,9 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     process.exit(1)
   }
   const port = Number(process.env.PORT) || 3000
-  createWebServer().listen(port, () => console.log(`Site and assistant on port ${port}${process.env.ANTHROPIC_API_KEY ? ' (Claude on)' : ' (no API key: field-guide answers)'}`))
+  const server = createWebServer().listen(port, () => console.log(`Site and assistant on port ${port}${process.env.ANTHROPIC_API_KEY ? ' (Claude on)' : ' (no API key: field-guide answers)'}`))
+  // Render stops the old server with SIGTERM when a new version goes live: finish open requests first.
+  const stop = () => { server.close(() => process.exit(0)); setTimeout(() => process.exit(0), 10000).unref() }
+  process.on('SIGTERM', stop)
+  process.on('SIGINT', stop)
 }
