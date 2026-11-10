@@ -282,6 +282,22 @@ Result: a 14-slide deck (`docs/slides/Invest-Detroit-Copilot-Client-Deck.pptx`, 
 - **Measured impact:** we ran the same 10 example applications, each with one common mistake, through the official form's own Submit checks and through the copilot. Today catches **2 of 10**; the copilot catches **10 of 10**. The deck explains the method and that real-world frequency isn't known yet. `tools/measure-impact.mjs` re-runs it.
 - **Other slides:** who it's for, how it works, the features with screenshots, how well it works (160 automated checks, 79 sourced help entries, 0 files stored), what it can't do, and a recommendation: check our facts, pilot the add-on, then measure follow-up emails and incomplete applications.
 
+## 10. Connecting a real AI
+
+**28. Get the chatbot ready for an API key**
+> We are getting an API key for our chatbot tomorrow. Prepare everything so our chatbot will work correctly and we would just have to enter the key tomorrow. *(Answered: the key is from Anthropic, and it runs on our Vercel site.)*
+
+Result:
+- **A Vercel endpoint** (`api/assistant.js`) runs our existing guardrails on the server, then asks Claude, which answers from our whole knowledge base:
+  - each answer comes with its sources and a flag when the team must take over;
+  - it answers in the applicant's language;
+  - if Claude's safety filters decline a request, it's retried automatically on a suitable model.
+- **The key goes only in Vercel's settings**, never in the website.
+- **Before the key is added**, and whenever Claude can't be reached, the chat quietly answers from the built-in knowledge base. A local test with a fake key showed Anthropic rejecting it and the chat still answering normally.
+- **The chat's subtitle** switches to "AI helper · Answers from official Invest Detroit sources" once Claude has answered.
+- **The star rating** is hidden on Vercel, because ratings can only be saved on here.now.
+- **Tomorrow's steps:** `docs/AI-SETUP.md` covers the 5 steps, how to test, and what the error logs mean.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

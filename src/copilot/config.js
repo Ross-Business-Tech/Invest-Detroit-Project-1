@@ -234,14 +234,20 @@ export const SOURCES = {
 
 /**
  * How the assistant gets its answers.
- *   'guide':       no AI; answers from the draft field guide in the browser (current prototype).
+ *   'auto':        on a host listed in `server_hosts` (our Vercel site), ask the server at
+ *                  `endpoint` (Claude when its key is set, guardrails enforced server-side), and
+ *                  fall back to the field guide if the server can't be reached. Elsewhere
+ *                  (here.now, which can't run server code), use the field guide.
+ *   'guide':       no AI; answers from the draft field guide in the browser.
  *   'placeholder': no AI; replies say the assistant isn't connected yet.
- *   'http':        POST to `endpoint` (a here.now proxy route, or an Invest Detroit backend).
- * Never put an API key here: this file ships to every visitor's browser.
+ *   'http':        always POST to `endpoint`.
+ * Never put an API key here: this file ships to every visitor's browser. The key lives in
+ * Vercel's environment variables (ANTHROPIC_API_KEY), read only by api/assistant.js.
  */
 export const ASSISTANT = {
-  mode: 'guide',
-  endpoint: './.herenow/proxy/assistant',
+  mode: 'auto',
+  endpoint: '/api/assistant',
+  server_hosts: ['.vercel.app', 'localhost'], // add a custom domain here if the Vercel site gets one
   history_window: 6, // most recent messages sent with each question, not the whole chat
 }
 
@@ -253,6 +259,8 @@ export const ASSISTANT = {
  */
 export const FEEDBACK = {
   endpoint: './.herenow/data/assistant_feedback',
+  // Site Data exists only on here.now; elsewhere (Vercel) the rating card stays hidden.
+  hosts: ['.here.now'],
   // "Meaningful interaction": the applicant has sent at least 2 messages and received at least 1 real answer.
   min_user_messages: 2,
   min_answers: 1,

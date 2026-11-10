@@ -4,7 +4,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { fieldContext } from '../copilot/formDefinition.js'
 import { useI18n } from './i18nContext.js'
-import { SUGGESTIONS, WELCOME_TEXT, DEFAULT_SUBTITLE } from './chatText.js'
+import { SUGGESTIONS, WELCOME_TEXT, DEFAULT_SUBTITLE, CONNECTED_SUBTITLE } from './chatText.js'
 import FeedbackCard from './FeedbackCard.jsx'
 import { hasMeaningfulInteraction } from '../copilot/feedback.js'
 
@@ -88,7 +88,7 @@ export default function ChatAssistant({ assistant, activeFieldId, subtitle = DEF
             <div className="chat-avatar" aria-hidden="true">ID</div>
             <div className="chat-heading">
               <h2 id="chat-title">{t('Application Assistant')}</h2>
-              <p>{t(subtitle)}</p>
+              <p>{t(messages.some((m) => m.from === 'claude') ? CONNECTED_SUBTITLE : subtitle)}</p>
             </div>
             <button type="button" className="chat-close" aria-label={t('Close assistant')} onClick={() => { setOpen(false); buttonRef.current?.focus() }}>×</button>
           </header>

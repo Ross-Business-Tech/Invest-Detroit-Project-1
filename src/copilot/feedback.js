@@ -26,8 +26,15 @@ export function hasMeaningfulInteraction(messages, { minUserMessages = FEEDBACK.
   return userMessages >= minUserMessages && answered >= minAnswers
 }
 
-export function createFeedbackClient({ endpoint = FEEDBACK.endpoint, fetchImpl = (...a) => fetch(...a), onEvent = () => {} } = {}) {
+/** True on a site that can save ratings (here.now Site Data). Outside a browser, assume yes. */
+export function feedbackAvailableHere(hostname = typeof location !== 'undefined' ? location.hostname : null, hosts = FEEDBACK.hosts) {
+  if (!hostname || !hosts?.length) return true
+  return hosts.some((h) => hostname === h.replace(/^\./, '') || hostname.endsWith(h))
+}
+
+export function createFeedbackClient({ endpoint = FEEDBACK.endpoint, fetchImpl = (...a) => fetch(...a), onEvent = () => {}, hostname } = {}) {
   if (!endpoint) return null
+  if (endpoint === FEEDBACK.endpoint && !feedbackAvailableHere(hostname)) return null
   return {
     /** Saves one rating. Throws on any failure so the card can show an error and allow a retry. */
     async submit(rating) {

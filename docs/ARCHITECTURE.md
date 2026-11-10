@@ -199,6 +199,14 @@ The test page is generated from our own field map, so the **final check must hap
 ### 4. Staff hand-off
 Not built. ("Talk to a person" was removed from the chat at the team's request.) The reply contract already has `needs_staff`, and issues have `requires_staff`. A hand-off would send only what the applicant chooses to share, through an approved channel.
 
+## Claude on Vercel (ready, key pending)
+
+`api/assistant.js` is a Vercel function that sends every question through `handleAssistantRequest()`:
+- **With `ANTHROPIC_API_KEY` set:** allowed questions go to Claude (`server/claudeAnswerer.js`). It uses `claude-opus-5-5` at low effort, a server-side refusal fallback, a JSON-schema reply (answer, source ids, needs_staff) and the cached knowledge base from `server/knowledgeContext.js`.
+- **Without a key, or if Claude fails:** the field guide answers.
+
+The browser uses `ASSISTANT.mode = 'auto'`. On a host in `server_hosts` (for example `.vercel.app`) it calls `/api/assistant` and falls back to the field guide on any failure; elsewhere, including here.now and the add-on, it uses the field guide. The rating card shows only on here.now, where Site Data exists. See `docs/AI-SETUP.md` for the key steps.
+
 ## Chat answers today: the field guide
 
 `ASSISTANT.mode` is `'guide'`. The chat answers in the browser from `fieldGuide.js`, with no AI and no network, using the same request and reply contract as a real AI endpoint:

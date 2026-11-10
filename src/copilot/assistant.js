@@ -45,15 +45,23 @@ export function buildRequest({ message, activeFieldId = null, history = [], loca
   }
 }
 
-/** Keep only citations we know about, so the model can't invent links. */
+// Reply kinds the server may send. Anything but 'answer' is fixed text the chat translates.
+const KINDS = new Set(['answer', 'no_answer', 'out_of_scope', 'clarify', 'integrity', 'privacy_warning'])
+
+/**
+ * Keep only citations we know about, so the model can't invent links. Accepts our server's
+ * `{ reply: {...} }` (api/assistant.js) or a plain `{ text, source_ids }` from another endpoint.
+ */
 function normalizeReply(raw) {
-  const ids = Array.isArray(raw?.source_ids) ? raw.source_ids : []
+  const r = raw?.reply && typeof raw.reply === 'object' ? raw.reply : raw
+  const ids = Array.isArray(r?.source_ids) ? r.source_ids : Array.isArray(r?.sources) ? r.sources.map((s) => s?.id) : []
   return {
-    kind: 'answer',
-    text: typeof raw?.text === 'string' && raw.text.trim() ? raw.text : CANNED_REPLIES.noAnswer,
-    sources: ids.filter((id) => SOURCES[id]).map((id) => ({ id, title: SOURCES[id].title, url: SOURCES[id].url })),
-    needs_staff: !!raw?.needs_staff,
-    english_only: false,
+    kind: KINDS.has(r?.kind) ? r.kind : 'answer',
+    text: typeof r?.text === 'string' && r.text.trim() ? r.text : CANNED_REPLIES.noAnswer,
+    sources: [...new Set(ids)].filter((id) => SOURCES[id]).map((id) => ({ id, title: SOURCES[id].title, url: SOURCES[id].url })),
+    needs_staff: !!r?.needs_staff,
+    english_only: !!r?.english_only,
+    from: typeof r?.from === 'string' ? r.from : 'server',
   }
 }
 
@@ -83,12 +91,35 @@ export function httpTransport(endpoint, fetchImpl = (...a) => fetch(...a)) {
         body: JSON.stringify(request),
       })
       if (!res.ok) throw new Error(`Assistant request failed (${res.status})`)
-      return normalizeReply(await res.json())
+      // A static host answers unknown paths with the web page itself: treat that as unavailable.
+      const body = await res.json().catch(() => null)
+      if (!body || typeof body !== 'object') throw new Error('Assistant endpoint did not return JSON')
+      return normalizeReply(body)
     },
   }
 }
 
-export function transportFromConfig(config = ASSISTANT) {
+/** Tries `primary`; if it fails (offline, server error, no server), answers with `fallback`. */
+export function withFallback(primary, fallback, onFallback = () => {}) {
+  return {
+    async send(request) {
+      try {
+        return await primary.send(request)
+      } catch (err) {
+        onFallback(err)
+        return fallback.send(request)
+      }
+    },
+  }
+}
+
+const onServerHost = (hosts, hostname = typeof location !== 'undefined' ? location.hostname : '') =>
+  !!hostname && (hosts || []).some((h) => hostname === h.replace(/^\./, '') || hostname.endsWith(h))
+
+export function transportFromConfig(config = ASSISTANT, { hostname } = {}) {
+  if (config.mode === 'auto') {
+    return onServerHost(config.server_hosts, hostname) ? withFallback(httpTransport(config.endpoint), guideTransport) : guideTransport
+  }
   if (config.mode === 'http') return httpTransport(config.endpoint)
   if (config.mode === 'guide') return guideTransport
   return placeholderTransport
