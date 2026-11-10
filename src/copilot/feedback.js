@@ -3,6 +3,7 @@
 // feedback id and the time. Never form answers, chat messages or anything about the applicant.
 
 import { FEEDBACK } from './config.js'
+import { onServerHost, onHereNow } from './hosting.js'
 
 export function newFeedbackId() {
   const rand = globalThis.crypto?.randomUUID?.() || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`
@@ -26,15 +27,21 @@ export function hasMeaningfulInteraction(messages, { minUserMessages = FEEDBACK.
   return userMessages >= minUserMessages && answered >= minAnswers
 }
 
-/** True on a site that can save ratings (here.now Site Data). Outside a browser, assume yes. */
-export function feedbackAvailableHere(hostname = typeof location !== 'undefined' ? location.hostname : null, hosts = FEEDBACK.hosts) {
-  if (!hostname || !hosts?.length) return true
-  return hosts.some((h) => hostname === h.replace(/^\./, '') || hostname.endsWith(h))
+/**
+ * Where ratings can be saved from this site: our server (Render/Vercel) at /api/feedback, or
+ * here.now Site Data. Anywhere else there is nowhere to save them, so the card stays hidden.
+ * Outside a browser (tests), here.now's path is assumed.
+ */
+export function defaultFeedbackEndpoint(hostname = typeof location !== 'undefined' ? location.hostname : null) {
+  if (!hostname) return FEEDBACK.endpoint
+  if (onServerHost(hostname)) return FEEDBACK.server_endpoint
+  if (onHereNow(hostname)) return FEEDBACK.endpoint
+  return null
 }
 
-export function createFeedbackClient({ endpoint = FEEDBACK.endpoint, fetchImpl = (...a) => fetch(...a), onEvent = () => {}, hostname } = {}) {
+export function createFeedbackClient({ endpoint, fetchImpl = (...a) => fetch(...a), onEvent = () => {}, hostname } = {}) {
+  if (endpoint === undefined) endpoint = defaultFeedbackEndpoint(hostname) // null = explicitly off
   if (!endpoint) return null
-  if (endpoint === FEEDBACK.endpoint && !feedbackAvailableHere(hostname)) return null
   return {
     /** Saves one rating. Throws on any failure so the card can show an error and allow a retry. */
     async submit(rating) {

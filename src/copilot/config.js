@@ -259,8 +259,10 @@ export const ASSISTANT = {
  */
 export const FEEDBACK = {
   endpoint: './.herenow/data/assistant_feedback',
-  // Site Data exists only on here.now; elsewhere (Vercel) the rating card stays hidden.
+  // here.now saves ratings in Site Data; our own server (Render/Vercel) saves them at
+  // server_endpoint; anywhere else the rating card stays hidden.
   hosts: ['.here.now'],
+  server_endpoint: '/api/feedback',
   // "Meaningful interaction": the applicant has sent at least 2 messages and received at least 1 real answer.
   min_user_messages: 2,
   min_answers: 1,

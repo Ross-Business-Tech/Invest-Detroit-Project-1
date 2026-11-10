@@ -3,7 +3,7 @@
 // `values`, `goToField` and the Submit lock play here.
 
 import { useEffect, useRef, useState } from 'react'
-import { FORM_INTRO, visibleSections, validate } from '../copilot/formDefinition.js'
+import { FORM_INTRO, visibleSections, validate, FIELDS_BY_ID } from '../copilot/formDefinition.js'
 import Field, { UploadTips } from '../components/Field.jsx'
 import ReviewPanel from '../components/ReviewPanel.jsx'
 import SuccessDialog from '../components/SuccessDialog.jsx'
@@ -17,6 +17,12 @@ import { uploadTips } from '../copilot/uploadTips.js'
 import { runReview } from '../copilot/review.js'
 import { equityMath, stateForZip, ZIP_STATE, ZIP_TEXT } from '../copilot/formHelpers.js'
 import FormProgress from './FormProgress.jsx'
+import { formProgress } from '../copilot/formHelpers.js'
+import { track } from '../copilot/events.js'
+import { buildStaffSummary } from '../copilot/staffSummary.js'
+import { saveDraft, loadDraft, clearDraft, draftsOff, setDraftsOff } from './draft.js'
+
+const isFileField = (id) => FIELDS_BY_ID[id]?.type === 'file'
 
 const HOME_TO_BUSINESS = { home_address: 'business_address', home_city: 'business_city', home_state: 'business_state', home_zip: 'business_zip' }
 const BUSINESS_FIELDS = new Set(Object.values(HOME_TO_BUSINESS))
@@ -54,7 +60,7 @@ function errorsFrom(issues) {
  * @param {{ onActiveFieldChange?: (fieldId: string) => void, onHelp?: (fieldId: string) => void }} props
  */
 export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const [values, setValues] = useState({})
   const valuesRef = useRef(values)
   useEffect(() => { valuesRef.current = values })
@@ -67,6 +73,12 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
   const touched = useRef(new Set())
   const [live, setLive] = useState({})
   const [reviewNotes, setReviewNotes] = useState({})
+  // Save & resume: a draft kept on this device only (see draft.js).
+  const [draftOffer, setDraftOffer] = useState(() => loadDraft())
+  const [savingOff, setSavingOff] = useState(() => draftsOff())
+  const [staffSummary, setStaffSummary] = useState('')
+  const started = useRef(false)
+  const submittedRef = useRef(false)
   const [review, session] = useReviewSession(() => valuesRef.current)
   const sections = visibleSections(values)
 
@@ -79,7 +91,47 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
     }
   }), [session])
 
+  // Keep the draft up to date (not while a saved draft is waiting to be resumed or discarded).
+  useEffect(() => {
+    if (draftOffer || submitted || !started.current) return
+    const timer = setTimeout(() => saveDraft(values, { isFileField, extra: { sameAddress } }), 600)
+    return () => clearTimeout(timer)
+  }, [values, sameAddress, draftOffer, submitted])
+
+  // Where people stop: when the page closes before Submit, count the first unfinished section.
+  useEffect(() => {
+    const onLeave = () => {
+      if (!started.current || submittedRef.current) return
+      const section = formProgress(valuesRef.current).sections.find((s) => s.done < s.total)?.id
+      track({ type: 'form_left', section })
+    }
+    addEventListener('pagehide', onLeave)
+    return () => removeEventListener('pagehide', onLeave)
+  }, [])
+
+  const markStarted = () => {
+    if (started.current) return
+    started.current = true
+    track({ type: 'form_started' })
+  }
+
+  const resumeDraft = () => {
+    setValues(draftOffer.values)
+    setSameAddress(!!draftOffer.sameAddress)
+    setDraftOffer(null)
+    markStarted()
+    session.invalidate()
+  }
+  const discardDraft = () => { clearDraft(); setDraftOffer(null) }
+  const toggleSaving = () => {
+    const off = !savingOff
+    setDraftsOff(off)
+    setSavingOff(off)
+    if (!off) saveDraft(valuesRef.current, { isFileField, extra: { sameAddress } })
+  }
+
   const onChange = (id, val, file) => {
+    markStarted()
     setValues((v) => {
       const next = { ...v, [id]: val }
       // Keep the business address in step with the home address while the box is ticked.
@@ -141,10 +193,18 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
       return
     }
     setShowErrors(false)
+    // What Invest Detroit's staff would receive with the application (never sent to our server).
+    setStaffSummary(buildStaffSummary({ issues: review.issues, notes: reviewNotes, locale }))
+    clearDraft()
+    submittedRef.current = true
+    track({ type: 'form_submitted' })
     setSubmitted(true)
   }
 
   const reset = () => {
+    clearDraft()
+    started.current = false
+    submittedRef.current = false
     setValues({})
     setErrors({})
     setShowErrors(false)
@@ -159,6 +219,7 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
   }
 
   const fillSample = () => {
+    markStarted()
     setValues(SAMPLE_APPLICANT)
     setSameAddress(false)
     setLive({})
@@ -176,6 +237,19 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
 
   return (
     <>
+      {draftOffer && (
+        <div className="draft-offer" role="region" aria-label={t('Saved answers')}>
+          <p>
+            <strong>{t('You have saved answers from {date}.', { date: new Date(draftOffer.savedAt).toLocaleString(locale, { dateStyle: 'medium', timeStyle: 'short' }) })}</strong>{' '}
+            {t('Files need to be attached again.')}
+          </p>
+          <div className="draft-actions">
+            <button type="button" className="btn small" onClick={resumeDraft}>{t('Continue where I left off')}</button>
+            <button type="button" className="btn small outline" onClick={discardDraft}>{t('Start over')}</button>
+          </div>
+        </div>
+      )}
+
       <BeforeYouStart />
 
       <div className="proto-tools">
@@ -190,6 +264,11 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
         <div className="form-intro">
           {FORM_INTRO.map((p) => <p key={p}>{t(p)}</p>)}
         </div>
+
+        <p className="draft-status" role="status">
+          {savingOff ? t('Answers are not being saved on this device.') : t('Your answers are saved on this device as you type, so you can come back later.')}{' '}
+          <button type="button" className="link-btn" onClick={toggleSaving}>{savingOff ? t('Save on this device') : t('Don’t save on this device')}</button>
+        </p>
 
         {showErrors && errorCount > 0 && (
           <div className="error-summary" role="alert">
@@ -248,7 +327,7 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
         {!review.canSubmit && <p className="submit-help" id="submit-help">{t('Submit unlocks after a successful review.')}</p>}
       </form>
 
-      {submitted && <SuccessDialog name={values.first_name} noteCount={sentNotes.length} onClose={() => setSubmitted(false)} onReset={reset} />}
+      {submitted && <SuccessDialog name={values.first_name} noteCount={sentNotes.length} staffSummary={staffSummary} onClose={() => setSubmitted(false)} onReset={reset} />}
     </>
   )
 }

@@ -12,6 +12,8 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import zlib from 'node:zlib'
 import assistant from '../api/assistant.js'
+import { getStore } from './store.js'
+import { eventsHandler, feedbackHandler, insightsHandler } from './insights.js'
 
 const DIST = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'dist')
 const MAX_BODY = 64 * 1024
@@ -21,8 +23,8 @@ const TYPES = {
   '.webp': 'image/webp', '.ico': 'image/x-icon', '.woff2': 'font/woff2', '.txt': 'text/plain; charset=utf-8', '.pdf': 'application/pdf',
 }
 
-/** Adapts Node's request/response to the small Vercel-style API the function expects. */
-async function runAssistant(req, res) {
+/** Adapts Node's request/response to the small Vercel-style API the functions expect. */
+async function runJson(req, res, fn) {
   const chunks = []
   let size = 0
   for await (const chunk of req) {
@@ -39,7 +41,7 @@ async function runAssistant(req, res) {
     status: (code) => { res.statusCode = code; return out },
     json: (payload) => { res.setHeader('content-type', 'application/json'); res.end(JSON.stringify(payload)); return out },
   }
-  return assistant({ method: req.method, headers: req.headers, body }, out)
+  return fn({ method: req.method, headers: req.headers, body }, out)
 }
 
 // Text files are compressed once (Brotli or gzip) and kept in memory: the app's main script
@@ -91,7 +93,11 @@ function serveStatic(req, res) {
 export function createWebServer() {
   return http.createServer((req, res) => {
     const pathname = new URL(req.url, 'http://x').pathname
-    if (pathname === '/api/assistant') return runAssistant(req, res).catch(() => { if (!res.headersSent) { res.writeHead(500); res.end() } })
+    const fail = () => { if (!res.headersSent) { res.writeHead(500); res.end() } }
+    if (pathname === '/api/assistant') return runJson(req, res, (rq, rs) => assistant(rq, rs)).catch(fail)
+    if (pathname === '/api/events') return runJson(req, res, (rq, rs) => eventsHandler(rq, rs, getStore())).catch(fail)
+    if (pathname === '/api/feedback') return runJson(req, res, (rq, rs) => feedbackHandler(rq, rs, getStore())).catch(fail)
+    if (pathname === '/insights') return insightsHandler(req, res, getStore()).catch(fail)
     if (pathname === '/healthz') { res.writeHead(200, { 'content-type': 'text/plain' }); return res.end('ok') }
     return serveStatic(req, res)
   })

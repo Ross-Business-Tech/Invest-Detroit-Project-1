@@ -26,7 +26,7 @@
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 body { background: var(--bg); line-height: 1.55; font-size: 16px; }
-a { color: var(--yellow-dark); }
+a { color: #7a5000; } /* 7:1 on white (brand yellow-dark was 3.1:1, too low for text) */
 img { max-width: 100%; }
 :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
 @media (max-width: 640px) { :root { --gutter: 16px; --pad-x: 16px; --pad-x-inner: 12px; --field-gap: 18px; } }

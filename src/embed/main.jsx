@@ -7,14 +7,17 @@
 //           data-launcher-bottom="84px"                 (optional: lift the chat button)
 //           data-assistant-endpoint="https://…"           (optional: connect a real AI)
 //           data-locale="es"                             (optional: otherwise follows <html lang>)
-//           data-feedback-endpoint="https://…"></script> (optional: turns on the chat rating card)
+//           data-feedback-endpoint="https://…"           (optional: turns on the chat rating card)
+//           data-summary-field="tfa_1234"></script>    (optional: hidden field that receives the staff summary)
 //
 // What it does:
 //   1. Waits for FormAssembly form 4907942 to appear on the page.
 //   2. Adds the "Review My Application" panel just above the form's own Submit button, and
 //      locks Submit until a review passes.
 //   3. Adds the "Need help?" chat button in the corner.
-// It only reads the form. It never fills in, changes or submits answers.
+// It only reads the form. It never fills in, changes or submits answers. The one exception is
+// opt-in: with data-summary-field, at Submit it writes the review summary (for Invest Detroit's
+// staff) into that hidden field, which Invest Detroit adds to their form for this purpose.
 //
 // Fail-safe: if anything goes wrong (form not found, a bug, a changed form), the add-on removes
 // itself and unlocks Submit, so the official form always keeps working on its own.
@@ -30,6 +33,7 @@ import { FORM_ASSEMBLY_FORM_ID, FORM_ASSEMBLY_SUBMIT_ID } from '../copilot/adapt
 import { createReviewSession } from '../copilot/reviewSession.js'
 import { createAssistant, httpTransport, transportFromConfig } from '../copilot/assistant.js'
 import { createFeedbackClient } from '../copilot/feedback.js'
+import { buildStaffSummary } from '../copilot/staffSummary.js'
 import { track } from '../copilot/events.js'
 import { PROGRAM } from '../copilot/config.js'
 import { CONNECTED_SUBTITLE } from '../components/chatText.js'
@@ -46,6 +50,7 @@ const SETTINGS = {
   locale: scriptTag?.dataset.locale ? localeFromLang(scriptTag.dataset.locale) : null, // default: follow the page
   // Rating card under the chat. Off unless Invest Detroit gives an endpoint that saves ratings.
   feedbackEndpoint: scriptTag?.dataset.feedbackEndpoint || null,
+  summaryField: scriptTag?.dataset.summaryField || null,
 }
 
 function makeHost(className) {
@@ -135,7 +140,13 @@ export async function mount(options = {}) {
 
     // Backup lock: some form scripts re-enable their button, so also stop the submit itself.
     const guard = (e) => {
-      if (!guardOn || e.target !== form || session.getState().canSubmit) return
+      if (!guardOn || e.target !== form) return
+      if (session.getState().canSubmit) {
+        // Staff summary goes inside the application, to Invest Detroit's own system only.
+        const target = opts.summaryField && (form.querySelector(`#${CSS.escape(opts.summaryField)}`) || form.querySelector(`[name="${CSS.escape(opts.summaryField)}"]`))
+        if (target) target.value = buildStaffSummary({ issues: session.getState().issues, locale: document.documentElement.lang || 'en' })
+        return
+      }
       e.preventDefault()
       e.stopImmediatePropagation()
       review.host.scrollIntoView({ behavior: 'smooth', block: 'center' })

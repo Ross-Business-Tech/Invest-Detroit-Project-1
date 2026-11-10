@@ -28,7 +28,7 @@
 /* Yellow title box: lines up with the page content and overlaps the photo's bottom edge. */
 .hero-title { position: absolute; left: 0; right: 0; bottom: calc(var(--sp-5) * -1); }
 .hero h2 {
-  display: inline-block; margin: 0; background: var(--yellow); color: #fff;
+  display: inline-block; margin: 0; background: var(--yellow); color: var(--dark); /* dark on yellow: 10:1 contrast (white was 1.9:1) */
   font-family: 'Barlow Condensed', var(--font); font-weight: 700; letter-spacing: .005em;
   font-size: clamp(30px, 4.6vw, 60px); line-height: 1.05;
   padding: var(--sp-3) var(--sp-5);
@@ -184,6 +184,15 @@
 .next-steps ol { margin: 0 0 var(--sp-2); padding-inline-start: 1.3em; font-size: 14px; line-height: 1.45; }
 .next-steps li { margin-bottom: var(--sp-2); }
 .next-time { color: var(--muted); font-size: 13px; white-space: nowrap; }
+.staff-summary { text-align: start; margin: 0 0 var(--sp-3); border: 1px solid var(--line); padding: var(--sp-2) var(--sp-3); }
+.staff-summary summary { cursor: pointer; font-weight: 700; font-size: 14px; }
+.staff-summary-note { font-size: 13px; color: var(--muted); margin: var(--sp-2) 0 !important; }
+.staff-summary pre { white-space: pre-wrap; font: 12.5px/1.45 ui-monospace, Menlo, Consolas, monospace; background: #f4f5f4; padding: var(--sp-2); margin: 0; max-height: 220px; overflow: auto; }
+.draft-offer { background: #fff3d6; border: 1px solid #f0d28a; padding: var(--sp-3) var(--pad-x); margin-bottom: var(--sp-4); }
+.draft-offer p { margin: 0 0 var(--sp-2); }
+.draft-actions { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
+.draft-status { font-size: 13px; color: var(--muted); margin: 0 0 var(--sp-4); }
+.link-btn { background: none; border: 0; padding: 0; font: inherit; color: var(--dark); text-decoration: underline; cursor: pointer; }
 .modal-notes { font-size: 14px; background: #eef7f1; padding: var(--sp-2) var(--sp-3); }
 .modal .next-note { font-size: 13px; color: var(--muted); margin: 0; }
 .modal-actions { display: flex; gap: var(--sp-2); justify-content: center; flex-wrap: wrap; margin-top: var(--sp-4); }

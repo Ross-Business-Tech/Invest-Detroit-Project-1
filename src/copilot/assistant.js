@@ -13,6 +13,7 @@ import { fieldContext } from './formDefinition.js'
 import { redactSensitive } from './privacy.js'
 import { guideTransport } from './guideTransport.js'
 import { evaluateRequest, guardrailReply } from './guardrails/index.js'
+import { hostMatches } from './hosting.js'
 
 /**
  * @typedef {{ role: 'user' | 'assistant', text: string }} ChatTurn
@@ -116,8 +117,7 @@ export function withFallback(primary, fallback, onFallback = () => {}) {
 /** Marks a transport whose server re-checks scope with a model, so the browser lets unclear questions through. */
 const serverJudged = (transport) => Object.assign(transport, { lenientScope: true })
 
-const onServerHost = (hosts, hostname = typeof location !== 'undefined' ? location.hostname : '') =>
-  !!hostname && (hosts || []).some((h) => hostname === h.replace(/^\./, '') || hostname.endsWith(h))
+const onServerHost = (hosts, hostname = typeof location !== 'undefined' ? location.hostname : '') => hostMatches(hosts, hostname)
 
 export function transportFromConfig(config = ASSISTANT, { hostname } = {}) {
   if (config.mode === 'auto') {

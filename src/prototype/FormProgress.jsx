@@ -39,8 +39,8 @@ export default function FormProgress({ values }) {
           const status = complete ? '✓' : s.isDocs ? `${s.done}/${s.total}` : String(s.total - s.done)
           return (
             <li key={s.id}>
-              <button type="button" className={complete ? 'complete' : undefined} onClick={() => jump(s.id)} title={complete ? undefined : left} aria-label={`${t(s.label)}: ${complete ? '✓' : left}`}>
-                {t(s.label)} <span className="fp-status" aria-hidden="true">{status}</span>
+              <button type="button" className={complete ? 'complete' : undefined} onClick={() => jump(s.id)} title={complete ? undefined : left} aria-label={complete ? `${t(s.label)} ✓` : `${t(s.label)} ${status} (${left})`}>
+                {t(s.label)} <span className="fp-status">{status}</span>
               </button>
             </li>
           )

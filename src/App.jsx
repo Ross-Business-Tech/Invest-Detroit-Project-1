@@ -11,6 +11,8 @@ import { localeInfo, localeFromLang } from './copilot/i18n/index.js'
 import { createAssistant } from './copilot/assistant.js'
 import { createFeedbackClient } from './copilot/feedback.js'
 import { track } from './copilot/events.js'
+import { startMetrics } from './copilot/metrics.js'
+import { onServerHost } from './copilot/hosting.js'
 import './components/copilot.css'
 import './App.css'
 
@@ -30,13 +32,18 @@ function Page({ locale, onLocaleChange }) {
   const [feedbackClient] = useState(() => createFeedbackClient({ onEvent: track }))
   const [activeFieldId, setActiveFieldId] = useState(null)
   const [helpRequest, setHelpRequest] = useState(null)
-  const askForHelp = (fieldId) => setHelpRequest((r) => ({ fieldId, n: (r?.n || 0) + 1 }))
+  const askForHelp = (fieldId) => {
+    track({ type: 'field_help', field_id: fieldId })
+    setHelpRequest((r) => ({ fieldId, n: (r?.n || 0) + 1 }))
+  }
+  // Anonymous usage counts, only where our server runs (see copilot/metrics.js).
+  useEffect(() => startMetrics(), [])
 
   return (
     <>
-      <div className="proto-banner" role="note">
-        {t('Student prototype for the Invest Detroit project. Not the official website. Nothing you enter is sent anywhere.')}
-      </div>
+      <aside className="proto-banner" aria-label={t('Prototype notice')}>
+        {onServerHost() ? t('Student prototype for the Invest Detroit project. Not the official website. Form answers are not sent anywhere; chat questions are answered by an AI service.') : t('Student prototype for the Invest Detroit project. Not the official website. Nothing you enter is sent anywhere.')}
+      </aside>
       {locale !== 'en' && (
         <div className="translation-note" role="note">
           {t('This page was translated with AI and has not yet been reviewed by a professional translator. If anything is unclear, the English version is the official one.')}
@@ -53,17 +60,17 @@ function Page({ locale, onLocaleChange }) {
         </div>
       </header>
 
-      <section className="hero">
-        {/* Photo from Invest Detroit's "Need Support?" page (2016 student service day). */}
-        <img className="hero-img" src="/images/need-support-hero.webp" alt="" width="1600" height="900" fetchPriority="high" />
-        <div className="hero-title">
-          <div className="container">
-            <h2>{t('Need Support?')}</h2>
-          </div>
-        </div>
-      </section>
-
       <main>
+        <section className="hero">
+          {/* Photo from Invest Detroit's "Need Support?" page (2016 student service day). */}
+          <img className="hero-img" src="/images/need-support-hero.webp" alt="" width="1600" height="900" fetchPriority="high" />
+          <div className="hero-title">
+            <div className="container">
+              <h2>{t('Need Support?')}</h2>
+            </div>
+          </div>
+        </section>
+
         <HowItWorks />
 
         <section className="band form-band" id="form">

@@ -136,9 +136,13 @@ test('on Vercel the chat asks the server; if it fails, it answers from the guide
   assert.match(reply.text, /Area Median Income/)
 })
 
-test('the rating card is offered only where ratings can be saved (here.now)', () => {
+test('ratings are saved through here.now or our server, and hidden anywhere else', async () => {
   assert.ok(createFeedbackClient({ hostname: 'invest-detroit-support.rossbusinesstech.here.now' }))
-  assert.equal(createFeedbackClient({ hostname: 'invest-detroit.vercel.app' }), null)
+  assert.equal(createFeedbackClient({ hostname: 'investdetroit.com' }), null)
+  let url = null
+  const client = createFeedbackClient({ hostname: 'invest-detroit-project-1.onrender.com', fetchImpl: async (u) => { url = u; return { ok: true, json: async () => ({ record: { id: 'x' } }) } } })
+  await client.submit(5)
+  assert.equal(url, '/api/feedback')
 })
 
 // ---- Scope with Claude connected ------------------------------------------------------------

@@ -17,3 +17,15 @@ services:
         value: "22"
       - key: ANTHROPIC_API_KEY
         sync: false                 # Render asks for the value; it is never stored in this file
+      - key: DATABASE_URL           # keeps insights, ratings and daily limits across restarts
+        fromDatabase:
+          name: invest-detroit-copilot-db
+          property: connectionString
+      - key: INSIGHTS_PASSWORD      # password for /insights; Render generates one (see the Environment tab)
+        generateValue: true
+      - key: ASSISTANT_SALT         # keeps per-visitor daily limits steady across restarts
+        generateValue: true
+
+databases:
+  - name: invest-detroit-copilot-db
+    plan: free                      # Render's free Postgres; check Render's current free-tier terms

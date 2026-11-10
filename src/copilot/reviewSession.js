@@ -44,7 +44,8 @@ export function createReviewSession({
     stop()
     const canSubmit = canSubmitWith(issues)
     set({ status: 'done', step: REVIEW_CHECKS.length, issues, stale: false, canSubmit })
-    onEvent({ type: 'review_completed', can_submit: canSubmit, ...summarizeIssues(issues) })
+    // Issue ids only (e.g. loan_gt_budget): never the answers themselves.
+    onEvent({ type: 'review_completed', can_submit: canSubmit, ...summarizeIssues(issues), issue_ids: issues.map((i) => i.id) })
   }
 
   return {

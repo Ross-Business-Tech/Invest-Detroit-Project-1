@@ -148,7 +148,7 @@ export default function Field({ field, value, error, onChange, onHelp, tips, not
 
   switch (field.type) {
     case 'subheading':
-      return <h4 className={`subheading${field.plain ? ' plain' : ''}`}>{t(field.text)}</h4>
+      return <h2 className={`subheading${field.plain ? ' plain' : ''}`}>{t(field.text)}</h2>
     case 'paragraph':
       return <p className="section-paragraph">{t(field.text)}</p>
     case 'disabled':

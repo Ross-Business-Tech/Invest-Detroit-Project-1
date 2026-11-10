@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useI18n } from './i18nContext.js'
 
-export default function SuccessDialog({ name, noteCount = 0, onClose, onReset }) {
+export default function SuccessDialog({ name, noteCount = 0, staffSummary = '', onClose, onReset }) {
   const { t } = useI18n()
   const closeRef = useRef(null)
   useEffect(() => {
@@ -27,6 +27,13 @@ export default function SuccessDialog({ name, noteCount = 0, onClose, onReset })
           </ol>
           <p className="next-note">{t('Typical times from Invest Detroit’s lending guide. Every project is different. Please don’t start construction before your loan closes.')}</p>
         </section>
+        {staffSummary && (
+          <details className="staff-summary">
+            <summary>{t('What Invest Detroit’s team receives')}</summary>
+            <p className="staff-summary-note">{t('In the real form, this summary goes privately to Invest Detroit’s staff with your application, so they can see what the review found and your notes. It is written in English for staff.')}</p>
+            <pre>{staffSummary}</pre>
+          </details>
+        )}
         <p className="modal-note">{t('Prototype only: nothing was actually sent or saved.')}</p>
         <div className="modal-actions">
           <button type="button" className="btn yellow" ref={closeRef} onClick={onClose}>{t('Close')}</button>
