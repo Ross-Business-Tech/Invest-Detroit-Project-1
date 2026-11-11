@@ -42,6 +42,10 @@ export const INTEGRITY_PATTERNS = [
   /\b(without (them|anyone|the (team|reviewer|lender|staff)) (finding out|knowing|noticing))\b/,
   /\b(so (they|the (team|reviewer|lender|staff)) (don'?t|won'?t|can'?t) (find out|notice|know|see))\b/,
   /\b(get away with|avoid (getting )?(caught|detection)|trick (the|a)? ?(review|reviewer|system|team|lender|check)|beat the (review|checks?|system)|fool (the|them))\b/,
+  // "make my revenue look higher", "round up my sales so the numbers look better"
+  /\bmak(e|ing)\s+(my|our|the|his|her|their)\s+(numbers?|figures?|revenue|income|sales|budget|profits?|financials?|equity|credit)\s+(look|seem|appear)\s+(higher|bigger|better|larger|stronger|more\b)/,
+  /\b(numbers?|figures?|revenue|income|sales|profits?|financials?)\s+(look|seem|appear)\s+(better|bigger|higher|larger|stronger)\b/,
+  /\b(round(ing)?|bump(ing)?|pump(ing)?|boost(ing)?)\s+up\b[^.?!]{0,40}\bso\b[^.?!]{0,30}\b(look|seem|appear)\b/,
   /\b(look|seem|appear)\s+(better|bigger|larger|more profitable)\s+than\s+(it|they|we|i)\s+(is|are|really|actually)\b/,
   /\b(say|answer|put|claim|write|enter|check|tick|select)\b[^.?!]{0,40}\b(even though|when (it|i|we|they) (is not|isn'?t|are not|aren'?t|do not|don'?t|does not|doesn'?t|am not|was not|wasn'?t))\b/,
 ]

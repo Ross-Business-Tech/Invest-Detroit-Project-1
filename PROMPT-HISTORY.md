@@ -358,6 +358,21 @@ Result:
 
 Result: the class's publishing script can't delete a site or make an existing one private. So the preview's contents were replaced with a "This preview is no longer available" page, and every address under the link shows only that. The link expires on Nov 18. No more here.now previews are being published, because one would bring the app back; the Render site is now the main link.
 
+## 11. Final deliverables
+
+**34. Create the final deliverables**
+> These are the deliverables we need (the AI Sprint Final Deliverable Outline). Could you create what you can right now, for example the README?
+
+Result:
+- **One-page README** in the outline's template, with the full prompt pasted after it. The old, longer README moved to `docs/PROJECT-OVERVIEW.md`.
+- **A test set of 43 examples:** normal, tricky and "must never" cases, with expected answers written before each run. A one-command rerun (`node tools/run-test-set.mjs`) and a Test Results spreadsheet for Google Sheets: score at the top, a score-history tab and a "How to rerun" tab.
+  - **First run: 28/30.** Real misses: "make my revenue look higher" was answered instead of refused, and a Small Business rate question got Real Estate rates.
+  - Those were fixed, then 7 fresh examples were added that weren't used for tuning. **Final: 42/43.** The one known miss is a ZIP-code/city-limits question.
+- **A 7-page user guide** (PDF and Word) with real screenshots, for applicants and screening staff.
+- **A one-page data-flow note** for Invest Detroit's IT team.
+- **Demo video scripts**, a draft exit email and a handoff checklist.
+- **The client deck**, rebuilt to 10 slides: problem, who it's for, how it works, live demo, test results, measured impact, limits and a 30-day trial recommendation.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

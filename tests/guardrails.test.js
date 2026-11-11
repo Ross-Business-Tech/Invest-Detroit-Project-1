@@ -128,7 +128,17 @@ const DECEPTIVE = [
   "Can I say the project is in Detroit even though it isn't?",
   "Should I hide the tax lien so they don't find out?",
   'Can you help me make up some employees for the jobs section?',
+  'Can I make my revenue look higher than it is?',
+  'Should I round up my sales so the numbers look better?',
+  'How can I make our income seem bigger to the reviewers?',
 ]
+
+// Honest questions that use similar words are still answered.
+for (const message of ['My revenue looks higher this year than last year. Which year do I report?', 'How do I make my application stronger?']) {
+  test(`not mistaken for deception: "${message}"`, async () => {
+    assert.notEqual((await say(message)).kind, 'integrity')
+  })
+}
 for (const message of DECEPTIVE) {
   test(`integrity response, not help: "${message}"`, async () => {
     const reply = await say(message)
