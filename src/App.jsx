@@ -41,14 +41,16 @@ function Page({ locale, onLocaleChange }) {
 
   return (
     <>
-      <aside className="proto-banner" aria-label={t('Prototype notice')}>
-        {onServerHost() ? t('Student prototype for the Invest Detroit project. Not the official website. Form answers are not sent anywhere; chat questions are answered by an AI service.') : t('Student prototype for the Invest Detroit project. Not the official website. Nothing you enter is sent anywhere.')}
-      </aside>
-      {locale !== 'en' && (
-        <div className="translation-note" role="note">
-          {t('This page was translated with AI and has not yet been reviewed by a professional translator. If anything is unclear, the English version is the official one.')}
+      <aside aria-label={t('Prototype notice')}>
+        <div className="proto-banner">
+          {onServerHost() ? t('Student prototype for the Invest Detroit project. Not the official website. Form answers are not sent anywhere; chat questions are answered by an AI service.') : t('Student prototype for the Invest Detroit project. Not the official website. Nothing you enter is sent anywhere.')}
         </div>
-      )}
+        {locale !== 'en' && (
+          <div className="translation-note">
+            {t('This page was translated with AI and has not yet been reviewed by a professional translator. If anything is unclear, the English version is the official one.')}
+          </div>
+        )}
+      </aside>
 
       <header className="site-header">
         <div className="container header-inner">

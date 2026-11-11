@@ -330,6 +330,34 @@ Result:
   - Claude can also mark a question off-topic, and the chat then shows the standard reply.
 - **Checks:** 5 new automated tests, and `tools/check-chat.mjs` runs 8 live pass/fail checks on the real site once the key is in.
 
+**32. Features for Invest Detroit's business needs**
+> Go ahead and implement these all: save and resume, a staff summary with each application, private usage insights, the star rating on Render, an accessibility pass, and abuse and cost protection. *(Follow-up: where would the staff summary be saved, since it should stay private?)*
+
+Result:
+- **Save and resume:**
+  - Answers are kept on the applicant's own device as they type, never the SSN or files.
+  - A "Continue where I left off / Start over" choice appears on return, with an option to turn saving off.
+  - Drafts expire after 7 days and are cleared on submit.
+- **Staff summary:**
+  - Built in the browser at submission. On the real form, it goes inside the application into a hidden field only Invest Detroit's staff see.
+  - It is never stored by our site. The prototype's success pop-up shows what staff would receive.
+- **Usage insights:**
+  - A password-protected `/insights` page shows forms started and submitted, where people stop, the most common review findings, what people ask about, chat outcomes and ratings.
+  - Only counts are stored, never what anyone typed.
+  - Counts last across restarts once Render's free Postgres database is attached.
+- **Star ratings** are saved through our server on Render.
+- **Accessibility:** an automated check went from 6 kinds of issues to none. The fixes include dark text on the yellow banner, darker links, the heading order and labeled page areas.
+- **Limits:**
+  - daily Claude limits per visitor and for the whole site, after which the chat answers from the built-in guide;
+  - no IP addresses stored;
+  - plus a reminder to set a spending cap in the Anthropic Console.
+- **Honest banner:** the top banner now says chat questions are answered by an AI service.
+
+**33. Take down the here.now preview**
+> Delete our Invest Detroit website preview from here.now, or make it private so people who have the link can't open it.
+
+Result: the class's publishing script can't delete a site or make an existing one private. So the preview's contents were replaced with a "This preview is no longer available" page, and every address under the link shows only that. The link expires on Nov 18. No more here.now previews are being published, because one would bring the app back; the Render site is now the main link.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

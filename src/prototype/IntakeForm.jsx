@@ -119,7 +119,7 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
     setValues(draftOffer.values)
     setSameAddress(!!draftOffer.sameAddress)
     setDraftOffer(null)
-    markStarted()
+    started.current = true // a resumed form was already counted as started on the first visit
     session.invalidate()
   }
   const discardDraft = () => { clearDraft(); setDraftOffer(null) }

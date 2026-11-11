@@ -82,7 +82,7 @@ export default function ReviewPanel({ state, onRun, onGoToField, notes = {}, onN
             if (!list.length) return null
             return (
               <div key={key} className={`issue-group ${key}`}>
-                <h4><span className="badge" aria-hidden="true">{icon}</span>{t(title)} ({list.length})</h4>
+                <h3><span className="badge" aria-hidden="true">{icon}</span>{t(title)} ({list.length})</h3>
                 <ul>
                   {list.map((i) => (
                     <li key={i.id} className={notes[i.id]?.trim() ? 'explained' : undefined}>

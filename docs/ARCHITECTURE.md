@@ -199,6 +199,34 @@ The test page is generated from our own field map, so the **final check must hap
 ### 4. Staff hand-off
 Not built. ("Talk to a person" was removed from the chat at the team's request.) The reply contract already has `needs_staff`, and issues have `requires_staff`. A hand-off would send only what the applicant chooses to share, through an approved channel.
 
+## Business features (prototype + server)
+
+- **Save & resume** (`src/prototype/draft.js`):
+  - A draft is kept in the applicant's browser only (`localStorage`), with a 7-day expiry.
+  - It never keeps the SSN or files.
+  - It's cleared on Submit, Clear form or Start over, and can be turned off with "Don't save on this device".
+  - The real form can use FormAssembly's own Save & Resume instead.
+- **Staff summary** (`src/copilot/staffSummary.js`):
+  - Plain English text, built in the browser at Submit: the review's double-check items, the applicant's notes and tips.
+  - The prototype shows it in the success pop-up.
+  - The add-on writes it into a hidden FormAssembly field when given `data-summary-field`, so it travels only with the application to Invest Detroit's own system.
+  - It is never sent to our server.
+- **Usage insights** (`src/copilot/metrics.js` → `/api/events`, `server/insights.js`, `server/store.js`):
+  - Only on our server hosts. Events are sent as type and key pairs (`review_issue:loan_gt_budget`, `form_exit:business_info`), and the server accepts only allow-listed types and keys.
+  - The chat endpoint also counts outcomes by category.
+  - Counts are kept in Postgres (`DATABASE_URL`) or in memory.
+  - `/insights` is the dashboard, protected by `INSIGHTS_PASSWORD` (HTTP Basic, constant-time compare, `noindex`).
+- **Ratings on the server:** `/api/feedback` takes the same request and reply shape as here.now Site Data, so the rating card is unchanged. `FEEDBACK.server_endpoint` is used on server hosts.
+- **Limits:**
+  - per-minute per IP, kept in memory;
+  - per-visitor per day, by a hashed and salted IP with a daily rotation;
+  - site-wide per day.
+  
+  Past a daily limit, the chat answers from the field guide.
+- **Accessibility:**
+  - An axe check (WCAG 2.1 A/AA plus best practices) is clean on desktop and phone.
+  - The banner text is dark on yellow, links are `#7a5000`, the heading order is fixed, and the page has labeled landmarks.
+
 ## Claude on Vercel (ready, key pending)
 
 `api/assistant.js` is a Vercel function that sends every question through `handleAssistantRequest()`:

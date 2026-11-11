@@ -97,6 +97,19 @@ The same settings are saved in `render.yaml`, so the service can also be created
 
 Render redeploys by itself when the branch changes. Logs are under the service's **Logs** tab and use the same `{"at":"assistant",...}` lines as the table above.
 
+## Insights, ratings and limits (Render)
+
+| What | How to turn it on |
+|---|---|
+| **Keep counts across restarts** | Create a free Render Postgres database (**New → Postgres**), then add its **Internal Database URL** to the web service as `DATABASE_URL`. Without it, counts live in memory and reset whenever the free server sleeps. |
+| **Insights dashboard** | Add `INSIGHTS_PASSWORD` (any password you choose), then open `https://your-site.onrender.com/insights`. The browser asks for a username (anything) and the password. |
+| **Steady per-visitor limits** | Add `ASSISTANT_SALT` (any long random text) so visitor counts survive restarts. |
+| **Spending cap** | In the **Anthropic Console → Limits**, set a monthly spending limit. This is the one cap no one can get around. |
+
+The dashboard shows forms started and submitted, where people stopped, the most common review findings, which questions people needed help with, chat outcomes, the guardrails, star ratings and limits reached. **It stores counts only:** no messages, answers, notes, names or IP addresses. Visitors are counted by a one-way hash that changes daily.
+
+**Daily limits:** after `ASSISTANT_VISITOR_DAILY` Claude answers for one visitor (default 60) or `ASSISTANT_DAILY_LIMIT` for the whole site (default 500), the chat answers from the built-in guide until the next day.
+
 ## Optional settings (environment variables, Render or Vercel)
 
 | Name | Default | What it does |
@@ -104,6 +117,11 @@ Render redeploys by itself when the branch changes. Logs are under the service's
 | `ASSISTANT_MODEL` | `claude-opus-5-5` | Which Claude model answers |
 | `ASSISTANT_EFFORT` | `low` | `low`, `medium` or `high`: more thinking, slower and pricier answers |
 | `ASSISTANT_RATE_LIMIT` | `20` | Questions per minute from one visitor (a basic brake) |
+| `ASSISTANT_VISITOR_DAILY` | `60` | Claude answers per visitor per day |
+| `ASSISTANT_DAILY_LIMIT` | `500` | Claude answers per day for the whole site |
+| `ASSISTANT_SALT` | random at start | Keeps visitor counting steady across restarts |
+| `DATABASE_URL` | none | Postgres for counts, ratings and limits |
+| `INSIGHTS_PASSWORD` | none (dashboard off) | Password for `/insights` |
 
 ## Cost and limits
 

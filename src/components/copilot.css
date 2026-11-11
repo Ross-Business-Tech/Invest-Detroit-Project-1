@@ -55,7 +55,7 @@
 .issue-group.blocker { border-inline-start-color: var(--error); }
 .issue-group.warning { border-inline-start-color: var(--yellow); }
 .issue-group.info { border-inline-start-color: #4a7fb0; }
-.issue-group h4 { margin: 0; padding: var(--sp-3) var(--pad-x-inner); padding-inline-start: calc(var(--pad-x-inner) - var(--accent) + 1px); font-size: 15px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--line); background: #fafbfa; }
+.issue-group h3 { margin: 0; padding: var(--sp-3) var(--pad-x-inner); padding-inline-start: calc(var(--pad-x-inner) - var(--accent) + 1px); font-size: 15px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--line); background: #fafbfa; }
 .badge { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 13px; font-weight: 900; flex: none; }
 .blocker .badge { background: var(--error); }
 .warning .badge { background: var(--yellow-dark); }
