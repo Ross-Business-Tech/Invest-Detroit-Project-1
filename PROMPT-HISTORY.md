@@ -398,6 +398,17 @@ Result:
 - **Subtitle:** the chat no longer says "AI not connected" before anyone has asked anything.
 - **Result:** the chatbot answered live with "AI helper" showing.
 
+**38. Rebuild the client deck**
+> Here is the Render link and the original form. Remake the Google Slides with snapshots of all our new features, their purpose, why we did it and why it's better. Make it very comprehensive. Make the measurements clear, with snapshots from the old form to the new one. Send me the pptx I can import into Slides.
+
+Result:
+- **The deck:** 34 slides in `docs/slides/` (PowerPoint file plus PDF), built to import into Google Slides. It covers the problem, who it's for, how it works, then one slide per feature with a real screenshot, what it does, why we built it and why it beats the original form.
+- **Features shown:** Before You Start, progress bar, checks as you type, the ? help, Review My Application, "explain why" notes, the AI chat assistant, the guardrails, five languages (including Arabic right to left), save and resume, submit and next steps, the staff summary, the insights page and the FormAssembly add-on.
+- **Measurements:** an old-form vs. copilot snapshot, a chart and a table for 2 of 10 vs. 10 of 10, the 42/43 test score by kind, the history from 28/30 to 42/43 and the one known miss.
+- **Also in it:** cost estimate, privacy, limits, the 30-day trial and a next-steps table with the team name, date and owner left as marked placeholders.
+- **Screenshots:** all taken from the app with the fictional sample applicant. "Before" pictures are from our replica of the original form with the copilot off, because the cloud environment can't open investdetroit.com.
+- **Rebuilding:** `tools/build-client-deck.mjs` regenerates the deck from `docs/slides/deck-images/`.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

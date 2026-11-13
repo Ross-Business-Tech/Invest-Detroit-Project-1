@@ -51,7 +51,7 @@ They're all in `docs/handoff/`; its `README.md` has the checklist.
 |---|---|---|
 | One-page README (+ full prompt) | `README.md` | Render link, team names, a named owner at Invest Detroit |
 | Test results sheet | `docs/handoff/Invest-Detroit-Copilot-Test-Results.xlsx` | (none) |
-| Slide deck, 10 slides | `docs/slides/Invest-Detroit-Copilot-Client-Deck.pptx/.pdf` | team name, date, link |
+| Slide deck, 34 slides (rebuild: tools/build-client-deck.mjs) | `docs/slides/Invest-Detroit-Copilot-Client-Deck.pptx/.pdf` | team name, date, link |
 | User guide, 7 pages | `docs/handoff/Invest-Detroit-Copilot-User-Guide.pdf/.docx` (source `USER-GUIDE.md`) | video links |
 | Demo videos | scripts in `docs/handoff/DEMO-VIDEO-SCRIPTS.md` | **the team records them** |
 | Exit email | `docs/handoff/EXIT-EMAIL.md` | send after the presentation, once the data deletion is really done |
