@@ -25,7 +25,10 @@ The copilot is **one script tag** plus a small server. It works on top of the ex
 
 | Feature (demo site) | On the real FormAssembly form | How |
 |---|---|---|
-| Review My Application; Submit locked until it passes | ✅ Automatic | Panel above FormAssembly's Submit button |
+| Review My Application; Submit locked until it passes | ✅ Automatic | Panel above FormAssembly's Submit button, with "Submit unlocks after a successful review." under the locked button |
+| After Review, the problem shown under each question that must be fixed | ✅ Automatic | The error text sits under the question until the answer changes; screen readers are told the answer is invalid. With `data-theme`, the box is also outlined red, as on the demo. |
+| Character counter under the executive summary ("149/500") | ✅ Automatic | Under long-text questions with a limit |
+| Notice on translated pages ("translated with AI… English is official") | ✅ Automatic | Above the form when the page is in another language |
 | "My answer is correct: explain why" notes | ✅ Automatic | Included in the staff summary |
 | Staff summary for screening staff | ✅ Needs one hidden field | Step 2 below, then `data-summary-field` |
 | Chat assistant, AI answers with guardrails | ✅ Automatic | Calls our server; falls back to built-in answers if the server can't be reached |
@@ -36,9 +39,9 @@ The copilot is **one script tag** plus a small server. It works on top of the ex
 | Progress bar with section chips | ✅ Automatic | Sticks to the top of the form; `data-progress-top` makes room for a sticky site header |
 | Five languages (incl. Arabic right to left) | ✅ Automatic | Follows the page's language; answers are read by FormAssembly's option codes, so translated pages still work |
 | Star ratings, usage insights (`/insights`) | ✅ Automatic | Sent to our server; counts only |
-| "Business address is the same as my home address"; state from a Michigan ZIP | ⚙️ Opt-in | `data-fill-helpers="true"`. These fill in answers, so they're off unless turned on. |
+| "Business address is the same as my home address"; state from a Michigan ZIP | ⚙️ Opt-in | `data-fill-helpers="true"`. These fill in answers, so they're off unless turned on. The business address boxes are locked while the box is ticked, as on the demo. |
 | "How it works" ("Which form is right for you?" cards, the 4 steps) and the "Before you start" checklist | ⚙️ Opt-in | `data-intro="true"`: drawn above the form exactly as on the demo site, in all 5 languages |
-| The demo form's look (section headings with yellow lines, larger boxes, yellow Submit button) | ⚙️ Opt-in | `data-theme="copilot"`: restyles only this form. Add `data-load-font="true"` if the site doesn't already use the Lato font. |
+| The demo form's look (section headings with yellow lines, larger boxes, "$" in money boxes, red outline on questions to fix, yellow Submit button) | ⚙️ Opt-in | `data-theme="copilot"`: restyles only this form. The "$" is display-only; the answer stays a plain number. Add `data-load-font="true"` if the site doesn't already use the Lato font. |
 | Save & resume ("Continue where I left off") | ⚙️ Opt-in, or a FormAssembly setting | `data-drafts="true"`: the demo's on-device drafts. Or FormAssembly's own **Save & Resume**, which works across devices (step 3). |
 | "What happens next" after Submit | ⚙️ FormAssembly setting | Paste the ready-made message below into the form's thank-you page (step 3) |
 | Money boxes adding commas as you type | ❌ Not carried over | Their money boxes only accept numbers, so commas could block Submit. The "About $…" note gives the same reassurance. |
@@ -147,6 +150,7 @@ It never includes an SSN. It's sent only inside the application, to FormAssembly
 **What isn't carried over, on purpose:**
 - **Money boxes adding commas as you type:** their form's money boxes only accept numbers, so commas could block Submit. The "About $1.45 million" note gives the same reassurance.
 - **The demo's prototype banner and "Fill with sample applicant" / "Clear form" buttons:** these are for demos only.
+- **"Selected: file (stays on your device)" under uploads:** on the real form, files *are* sent to Invest Detroit with the application, so that sentence would be wrong there. FormAssembly shows the chosen file itself.
 
 ## Step 5: check the page around the form (WordPress)
 

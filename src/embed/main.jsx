@@ -55,6 +55,7 @@ import { createAssistant, httpTransport, withFallback } from '../copilot/assista
 import { guideTransport } from '../copilot/guideTransport.js'
 import { startMetrics } from '../copilot/metrics.js'
 import { formProgress } from '../copilot/formHelpers.js'
+import { FIELDS_BY_ID } from '../copilot/formDefinition.js'
 import { createFeedbackClient } from '../copilot/feedback.js'
 import { buildStaffSummary } from '../copilot/staffSummary.js'
 import { track } from '../copilot/events.js'
@@ -162,6 +163,11 @@ export async function mount(options = {}) {
     if (!anchor) throw new Error('Submit button not found')
     hosts.review = place(makeHost('idc-review-host'), (h) => anchor.parentNode.insertBefore(h, anchor))
 
+    // "Submit unlocks after a successful review." just under the form's Submit button.
+    hosts.submit = place(makeHost('idc-submit-host'), (h) => anchor.after(h))
+    // On translated pages, a short notice above the form that our screens were translated with AI.
+    hosts.notice = place(makeHost('idc-notice-host'), (h) => form.insertBefore(h, form.firstChild))
+
     // Chat button in the corner.
     const chat = makeHost('idc-chat-host')
     if (opts.launcherBottom) {
@@ -209,7 +215,11 @@ export async function mount(options = {}) {
       style.textContent = themeCss
       document.head.append(style)
       form.classList.add('idc-theme')
-      cleanups.push(() => style.remove(), () => form.classList.remove('idc-theme'))
+      // "$" in front of money answers, as on the demo (display only: the answer stays a plain number).
+      const money = Object.keys(FORM_ASSEMBLY_MAP).filter((id) => FIELDS_BY_ID[id]?.type === 'money').map((id) => adapter.elementsFor(id).container).filter(Boolean)
+      money.forEach((c) => c.classList.add('idc-money'))
+      cleanups.push(() => style.remove(), () => form.classList.remove('idc-theme'), () => money.forEach((c) => c.classList.remove('idc-money')),
+        () => form.querySelectorAll('.idc-invalid').forEach((c) => c.classList.remove('idc-invalid')))
     }
     // Opt-in: "same as home address" box just above the business address.
     const bizAddress = adapter.elementsFor('business_address').container

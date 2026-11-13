@@ -42,3 +42,13 @@
 .wForm form.idc-theme #submit_button:hover { background: #ffc145; }
 .wForm form.idc-theme #submit_button:disabled { background: #e4e7e5; color: #7a817e; cursor: not-allowed; }
 @media (max-width: 640px) { .wForm form.idc-theme { padding: 24px 16px 32px; } }
+
+/* A question that must be fixed after Review (the add-on adds idc-invalid), as on the demo */
+.wForm form.idc-theme .idc-invalid input:not([type="radio"]):not([type="checkbox"]),
+.wForm form.idc-theme .idc-invalid select, .wForm form.idc-theme .idc-invalid textarea { border-color: var(--idc-error); background: #fdecea; }
+.wForm form.idc-theme .idc-invalid .choices { outline: 1px solid var(--idc-error); outline-offset: 4px; }
+
+/* "$" in front of money answers (display only) */
+.wForm form.idc-theme .idc-money .inputWrapper { position: relative; }
+.wForm form.idc-theme .idc-money .inputWrapper::before { content: "$"; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--idc-muted); pointer-events: none; }
+.wForm form.idc-theme .idc-money .inputWrapper input { padding-left: 26px; }

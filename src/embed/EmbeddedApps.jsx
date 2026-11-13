@@ -9,6 +9,10 @@
 //   same     opt-in "Business address is the same as my home address" box
 //   intro    opt-in "How it works" and "Before you start", above the form
 //   draft    opt-in save & resume on this device: "Continue where I left off" and the saving line
+//   submit   "Submit unlocks after a successful review." under the locked Submit button
+//   notice   on translated pages: the screens were translated with AI; English is official
+// After a review, each question that must be fixed shows its error under it, and its container
+// gets the class idc-invalid (red outline with data-theme) and aria-invalid on the control.
 // They reuse the demo site's components, so both behave the same.
 import { Component, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -89,6 +93,18 @@ function DraftBar({ offer, savingOff, onResume, onDiscard, onToggle }) {
   )
 }
 
+function SubmitHelp({ locked }) {
+  const { t } = useI18n()
+  return locked ? <p className="submit-help">{t('Submit unlocks after a successful review.')}</p> : null
+}
+
+/** On a translated page: our screens were translated with AI, and the English version is official. */
+function TranslationNotice() {
+  const { t, locale } = useI18n()
+  if (!locale || locale === 'en') return null
+  return <p className="translation-note">{t('This page was translated with AI and has not yet been reviewed by a professional translator. If anything is unclear, the English version is the official one.')}</p>
+}
+
 function SameAddressBox({ checked, onChange }) {
   const { t } = useI18n()
   return (
@@ -99,14 +115,16 @@ function SameAddressBox({ checked, onChange }) {
   )
 }
 
-/** Notes under one question: the live check, the money amount in words, the equity math, file checks. */
-function fieldNotes(id, values, live) {
+/** Notes under one question: a review error or the live check, the money amount in words, the equity math, file checks, a character count. */
+function fieldNotes(id, values, live, error) {
   const field = FIELDS_BY_ID[id]
   const notes = []
-  if (live[id]) notes.push({ ...live[id], level: level(live[id].level) })
+  if (error) notes.push({ text: error, level: 'error' }) // a review error wins, as on the demo
+  else if (live[id]) notes.push({ ...live[id], level: level(live[id].level) })
   if (field?.type === 'money' && !live[id]) notes.push(moneyNote(values[id]))
   if (id === 'equity_10pct') notes.push({ ...equityMath(values), level: 'calc' })
   if (field?.type === 'file' && values._files?.[id]) notes.push(...checkFile(id, values._files[id]).map((c) => ({ ...c, level: level(c.level) })))
+  if (field?.type === 'textarea' && field.maxLength) notes.push({ text: `${(values[id] || '').length}/${field.maxLength}`, level: 'calc' })
   return notes.filter((n) => n?.text)
 }
 
@@ -127,6 +145,15 @@ export function EmbeddedApp({ adapter, session, assistant, hosts, notesRef, feed
   const [reviewNotes, setReviewNotes] = useState({})
   const [same, setSame] = useState(false)
   const started = useRef(false)
+  // Review errors shown under each question; one goes away as soon as that answer changes.
+  const [reviewErrors, setReviewErrors] = useState({})
+  useEffect(() => session.subscribe((st) => {
+    if (st.status !== 'done') return
+    const snap = adapter.getSnapshot()
+    const errs = {}
+    for (const i of st.issues) if (i.blocking && !errs[i.field_id]) errs[i.field_id] = { text: i.inline_message || i.title, value: JSON.stringify(snap[i.field_id] ?? '') }
+    setReviewErrors(errs)
+  }), [session, adapter])
   // Save & resume (opt-in): offer a draft from an earlier visit; save as the applicant types.
   const [draftOffer, setDraftOffer] = useState(() => (drafts ? loadDraft() : null))
   const [savingOff, setSavingOff] = useState(() => draftsOff())
@@ -171,6 +198,28 @@ export function EmbeddedApp({ adapter, session, assistant, hosts, notesRef, feed
 
   // A chosen file counts as visited at once, so its checks show without leaving the field.
   const live = useMemo(() => liveNotesFor(values, new Set([...touched, ...Object.keys(values._files || {})])), [values, touched])
+  const errors = useMemo(() => Object.fromEntries(Object.entries(reviewErrors)
+    .filter(([id, e]) => JSON.stringify(values[id] ?? '') === e.value).map(([id, e]) => [id, e.text])), [reviewErrors, values])
+  // Mark questions that need fixing on the page itself: aria-invalid always; the red look comes with data-theme.
+  useEffect(() => {
+    for (const id of Object.keys(hosts.fields || {})) {
+      const { container } = adapter.elementsFor(id)
+      if (!container) continue
+      const bad = !!errors[id] || live[id]?.level === 'blocker'
+      container.classList.toggle('idc-invalid', bad)
+      container.querySelectorAll('input:not([type="hidden"]), select, textarea').forEach((el) => {
+        if (bad) el.setAttribute('aria-invalid', 'true'); else if (el.getAttribute('aria-invalid') === 'true') el.removeAttribute('aria-invalid')
+      })
+    }
+  }) // runs after every render: cheap, and keeps the page in step with the notes
+  // Business address boxes are locked while "same as home address" is ticked, as on the demo.
+  useEffect(() => {
+    if (!fillHelpers) return undefined
+    const ids = Object.values(HOME_TO_BUSINESS)
+    for (const id of ids) { const el = adapter.elementsFor(id).container?.querySelector('input, select'); if (el) el.readOnly = same }
+    return () => { for (const id of ids) { const el = adapter.elementsFor(id).container?.querySelector('input, select'); if (el) el.readOnly = false } }
+  }, [same, fillHelpers, adapter])
+
   const askHelp = (fieldId) => {
     track({ type: 'field_help', field_id: fieldId })
     setHelpRequest((r) => ({ fieldId, n: (r?.n || 0) + 1 }))
@@ -186,21 +235,23 @@ export function EmbeddedApp({ adapter, session, assistant, hosts, notesRef, feed
       {portal(<FormProgress values={values} embedded onJump={(id) => { const q = firstQuestion(id); if (q) adapter.focusField(q) }} />, hosts.progress, 'progress')}
       {fillHelpers && portal(<SameAddressBox checked={same} onChange={setSame} />, hosts.same, 'same')}
       {portal(<div className="intro"><HowItWorks canSave={canSave} onStart={onStartForm} /><BeforeYouStart canSave={canSave} /></div>, hosts.intro, 'intro')}
+      {portal(<SubmitHelp locked={!review.canSubmit} />, hosts.submit, 'submit')}
+      {portal(<TranslationNotice />, hosts.notice, 'notice')}
       {drafts && portal(<DraftBar offer={draftOffer} savingOff={savingOff} onResume={resumeDraft} onDiscard={discardDraft} onToggle={toggleSaving} />, hosts.draft, 'draft')}
       {Object.entries(hosts.fields || {}).map(([id, h]) => (
-        <FieldExtras key={id} id={id} hosts={h} values={values} live={live} onHelp={askHelp} />
+        <FieldExtras key={id} id={id} hosts={h} values={values} live={live} error={errors[id]} onHelp={askHelp} />
       ))}
     </>
   )
 }
 
-function FieldExtras({ id, hosts, values, live, onHelp }) {
+function FieldExtras({ id, hosts, values, live, error, onHelp }) {
   const tipsFor = id === 'doc_pfs' ? 'supporting_docs' : id // the supporting documents' tip sits before the first one
   return (
     <>
       {hosts.help && FIELD_GUIDE[id] && createPortal(<HelpButton onClick={() => onHelp(id)} />, hosts.help)}
       {hosts.tips && createPortal(<UploadTips tips={uploadTips(tipsFor, values)} id={`idc-${id}-tips`} />, hosts.tips)}
-      {hosts.notes && createPortal(<Notes id={`idc-${id}`} notes={fieldNotes(id, values, live)} />, hosts.notes)}
+      {hosts.notes && createPortal(<Notes id={`idc-${id}`} notes={fieldNotes(id, values, live, error)} />, hosts.notes)}
     </>
   )
 }

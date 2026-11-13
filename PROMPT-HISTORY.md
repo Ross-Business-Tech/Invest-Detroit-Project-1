@@ -454,6 +454,22 @@ Result:
 
 Result: "Invest Detroit Team #1" now appears on the deck's title slide and in every slide's footer. The README, the deck's closing slide and the exit email list Johnny Lin, Ginny Liu, Shantanu Shah, Samantha Luu. Both repositories are updated.
 
+**42. Close the last gaps between the demo and the real form**
+> Add the two missing visual touches ("$" in money boxes and red outlines). Go over the website and add any other missing visual touches or functions, and push to both repos.
+
+Result: a line-by-line comparison of the demo form and the add-on found seven gaps, and all are now added to the add-on:
+- **With `data-theme`:**
+  - a "$" in the money boxes (display only);
+  - a red outline and pink background on questions to fix after Review.
+- **Always on:**
+  - the error text under each question to fix, until it's changed;
+  - a character counter under the executive summary;
+  - "Submit unlocks after a successful review." under the greyed-out button;
+  - the AI-translation notice on non-English pages.
+- **With the fill helpers:** the business address is locked while "same as home" is ticked.
+
+One demo sentence was left out on purpose: "file stays on your device", because on the real form files are sent to Invest Detroit. Tested: 11 new checks plus all earlier ones pass (autosave included).
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.
