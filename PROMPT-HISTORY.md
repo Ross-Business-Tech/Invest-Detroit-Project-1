@@ -373,6 +373,11 @@ Result:
 - **Demo video scripts**, a draft exit email and a handoff checklist.
 - **The client deck**, rebuilt to 10 slides: problem, who it's for, how it works, live demo, test results, measured impact, limits and a 30-day trial recommendation.
 
+**35. Hand the project to a new chat**
+> I want to share this project with another chat. Is there a way to carry over everything you know from this chat?
+
+Result: a new file, `docs/AI-HANDOFF.md`, sums up the goal, current status, the decisions already made, the deliverables and the numbers that must stay consistent, the code map, the rules, and the next steps. A new chat reads it first.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.
