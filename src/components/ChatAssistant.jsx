@@ -88,7 +88,7 @@ export default function ChatAssistant({ assistant, activeFieldId, subtitle = DEF
             <div className="chat-avatar" aria-hidden="true">ID</div>
             <div className="chat-heading">
               <h2 id="chat-title">{t('Application Assistant')}</h2>
-              <p>{t(messages.some((m) => m.from === 'claude') ? CONNECTED_SUBTITLE : subtitle)}</p>
+              <p>{t(messages.some((m) => m.from === 'openai' || m.from === 'claude') ? CONNECTED_SUBTITLE : subtitle)}</p>
             </div>
             <button type="button" className="chat-close" aria-label={t('Close assistant')} onClick={() => { setOpen(false); buttonRef.current?.focus() }}>×</button>
           </div>

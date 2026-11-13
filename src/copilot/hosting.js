@@ -1,5 +1,5 @@
 // Where is the site running? Decides which optional services exist:
-//   our server (Render / Vercel): Claude chat, ratings and usage counts through /api/*
+//   our server (Render / Vercel): AI chat (OpenAI), ratings and usage counts through /api/*
 //   here.now: ratings through here.now Site Data; no server code
 //   anywhere else (e.g. the add-on on Invest Detroit's page): none of these unless configured
 import { ASSISTANT, FEEDBACK } from './config.js'

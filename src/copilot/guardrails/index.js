@@ -87,7 +87,7 @@ const wordCount = (t) => normalize(t).split(' ').filter(Boolean).length
 
 /**
  * @param {{ message: string, history?: {role: string, text: string}[], fieldId?: string|null, intent?: string|null, lenient?: boolean }} req
- *   lenient: an AI model that can judge scope will answer (Claude on the server). Unclear or
+ *   lenient: an AI model that can judge scope will answer (OpenAI or Claude on the server). Unclear or
  *   unrecognized questions are then passed to it instead of getting the clarifying question;
  *   protected, falsifying, injection and clearly off-topic requests are still refused here.
  * @returns {{ action: 'allow'|'reject'|'clarify'|'integrity', category: string, version: string,

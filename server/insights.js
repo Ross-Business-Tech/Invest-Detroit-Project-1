@@ -13,7 +13,7 @@ import { SOURCES } from '../src/copilot/config.js'
 const SECTION_IDS = new Set(SECTIONS.map((s) => s.id))
 const ISSUE_ID = /^[a-z0-9_]{2,60}$/
 const KINDS = new Set(['answer', 'no_answer', 'out_of_scope', 'clarify', 'integrity', 'privacy_warning', 'error'])
-const FROM = new Set(['claude', 'field_guide', 'field_guide_fallback', 'field_guide_limit'])
+const FROM = new Set(['openai', 'claude', 'field_guide', 'field_guide_fallback', 'field_guide_limit'])
 
 /** Which browser events are accepted, and how each key is checked. */
 const EVENT_RULES = {
@@ -132,6 +132,7 @@ ${table('Chat outcomes', pick(totals, 'chat_kind'))}
 ${table('Requests the guardrails stopped', pick(totals, 'guardrail'))}
 ${table('Star ratings', ratings.map(([n, c]) => [`${'★'.repeat(n)}`, c]))}
 ${table('Limits reached', pick(totals, 'limit'), 'Chats answered by the built-in guide because a daily limit was reached.')}
+${table('AI service errors', pick(totals, 'ai_error'), 'Answered by the built-in guide because the AI service failed. 401 = wrong key; 403/404 = model not allowed for this key; 429 = rate or budget limit.')}
 </div></main></body></html>`
 }
 

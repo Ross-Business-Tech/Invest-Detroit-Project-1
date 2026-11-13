@@ -15,8 +15,10 @@ services:
     envVars:
       - key: NODE_VERSION
         value: "22"
-      - key: ANTHROPIC_API_KEY
+      - key: OPENAI_API_KEY         # the chatbot's AI key (OpenAI / Codex key)
         sync: false                 # Render asks for the value; it is never stored in this file
+      - key: OPENAI_MODEL           # optional: change if the key only allows certain models
+        value: gpt-6.1-sol
       - key: DATABASE_URL           # keeps insights, ratings and daily limits across restarts
         fromDatabase:
           name: invest-detroit-copilot-db

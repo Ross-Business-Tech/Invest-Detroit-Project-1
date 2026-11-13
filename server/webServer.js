@@ -1,11 +1,12 @@
 // One Node server for hosts that run a long-lived process (Render "Web Service"): serves the
 // built website from dist/ and the chat endpoint POST /api/assistant (the same function Vercel
-// runs, so guardrails, Claude and the field-guide fallback behave identically).
+// runs, so guardrails, the AI service and the field-guide fallback behave identically).
 //
 //   npm run build && npm start        # http://localhost:3000 (Render sets PORT itself)
 //
 // The API key is read from the ANTHROPIC_API_KEY environment variable by api/assistant.js.
 
+import { aiProvider, PROVIDER_NAME } from './aiProvider.js'
 import http from 'node:http'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -109,7 +110,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     process.exit(1)
   }
   const port = Number(process.env.PORT) || 3000
-  const server = createWebServer().listen(port, () => console.log(`Site and assistant on port ${port}${process.env.ANTHROPIC_API_KEY ? ' (Claude on)' : ' (no API key: field-guide answers)'}`))
+  const server = createWebServer().listen(port, () => console.log(`Site and assistant on port ${port}${aiProvider() ? ` (${PROVIDER_NAME[aiProvider()]} on)` : ' (no API key: field-guide answers)'}`))
   // Render stops the old server with SIGTERM when a new version goes live: finish open requests first.
   const stop = () => { server.close(() => process.exit(0)); setTimeout(() => process.exit(0), 10000).unref() }
   process.on('SIGTERM', stop)

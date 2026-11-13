@@ -1,4 +1,4 @@
-// The knowledge base Claude answers from: every field-guide entry, topic, knowledge entry and
+// The knowledge base the AI model answers from: every field-guide entry, topic, knowledge entry and
 // glossary term, plus the list of sources it may cite. Built once from the same files the
 // browser's built-in answers use, so both always say the same thing.
 //

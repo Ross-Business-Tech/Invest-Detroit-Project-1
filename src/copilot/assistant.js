@@ -145,7 +145,7 @@ export function createAssistant({ transport = transportFromConfig(), onEvent = (
       }
       // Guardrails run before any answer is produced. In 'http' mode the server runs them again
       // (server/assistantHandler.js), so skipping this browser check gains nothing. When the server
-      // judges scope with Claude, unclear questions go to it; without a key it applies the strict check.
+      // judges scope with an AI model, unclear questions go to it; without a key it applies the strict check.
       const decision = evaluateRequest({ message, history, fieldId: activeFieldId, intent, lenient: !!transport.lenientScope })
       if (decision.action !== 'allow') {
         onEvent({ type: 'assistant_guardrail', action: decision.action, category: decision.category })

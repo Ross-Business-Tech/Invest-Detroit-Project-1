@@ -235,14 +235,14 @@ export const SOURCES = {
 /**
  * How the assistant gets its answers.
  *   'auto':        on a host listed in `server_hosts` (our Vercel site), ask the server at
- *                  `endpoint` (Claude when its key is set, guardrails enforced server-side), and
+ *                  `endpoint` (an AI service when its key is set, guardrails enforced server-side), and
  *                  fall back to the field guide if the server can't be reached. Elsewhere
  *                  (here.now, which can't run server code), use the field guide.
  *   'guide':       no AI; answers from the draft field guide in the browser.
  *   'placeholder': no AI; replies say the assistant isn't connected yet.
  *   'http':        always POST to `endpoint`.
  * Never put an API key here: this file ships to every visitor's browser. The key lives in
- * Vercel's environment variables (ANTHROPIC_API_KEY), read only by api/assistant.js.
+ * Vercel's environment variables (OPENAI_API_KEY), read only by api/assistant.js.
  */
 export const ASSISTANT = {
   mode: 'auto',

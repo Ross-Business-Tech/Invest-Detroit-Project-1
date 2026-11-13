@@ -83,15 +83,15 @@ test('the dashboard escapes anything it shows', () => {
   assert.match(html, /reset when the server restarts/)
 })
 
-test('daily limits switch Claude off for that visitor (and site) and answer from the guide', async () => {
+test('daily limits switch the AI off for that visitor (and site) and answer from the guide', async () => {
   const store = createMemoryStore()
   const saved = { ...process.env }
-  process.env.ANTHROPIC_API_KEY = 'sk-ant-test-not-used'
+  process.env.OPENAI_API_KEY = 'test-key-not-used'
   process.env.ASSISTANT_VISITOR_DAILY = '1'
   const res1 = fakeRes()
   // Pre-fill the site-wide counter to the limit so no real API call is attempted.
   process.env.ASSISTANT_DAILY_LIMIT = '1'
-  await store.incr('claude:daily', 1)
+  await store.incr('ai:daily', 1)
   await assistant(post({ message: 'What does AMI mean?' }), res1, { store })
   assert.equal(res1.payload.reply.from, 'field_guide_limit')
   assert.equal((await store.totals())['limit:site_daily'], 1)

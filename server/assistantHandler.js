@@ -86,7 +86,7 @@ export const guideAnswerer = async ({ request, messageForAnswer }) =>
  * @param {unknown} body  parsed JSON from the client (untrusted)
  * @param {{ answer?: Function, classifier?: Function, onEvent?: Function, lenientScope?: boolean }} [deps]
  *   answer({ request, messageForAnswer, modelInput }) -> reply; classifier is optional (see guardrails).
- *   lenientScope: true when the answerer is a model that judges scope itself (Claude).
+ *   lenientScope: true when the answerer is a model that judges scope itself (OpenAI or Claude).
  * @returns {Promise<{ status: number, body: object }>}
  */
 export async function handleAssistantRequest(body, { answer = guideAnswerer, classifier = null, onEvent = () => {}, lenientScope = false } = {}) {
