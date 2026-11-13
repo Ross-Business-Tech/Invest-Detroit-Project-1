@@ -25,6 +25,21 @@ Browser chat ──► /api/assistant (our server on Render) ──► OpenAI
 
 **About "Codex" keys:** Codex is OpenAI's coding product, but its API keys are ordinary OpenAI API keys. They usually start with `sk-proj-` and work with OpenAI's general models. If the key's project is limited to certain models, the chat falls back to the guide, and the logs show `403` or `404` (see the table below). Then set `OPENAI_MODEL` to a model the key allows.
 
+## Using a U-M GPT Toolkit key ("Codex" / "Codex for the Classroom")
+
+The University of Michigan's Codex keys only work through U-M's own gateway, not directly with OpenAI. Sending one straight to OpenAI gives `401 invalid_api_key`. Add these in Render next to the key, using the values from U-M's "Codex Setup" guide:
+
+| Key | Value |
+|---|---|
+| `OPENAI_API_KEY` | your Toolkit key |
+| `OPENAI_BASE_URL` | `https://api.toolkit.umgpt.umich.edu/v1` |
+| `OPENAI_MODEL` | `gpt-5.6-terra` |
+
+- **Rejected settings:** if the gateway rejects an optional setting (reasoning effort, caching key or `store`), the server retries without it and logs `openai_setting_unsupported`.
+- **Course rules:** check that your course allows using the key for this project.
+- **Budget:** the key's monthly budget is shared with your coursework, and the site is public. Lower `ASSISTANT_DAILY_LIMIT` (for example to `100`).
+- **Before handover:** Invest Detroit needs its own key; remove the class key from their copy.
+
 ## Turn it on: 4 steps
 
 1. **Add the key in Render.** Open the web service, then **Environment → Add Environment Variable**:
@@ -44,7 +59,7 @@ Browser chat ──► /api/assistant (our server on Render) ──► OpenAI
    | `"ai_error","provider":"openai","status":401` | Key rejected | Re-copy the key; check it isn't revoked |
    | `"status":403` or `404` | This key can't use the model | Add `OPENAI_MODEL` with a model the key's project allows (ask whoever issued the key), then deploy |
    | `"status":429` | Rate limit, or the account's budget or credit ran out | Wait, or add credit or raise the budget in the OpenAI dashboard |
-   | `"status":400` | Request not accepted | Copy the log line and send it to Claude Code |
+   | `"status":400` | Request not accepted | The line includes a short `detail`; copy the line (it never contains the key) and send it to Claude Code |
    | `"status":null` | OpenAI couldn't be reached | Usually temporary; try again |
 
    The `/insights` page also has an **AI service errors** table with the same status codes.

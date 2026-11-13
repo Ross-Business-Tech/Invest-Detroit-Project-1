@@ -49,7 +49,9 @@ function answerFor(ip, store) {
       return reply
     } catch (err) {
       // Only the status and error type are logged (e.g. 401 = wrong key, 404/403 = model not allowed).
-      log({ type: 'ai_error', provider, status: err?.status ?? null, name: err?.name ?? 'Error', code: err?.code ?? null })
+      // For a rejected request (400) the service's short explanation is logged too; it describes the
+      // request settings, not what the applicant typed.
+      log({ type: 'ai_error', provider, status: err?.status ?? null, name: err?.name ?? 'Error', code: err?.code ?? null, ...(err?.status === 400 ? { detail: String(err?.error?.message || err?.message || '').slice(0, 200) } : {}) })
       await store.incr(`ai_error:${err?.status ?? 'network'}`)
       return { ...(await guideAnswerer(input)), from: 'field_guide_fallback' }
     }

@@ -10,6 +10,8 @@
 //                    (some "Codex" keys are), set this to one the key allows.
 //   OPENAI_EFFORT    reasoning effort: none | minimal | low | medium | high, default low
 //                    (quick, conversational answers). Sent only to models that accept it.
+//   OPENAI_BASE_URL  send requests to another OpenAI-compatible gateway instead of OpenAI, e.g.
+//                    U-M GPT Toolkit: https://api.toolkit.umgpt.umich.edu/v1 (read by the SDK)
 
 import OpenAI from 'openai'
 import { SYSTEM_PROMPT } from './systemPrompt.js'
@@ -23,7 +25,14 @@ export const FROM = 'openai'
 export const INSTRUCTIONS = `${SYSTEM_PROMPT}\n\n${KNOWLEDGE_TEXT}`
 const CACHE_KEY = 'invest-detroit-copilot-v1'
 
-const unsupportedReasoning = (err) => err?.status === 400 && /reasoning|effort/i.test(String(err?.message || ''))
+// Optional settings a gateway (for example U-M's GPT Toolkit) might not accept. If a request is
+// rejected naming one of them, it is retried once without it and left out from then on.
+const OPTIONAL = [
+  ['reasoning', /reasoning|effort/i],
+  ['prompt_cache_key', /prompt_cache_key|prompt cache/i],
+  ['store', /\bstore\b/i],
+]
+const rejectedOptional = (err, sent) => err?.status === 400 ? OPTIONAL.find(([key, re]) => key in sent && re.test(String(err?.message || '')))?.[0] : undefined
 
 /**
  * @param {{ client?: OpenAI, model?: string, effort?: string, onEvent?: Function }} [opts]
@@ -33,8 +42,8 @@ export function createOpenAIAnswerer({ client, model = process.env.OPENAI_MODEL 
   // Reads OPENAI_API_KEY from the environment. A slow answer gives up after 30 s (one retry), so the
   // chat falls back to the built-in guide instead of hanging.
   // Spaces or line breaks pasted around the key in Render's settings are ignored.
-  const api = client || new OpenAI({ apiKey: String(process.env.OPENAI_API_KEY || '').trim(), timeout: 30_000, maxRetries: 1 })
-  let sendReasoning = true // switched off once if the chosen model doesn't take a reasoning setting
+  const api = client || new OpenAI({ apiKey: String(process.env.OPENAI_API_KEY || '').trim(), baseURL: String(process.env.OPENAI_BASE_URL || '').trim() || undefined, timeout: 30_000, maxRetries: 1 })
+  const dropped = new Set() // optional settings this model or gateway rejected
 
   return async ({ modelInput }) => {
     const params = {
@@ -45,15 +54,20 @@ export function createOpenAIAnswerer({ client, model = process.env.OPENAI_MODEL 
       max_output_tokens: 4000,
       store: false, // OpenAI doesn't keep the conversation for later retrieval
       prompt_cache_key: CACHE_KEY,
+      reasoning: { effort },
     }
     let response
-    try {
-      response = await api.responses.create(sendReasoning ? { ...params, reasoning: { effort } } : params)
-    } catch (err) {
-      if (!sendReasoning || !unsupportedReasoning(err)) throw err
-      sendReasoning = false
-      onEvent({ type: 'openai_reasoning_unsupported', model })
-      response = await api.responses.create(params)
+    for (let attempt = 0; ; attempt++) {
+      const sent = Object.fromEntries(Object.entries(params).filter(([k]) => !dropped.has(k)))
+      try {
+        response = await api.responses.create(sent)
+        break
+      } catch (err) {
+        const key = rejectedOptional(err, sent)
+        if (!key || attempt >= OPTIONAL.length) throw err
+        dropped.add(key)
+        onEvent({ type: 'openai_setting_unsupported', setting: key, model })
+      }
     }
     const usage = response.usage || {}
     onEvent({ type: 'ai_answer', provider: 'openai', status: response.status, input_tokens: usage.input_tokens, cached_tokens: usage.input_tokens_details?.cached_tokens, output_tokens: usage.output_tokens, reasoning_tokens: usage.output_tokens_details?.reasoning_tokens })

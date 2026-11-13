@@ -82,6 +82,26 @@ test('a model that rejects the reasoning setting is retried once without it', as
   assert.deepEqual(client.calls.map((c) => !!c.reasoning), [true, false, false]) // remembered after the first miss
 })
 
+test('a gateway that rejects optional settings (like U-M GPT Toolkit might) still gets an answer', async () => {
+  const client = fakeClient((params) => {
+    for (const k of ['prompt_cache_key', 'store']) if (k in params) { const e = new Error(`Unrecognized request argument supplied: ${k}`); e.status = 400; throw e }
+    return jsonReply({ answer: 'ok', source_ids: [], needs_staff: false, in_scope: true })
+  })
+  const events = []
+  const answer = createOpenAIAnswerer({ client, model: 'gpt-5.6-terra', onEvent: (e) => events.push(e) })
+  const { body: out } = await handleAssistantRequest(body('What is net income?'), { answer })
+  assert.equal(out.reply.kind, 'answer')
+  assert.deepEqual(events.filter((e) => e.type === 'openai_setting_unsupported').map((e) => e.setting), ['prompt_cache_key', 'store'])
+  assert.equal(client.calls.at(-1).model, 'gpt-5.6-terra')
+  assert.ok('reasoning' in client.calls.at(-1)) // still sent: the gateway accepted it
+})
+
+test('other rejections are not retried', async () => {
+  const client = fakeClient(() => { const e = new Error('Invalid schema for response_format'); e.status = 400; throw e })
+  await assert.rejects(createOpenAIAnswerer({ client })({ modelInput: { messages: [{ role: 'user', content: 'hi' }], locale: 'en-US' } }))
+  assert.equal(client.calls.length, 1)
+})
+
 test('the key decides which AI service answers; OpenAI wins unless told otherwise', () => {
   assert.equal(aiProvider({}), null)
   assert.equal(aiProvider({ OPENAI_API_KEY: 'x' }), 'openai')
