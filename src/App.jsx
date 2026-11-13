@@ -73,7 +73,7 @@ function Page({ locale, onLocaleChange }) {
           </div>
         </section>
 
-        <HowItWorks />
+        <HowItWorks canSave />
 
         <section className="band form-band" id="form">
           <div className="band-title"><span>{t('Get In Touch')}</span></div>

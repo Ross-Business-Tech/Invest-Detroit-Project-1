@@ -9,6 +9,13 @@
 //           data-launcher-bottom="84px"                  (optional: lift the chat button)
 //           data-progress-top="80px"                     (optional: room for a sticky site header)
 //           data-fill-helpers="true"                     (optional: "same as home address" box, state from ZIP)
+//           data-intro="true"                            (optional: "How it works" + "Before you start" above the form)
+//           data-theme="copilot"                         (optional: restyle the form to look like the demo site)
+//           data-drafts="true"                           (optional: save & resume on this device)
+//           data-save-resume="true"                      (optional: say "you can save and finish later", when
+//                                                         FormAssembly's own Save & Resume is on)
+//           data-load-font="true"                        (optional: load the demo's fonts (Lato, plus Arabic and
+//                                                         Bengali) from Google Fonts, if the site doesn't already)
 //           data-locale="es"                             (optional: otherwise follows <html lang>)
 //           data-server="https://…"                      (optional: our server, if the script is hosted elsewhere;
 //                                                         "none" = no server: built-in answers, no ratings or counts)
@@ -36,6 +43,9 @@
 import { createRoot } from 'react-dom/client'
 import baseCss from '../components/copilot.css?inline'
 import extrasCss from './extras.css?inline'
+import introCss from './intro.css?inline'
+import themeCss from './theme.css?inline'
+import { clearDraft } from '../prototype/draft.js'
 import { FailSafe, EmbeddedApp, PageLanguage } from './EmbeddedApps.jsx'
 import { localeFromLang } from '../copilot/i18n/index.js'
 import { createFormAssemblyAdapter } from '../copilot/adapters/formAssemblyAdapter.js'
@@ -70,10 +80,16 @@ const SETTINGS = {
   locale: data.locale ? localeFromLang(data.locale) : null, // default: follow the page
   summaryField: data.summaryField || null,
   fillHelpers: data.fillHelpers === 'true',
+  intro: data.intro === 'true',
+  theme: data.theme || null,
+  drafts: data.drafts === 'true',
+  saveResume: data.saveResume === 'true',
+  loadFont: data.loadFont === 'true',
 }
+const FONT_URL = 'https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Noto+Sans+Arabic:wght@400;700;900&family=Noto+Sans+Bengali:wght@400;700;900&display=swap'
 
 // One copy of the styles, shared by every shadow root (falls back to a <style> per root).
-const CSS = baseCss + '\n' + extrasCss
+const CSS = baseCss + '\n' + extrasCss + '\n' + introCss
 let sharedSheet = null
 try { sharedSheet = new CSSStyleSheet(); sharedSheet.replaceSync(CSS) } catch { sharedSheet = null }
 
@@ -172,6 +188,29 @@ export async function mount(options = {}) {
       h.notes = place(makeHost('idc-notes-host'), (el) => container.append(el))
       hosts.fields[fieldId] = h
     }
+    // Opt-in: "How it works" and "Before you start" above the form; save & resume bar at its top.
+    if (opts.intro) {
+      const container = form.closest('.wFormContainer') || form
+      hosts.intro = place(makeHost('idc-intro-host'), (el) => container.parentNode.insertBefore(el, container))
+    }
+    if (opts.drafts) hosts.draft = place(makeHost('idc-draft-host'), (el) => progress.host.after(el))
+    // Opt-in: the demo's fonts. Fonts must be loaded by the page itself; shadow roots then use them.
+    if (opts.loadFont && !document.querySelector(`link[href="${FONT_URL}"]`)) {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = FONT_URL
+      document.head.append(link)
+      cleanups.push(() => link.remove())
+    }
+    // Opt-in: restyle the FormAssembly form to look like the demo site (page styles, scoped to this form).
+    if (opts.theme === 'copilot') {
+      const style = document.createElement('style')
+      style.id = 'idc-theme'
+      style.textContent = themeCss
+      document.head.append(style)
+      form.classList.add('idc-theme')
+      cleanups.push(() => style.remove(), () => form.classList.remove('idc-theme'))
+    }
     // Opt-in: "same as home address" box just above the business address.
     const bizAddress = adapter.elementsFor('business_address').container
     if (opts.fillHelpers && bizAddress) hosts.same = place(makeHost('idc-same-host'), (el) => bizAddress.parentNode.insertBefore(el, bizAddress))
@@ -184,7 +223,10 @@ export async function mount(options = {}) {
     root.render(
       <FailSafe onError={failOpen}><PageLanguage fixed={opts.locale}>
         <EmbeddedApp adapter={adapter} session={session} assistant={assistant} hosts={hosts} notesRef={notesRef}
-          feedbackClient={feedbackClient} waitForReply={!!opts.assistantEndpoint} fillHelpers={opts.fillHelpers} onError={failOpen} />
+          feedbackClient={feedbackClient} waitForReply={!!opts.assistantEndpoint} fillHelpers={opts.fillHelpers}
+          drafts={opts.drafts} canSave={opts.drafts || opts.saveResume}
+          onStartForm={() => (hosts.draft ? document.querySelector('.idc-draft-host') : progress.host).scrollIntoView({ behavior: 'smooth', block: 'start' })}
+          onError={failOpen} />
       </PageLanguage></FailSafe>,
     )
     cleanups.unshift(() => root.unmount())
@@ -216,6 +258,7 @@ export async function mount(options = {}) {
         const target = opts.summaryField && (form.querySelector(`#${cssEscape(opts.summaryField)}`) || form.querySelector(`[name="${cssEscape(opts.summaryField)}"]`))
         if (target) target.value = buildStaffSummary({ issues: session.getState().issues, notes: notesRef.current, locale: document.documentElement.lang || 'en' })
         submitted = true
+        if (opts.drafts) clearDraft() // the draft is no longer needed once the application is sent
         track({ type: 'form_submitted' })
         return
       }

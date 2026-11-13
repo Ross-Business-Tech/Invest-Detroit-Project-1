@@ -79,7 +79,7 @@ To see the review catch mistakes, change the loan amount to more than the total 
   - `src/embed/`: the add-on script for Invest Detroit's live page (built to `dist/embed/copilot.js`)
   - `src/components/`: the review panel and chat window
   - `src/copilot/fieldGuide.js`: the draft field guide the chat answers from
-  - `src/prototype/`: our copy of the form, the checklist, the upload demo and the fictional sample applicant
+  - `src/prototype/`: our copy of the form, the checklist and the fictional sample applicant
   - `src/copilot/guardrails/`: what the chat will and won't answer
   - `server/`: reference backend that enforces the guardrails for direct API requests (not deployed on here.now)
   - `tests/`: automated checks; run `npm test`

@@ -14,6 +14,7 @@
 //   onFieldLeave(cb)             -> calls cb(fieldId) when the applicant leaves a question
 //   setValue(fieldId, value)     -> fills in a text answer (used ONLY by the opt-in fill helpers,
 //                                   such as "same as home address"; off unless turned on)
+//   restore(values)              -> puts saved answers back (ONLY the opt-in save & resume)
 //
 // It reads the page and never submits it. It never reads fields that aren't mapped (the live
 // form's SSN field is deliberately unmapped), and it never reads a file's contents: only its
@@ -134,6 +135,43 @@ export function createFormAssemblyAdapter({ root = document, map = FORM_ASSEMBLY
       el.dispatchEvent(new Event('input', { bubbles: true }))
       el.dispatchEvent(new Event('change', { bubbles: true }))
       return true
+    },
+
+    /**
+     * Puts saved answers back (opt-in save & resume only). Takes answers keyed by our field ids,
+     * as getSnapshot() returns them; choices are matched by option, so translated pages work.
+     * Files and unmapped fields (the SSN) are never touched. Returns how many were restored.
+     */
+    restore(values = {}) {
+      let n = 0
+      const fire = (el) => { el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })) }
+      for (const [fieldId, value] of Object.entries(values)) {
+        const entry = map[fieldId]
+        if (!entry || entry.kind === 'file' || value === undefined || value === null) continue
+        const codeOf = (v) => { const l = lookups[fieldId]; return l ? Object.keys(l).find((c) => l[c] === v) : null }
+        if (entry.kind === 'radio') {
+          const code = codeOf(value)
+          const el = code ? root.querySelector(`input[type="radio"][name="${entry.id}"][value="${code}"]`) : null
+          if (el && !el.checked) { el.checked = true; fire(el); n++ }
+          continue
+        }
+        const el = root.querySelector(`#${entry.id}`)
+        if (!el) continue
+        if (entry.kind === 'checkbox') { if (el.checked !== !!value) { el.checked = !!value; fire(el); n++ } continue }
+        if (entry.kind === 'select') {
+          const code = codeOf(value) || [...el.options].find((o) => o.textContent.trim() === value)?.value
+          if (code && el.value !== code) { el.value = code; fire(el); n++ }
+          continue
+        }
+        if (entry.kind === 'multi') {
+          const codes = new Set((Array.isArray(value) ? value : []).map((v) => codeOf(v)).filter(Boolean))
+          for (const o of el.options) o.selected = codes.has(o.value)
+          fire(el); n++
+          continue
+        }
+        if (typeof value === 'string' && el.value !== value) { el.value = value; fire(el); n++ }
+      }
+      return n
     },
 
     setSubmitEnabled(enabled) {

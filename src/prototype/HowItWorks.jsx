@@ -2,9 +2,14 @@
 // applying. Same facts as the official page, laid out so an applicant can scan it.
 import { useI18n } from '../components/i18nContext.js'
 import Icon from './Icon.jsx'
-import { ROUTES, STEPS } from './howItWorksText.js'
+import { ROUTES, STEPS, SAVE_STEP_TEXT } from './howItWorksText.js'
 
-export default function HowItWorks() {
+/**
+ * @param {{ canSave?: boolean, onStart?: () => void }} props
+ *   canSave: answers can be saved and finished later (changes step 1's text);
+ *   onStart: what "Start the form" does (the add-on scrolls to the live form instead of #form).
+ */
+export default function HowItWorks({ canSave = false, onStart }) {
   const { t } = useI18n()
   return (
     <section className="band how-it-works">
@@ -22,7 +27,8 @@ export default function HowItWorks() {
                 <span className="route-icon"><Icon name={r.icon} size={26} /></span>
                 <h5>{t(r.title)}</h5>
                 <p>{t(r.text)}</p>
-                <a className={r.current ? 'route-action primary' : 'route-action'} href={r.href} {...(external ? { target: '_blank', rel: 'noreferrer' } : {})}>
+                <a className={r.current ? 'route-action primary' : 'route-action'} href={r.href} {...(external ? { target: '_blank', rel: 'noreferrer' } : {})}
+                  onClick={!external && onStart ? (e) => { e.preventDefault(); onStart() } : undefined}>
                   {t(r.action)} <Icon name={external ? 'external' : 'arrowDown'} size={16} />
                 </a>
               </li>
@@ -37,7 +43,7 @@ export default function HowItWorks() {
               <span className="step-num" aria-hidden="true">{i + 1}</span>
               <div>
                 <strong>{t(s.title)}</strong>
-                <span>{t(s.text)}</span>
+                <span>{t(i === 0 && canSave ? SAVE_STEP_TEXT : s.text)}</span>
               </div>
             </li>
           ))}

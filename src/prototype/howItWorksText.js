@@ -13,8 +13,12 @@ export const STEPS = [
   { title: 'Hear from the team', text: 'Someone from Invest Detroit will be in touch about next steps.' },
 ]
 
+/** Step 1's text when answers can be saved (the demo's drafts, or FormAssembly's Save & Resume). */
+export const SAVE_STEP_TEXT = 'Use the checklist below. You can save and finish later.'
+
 /** Every string above, for the translation check. */
 export const HOW_IT_WORKS_TEXT = [
   ...ROUTES.flatMap((r) => [r.title, r.text, r.action]),
   ...STEPS.flatMap((s) => [s.title, s.text]),
+  SAVE_STEP_TEXT,
 ]

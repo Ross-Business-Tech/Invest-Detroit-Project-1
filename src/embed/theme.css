@@ -1,0 +1,44 @@
+/* Opt-in look for Invest Detroit's FormAssembly form (data-theme="copilot"): makes the live form
+ * look like the demo site's form. These are ordinary page styles, scoped to the form the add-on
+ * marks with the class "idc-theme", so nothing else on the page changes. Remove the attribute
+ * to go back to FormAssembly's own look.
+ * FormAssembly's markup: fieldset > legend (sections), .oneField (question), .label.preField
+ * (question label), .inputWrapper (control), .oneChoice (radio/checkbox), #submit_button. */
+.wForm form.idc-theme {
+  --idc-ink: #2b2f2e; --idc-muted: #515e59; --idc-line: #d6dbd9; --idc-yellow: #fcaf17; --idc-yellow-dark: #c98400;
+  --idc-dark: #1f2423; --idc-error: #c0392b;
+  font-family: 'Lato', 'Helvetica Neue', Arial, sans-serif; color: var(--idc-ink); line-height: 1.55;
+  background: #fff; border: 1px solid var(--idc-line); padding: 32px 24px 48px; box-sizing: border-box;
+}
+.wForm form.idc-theme * { box-sizing: border-box; }
+.wForm form.idc-theme h1, .wForm form.idc-theme h2 { font-weight: 900; color: var(--idc-dark); text-align: center; }
+.wForm form.idc-theme fieldset { border: 0; padding: 0; margin: 32px 0 0; min-width: 0; }
+.wForm form.idc-theme fieldset > legend {
+  display: block; width: 100%; font-weight: 900; font-size: 20px; color: var(--idc-dark);
+  border-bottom: 2px solid var(--idc-yellow); padding: 0 0 8px; margin-bottom: 16px;
+}
+.wForm form.idc-theme .htmlContent { font-size: 15px; color: var(--idc-muted); }
+.wForm form.idc-theme .oneField { margin: 0 0 20px; }
+.wForm form.idc-theme .label.preField { display: inline; font-weight: 700; font-size: 14.5px; color: var(--idc-ink); }
+.wForm form.idc-theme .reqMark::after, .wForm form.idc-theme .reqMark > .reqMarkText { color: var(--idc-error); }
+.wForm form.idc-theme input[type="text"], .wForm form.idc-theme input[type="email"], .wForm form.idc-theme input[type="tel"],
+.wForm form.idc-theme select, .wForm form.idc-theme textarea {
+  width: 100%; max-width: 100%; font: 16px 'Lato', 'Helvetica Neue', Arial, sans-serif; color: var(--idc-ink); background: #fff;
+  border: 1px solid #aeb5b3; border-radius: 2px; padding: 10px 12px; min-height: 44px;
+}
+.wForm form.idc-theme select[multiple] { min-height: 140px; }
+.wForm form.idc-theme textarea { resize: vertical; min-height: 96px; }
+.wForm form.idc-theme input:focus, .wForm form.idc-theme select:focus, .wForm form.idc-theme textarea:focus {
+  border-color: var(--idc-yellow-dark); outline: 2px solid var(--idc-yellow); outline-offset: 0;
+}
+.wForm form.idc-theme .choices { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+.wForm form.idc-theme .oneChoice { display: inline-flex; align-items: flex-start; gap: 8px; font-size: 15px; margin: 0; }
+.wForm form.idc-theme .oneChoice input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--idc-yellow-dark); flex: none; }
+.wForm form.idc-theme .actions { margin-top: 24px; display: flex; justify-content: center; text-align: center; }
+.wForm form.idc-theme #submit_button {
+  font: 900 16px 'Lato', 'Helvetica Neue', Arial, sans-serif; text-transform: uppercase; letter-spacing: .06em;
+  background: var(--idc-yellow); color: var(--idc-dark); border: 2px solid transparent; border-radius: 0; padding: 16px 48px; cursor: pointer;
+}
+.wForm form.idc-theme #submit_button:hover { background: #ffc145; }
+.wForm form.idc-theme #submit_button:disabled { background: #e4e7e5; color: #7a817e; cursor: not-allowed; }
+@media (max-width: 640px) { .wForm form.idc-theme { padding: 24px 16px 32px; } }

@@ -171,6 +171,12 @@ It reuses the demo site's components (`ReviewPanel`, `ChatAssistant`, `FormProgr
 - The add-on calls the server it was loaded from (or `data-server`): `/api/assistant` for the chat, falling back to the built-in guide; `/api/feedback` for ratings; `/api/events` for counts.
 - The server allows those calls from the sites in `ALLOWED_ORIGINS` (CORS; the default is investdetroit.com) and refuses other websites.
 
+**Opt-in options that make the live form look and work like the demo site:**
+- `data-intro="true"`: `HowItWorks` and `BeforeYouStart`, drawn above `.wFormContainer`.
+- `data-theme="copilot"`: `src/embed/theme.css`, page styles scoped to the form through the class `idc-theme`.
+- `data-drafts="true"`: save & resume with `src/prototype/draft.js`. Answers are restored through the adapter's `restore()`, matching choices by FormAssembly option code.
+- `data-load-font="true"`: loads the demo's fonts from Google Fonts.
+
 **Read-only by default:**
 - The adapter reads mapped fields only. It never reads the SSN field (`tfa_541`, deliberately unmapped), and reads only a file's name, size and type.
 - With `data-fill-helpers="true"`, it may fill the business address and state fields. It dispatches `input` and `change` events so FormAssembly's own scripts see the change.

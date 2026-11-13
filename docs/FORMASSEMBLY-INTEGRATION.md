@@ -37,11 +37,11 @@ The copilot is **one script tag** plus a small server. It works on top of the ex
 | Five languages (incl. Arabic right to left) | ✅ Automatic | Follows the page's language; answers are read by FormAssembly's option codes, so translated pages still work |
 | Star ratings, usage insights (`/insights`) | ✅ Automatic | Sent to our server; counts only |
 | "Business address is the same as my home address"; state from a Michigan ZIP | ⚙️ Opt-in | `data-fill-helpers="true"`. These fill in answers, so they're off unless turned on. |
-| Save & resume | ⚙️ FormAssembly setting | Turn on FormAssembly's own **Save & Resume** for the form (step 3) |
-| "What happens next" after Submit | ⚙️ FormAssembly setting | Paste the text below into the form's thank-you message (step 3) |
-| "How it works" and "Before you start" | ⚙️ WordPress content | Copy into the page above the form if wanted (step 5) |
-| Money boxes adding commas as you type | ❌ Not carried over | It would change what FormAssembly receives, and FormAssembly's number checks may reject commas. The "About $…" note gives the same reassurance. |
-| Document "suggestion" mock-up | ❌ Demo only | Never reads files; not part of the add-on |
+| "How it works" ("Which form is right for you?" cards, the 4 steps) and the "Before you start" checklist | ⚙️ Opt-in | `data-intro="true"`: drawn above the form exactly as on the demo site, in all 5 languages |
+| The demo form's look (section headings with yellow lines, larger boxes, yellow Submit button) | ⚙️ Opt-in | `data-theme="copilot"`: restyles only this form. Add `data-load-font="true"` if the site doesn't already use the Lato font. |
+| Save & resume ("Continue where I left off") | ⚙️ Opt-in, or a FormAssembly setting | `data-drafts="true"`: the demo's on-device drafts. Or FormAssembly's own **Save & Resume**, which works across devices (step 3). |
+| "What happens next" after Submit | ⚙️ FormAssembly setting | Paste the ready-made message below into the form's thank-you page (step 3) |
+| Money boxes adding commas as you type | ❌ Not carried over | Their money boxes only accept numbers, so commas could block Submit. The "About $…" note gives the same reassurance. |
 
 ## Step 1: run the copilot server (Render)
 
@@ -74,18 +74,30 @@ It never includes an SSN. It's sent only inside the application, to FormAssembly
 
 ## Step 3: FormAssembly settings
 
-- **Save & Resume:** turn on FormAssembly's Save & Resume for the form, so applicants can finish later. The demo site's on-device drafts aren't part of the add-on; FormAssembly's version saves on their side and works across devices.
-- **Thank-you message:** paste this in (edit as needed):
+- **Save & resume, pick one:**
+  - **On the applicant's device,** exactly like the demo: add `data-drafts="true"` to the script tag (step 4).
+    - Answers are kept in that browser for 7 days, never the SSN and never files.
+    - The applicant sees "Continue where I left off" when they come back, and can choose "Don't save on this device".
+  - **FormAssembly's own Save & Resume,** which works across devices: turn it on for the form, and add `data-save-resume="true"` so the intro says "You can save and finish later".
+- **Thank-you message ("What happens next"):** in the form's thank-you message, switch to the HTML or source view and paste this. It matches the demo's success screen; edit as needed.
 
-  > Thank you. Your intake form has been received. A member of the Invest Detroit team will be in touch about next steps.
-  >
-  > **What happens next** (typical times from Invest Detroit's lending guide; every project is different):
-  > 1. **Screening** (1–2 weeks): Invest Detroit reviews mission fit and feasibility.
-  > 2. **Term sheet** (2–6 weeks): site visit, credit review and an indicative term sheet.
-  > 3. **Commitment** (5–10 weeks): underwriting and committee decision. Approval brings a commitment letter.
-  > 4. **Closing** (4–6 weeks): closing checklist, loan documents and funding.
-  >
-  > Please don't start construction before your loan closes.
+  ```html
+  <div style="font-family:Lato,'Helvetica Neue',Arial,sans-serif;color:#2b2f2e;max-width:640px;margin:0 auto;text-align:left">
+    <p style="text-align:center;font-size:40px;margin:0;color:#1e7b45">&#10003;</p>
+    <h2 style="text-align:center;font-weight:900;margin:8px 0">Thank you.</h2>
+    <p style="text-align:center">Your intake form has been received. A member of the Invest Detroit team will be in touch about next steps.</p>
+    <div style="background:#f4f5f4;padding:16px 20px;margin-top:16px">
+      <h3 style="margin:0 0 8px;font-weight:900">What happens next</h3>
+      <ol style="margin:0;padding-left:20px;line-height:1.5">
+        <li><strong>Screening</strong> <span style="color:#515e59">1–2 weeks</span><br>Invest Detroit reviews mission fit and feasibility.</li>
+        <li><strong>Term sheet</strong> <span style="color:#515e59">2–6 weeks</span><br>Site visit, credit review and an indicative term sheet.</li>
+        <li><strong>Commitment</strong> <span style="color:#515e59">5–10 weeks</span><br>Underwriting and committee decision. Approval brings a commitment letter.</li>
+        <li><strong>Closing</strong> <span style="color:#515e59">4–6 weeks</span><br>Closing checklist, loan documents and funding.</li>
+      </ol>
+      <p style="font-size:13px;color:#515e59;margin:12px 0 0">Typical times from Invest Detroit’s lending guide. Every project is different. Please don’t start construction before your loan closes.</p>
+    </div>
+  </div>
+  ```
 
 ## Step 4: add the script tag
 
@@ -103,25 +115,46 @@ It never includes an SSN. It's sent only inside the application, to FormAssembly
   - If a caching or optimization plugin combines or delays scripts, exclude `copilot.js` from it.
 - **FormAssembly:** the form's own custom-code area (the live form has one: `#code-4907942`). **Use this if the form is ever published as an iframe**: the add-on must run on the same page as the form's fields, so inside an iframe only FormAssembly's custom code can reach them.
 
-**Optional settings:**
+**To make it look and work like the demo site,** use the full version:
+
+```html
+<script src="https://<your-service>.onrender.com/embed/copilot.js" defer
+        data-summary-field="tfa_1234"
+        data-launcher-bottom="84px"
+        data-intro="true"
+        data-theme="copilot"
+        data-drafts="true"
+        data-fill-helpers="true"></script>
+```
+
+**All optional settings:**
 
 | Attribute | What it does |
 |---|---|
+| `data-intro="true"` | "How it works" ("Which form is right for you?", the 4 steps) and "Before you start" above the form, as on the demo. "Start the form" scrolls to the form. |
+| `data-theme="copilot"` | Restyles this form to look like the demo: section headings with yellow lines, larger boxes, yellow Submit. Only this form is affected. |
+| `data-load-font="true"` | Loads the demo's fonts (Lato, plus Arabic and Bengali) from Google Fonts, if the site doesn't already use them |
+| `data-drafts="true"` | Save & resume on the applicant's device, like the demo |
+| `data-save-resume="true"` | Use with FormAssembly's own Save & Resume: the intro then says "You can save and finish later" |
 | `data-progress-top="80px"` | Room for a sticky site header above the progress bar |
 | `data-fill-helpers="true"` | Turns on "same as home address" and state-from-ZIP |
 | `data-locale="es"` | Fixes the language; otherwise it follows the page's `<html lang>` |
 | `data-server="https://…"` | Our server's address, if `copilot.js` is hosted somewhere else |
 | `data-server="none"` | No server at all: built-in answers only, no ratings or counts |
 
-**If the site uses a Content Security Policy,** allow the server's address in `script-src` and `connect-src`.
+**If the site uses a Content Security Policy,** allow the server's address in `script-src` and `connect-src`. With `data-load-font`, also allow `fonts.googleapis.com` (`style-src`) and `fonts.gstatic.com` (`font-src`).
 
-## Step 5: page content (optional, WordPress)
+**What isn't carried over, on purpose:**
+- **Money boxes adding commas as you type:** their form's money boxes only accept numbers, so commas could block Submit. The "About $1.45 million" note gives the same reassurance.
+- **The demo's prototype banner and "Fill with sample applicant" / "Clear form" buttons:** these are for demos only.
 
-The demo site has "How it works" and "Before you start" sections above the form: the 3 required documents and the numbers to gather. They're page text, not part of the form. If Invest Detroit wants them, copy the wording from the demo site into the WordPress page. The English text is in `src/prototype/howItWorksText.js` and `src/prototype/BeforeYouStart.jsx`.
+## Step 5: check the page around the form (WordPress)
+
+With `data-intro="true"`, "How it works" and "Before you start" appear just above the form. If the WordPress page already has its own version of that text, remove one of the two. The demo's header, "Need Support?" photo and Contact Us section copied Invest Detroit's real page, so nothing else needs adding.
 
 ## Step 6: test before going live
 
-1. **Try the test page first:** `https://<your-service>.onrender.com/embed-test/` is a copy of the form's structure with the add-on loaded, the staff-summary field and the fill helpers on. It shows the summary after Submit.
+1. **Try the test page first:** `https://<your-service>.onrender.com/embed-test/` is a copy of the form's structure with the add-on loaded and every option on: intro, theme, save & resume, fill helpers and the staff-summary field. It shows the summary after Submit.
 2. **Then try the real page, ideally on a staging copy first.** Check that:
    - the progress bar and **?** buttons appear;
    - leaving the loan amount larger than the budget shows a note;

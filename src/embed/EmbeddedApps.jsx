@@ -7,6 +7,8 @@
 //            under the question (live checks, "About $1.45 million", the 10% equity math,
 //            file checks)
 //   same     opt-in "Business address is the same as my home address" box
+//   intro    opt-in "How it works" and "Before you start", above the form
+//   draft    opt-in save & resume on this device: "Continue where I left off" and the saving line
 // They reuse the demo site's components, so both behave the same.
 import { Component, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -15,6 +17,9 @@ import ChatAssistant from '../components/ChatAssistant.jsx'
 import I18nProvider from '../components/I18nProvider.jsx'
 import { Notes, UploadTips } from '../components/Field.jsx'
 import FormProgress from '../prototype/FormProgress.jsx'
+import HowItWorks from '../prototype/HowItWorks.jsx'
+import BeforeYouStart from '../prototype/BeforeYouStart.jsx'
+import { saveDraft, loadDraft, clearDraft, draftsOff, setDraftsOff } from '../prototype/draft.js'
 import { useI18n } from '../components/i18nContext.js'
 import { localeFromLang } from '../copilot/i18n/index.js'
 import { FIELDS_BY_ID, SECTIONS } from '../copilot/formDefinition.js'
@@ -57,6 +62,33 @@ function HelpButton({ onClick }) {
   )
 }
 
+const isFileField = (id) => FIELDS_BY_ID[id]?.type === 'file'
+
+/** Save & resume on this device, like the demo form: the offer to continue, and the saving line. */
+function DraftBar({ offer, savingOff, onResume, onDiscard, onToggle }) {
+  const { t, locale } = useI18n()
+  return (
+    <>
+      {offer && (
+        <div className="draft-offer" role="region" aria-label={t('Saved answers')}>
+          <p>
+            <strong>{t('You have saved answers from {date}.', { date: new Date(offer.savedAt).toLocaleString(locale, { dateStyle: 'medium', timeStyle: 'short' }) })}</strong>{' '}
+            {t('Files need to be attached again.')}
+          </p>
+          <div className="draft-actions">
+            <button type="button" className="btn small" onClick={onResume}>{t('Continue where I left off')}</button>
+            <button type="button" className="btn small outline" onClick={onDiscard}>{t('Start over')}</button>
+          </div>
+        </div>
+      )}
+      <p className="draft-status" role="status">
+        {savingOff ? t('Answers are not being saved on this device.') : t('Your answers are saved on this device as you type, so you can come back later.')}{' '}
+        <button type="button" className="link-btn" onClick={onToggle}>{savingOff ? t('Save on this device') : t('Don’t save on this device')}</button>
+      </p>
+    </>
+  )
+}
+
 function SameAddressBox({ checked, onChange }) {
   const { t } = useI18n()
   return (
@@ -86,7 +118,7 @@ function fieldNotes(id, values, live) {
  * @param {object} props.hosts     where to draw: { review, chat, progress, fields: { [id]: { help, tips, notes } }, same }
  * @param {{ current: Record<string,string> }} props.notesRef  the applicant's "this is correct because…" notes, read at Submit
  */
-export function EmbeddedApp({ adapter, session, assistant, hosts, notesRef, feedbackClient = null, waitForReply = false, fillHelpers = false, onError }) {
+export function EmbeddedApp({ adapter, session, assistant, hosts, notesRef, feedbackClient = null, waitForReply = false, fillHelpers = false, drafts = false, canSave = false, onStartForm, onError }) {
   const [values, setValues] = useState(() => adapter.getSnapshot())
   const [review, setReview] = useState(session.getState())
   const [touched, setTouched] = useState(() => new Set())
@@ -95,6 +127,29 @@ export function EmbeddedApp({ adapter, session, assistant, hosts, notesRef, feed
   const [reviewNotes, setReviewNotes] = useState({})
   const [same, setSame] = useState(false)
   const started = useRef(false)
+  // Save & resume (opt-in): offer a draft from an earlier visit; save as the applicant types.
+  const [draftOffer, setDraftOffer] = useState(() => (drafts ? loadDraft() : null))
+  const [savingOff, setSavingOff] = useState(() => draftsOff())
+  useEffect(() => {
+    if (!drafts || draftOffer || !started.current) return undefined
+    const timer = setTimeout(() => saveDraft(values, { isFileField, extra: { sameAddress: same } }), 600)
+    return () => clearTimeout(timer)
+  }, [values, same, drafts, draftOffer])
+  const resumeDraft = () => {
+    const offer = draftOffer
+    setDraftOffer(null)
+    started.current = true // already counted as started on the first visit
+    adapter.restore(offer.values)
+    if (offer.sameAddress) setSame(true)
+    session.invalidate()
+  }
+  const discardDraft = () => { clearDraft(); setDraftOffer(null) }
+  const toggleSaving = () => {
+    const off = !savingOff
+    setDraftsOff(off)
+    setSavingOff(off)
+    if (!off) saveDraft(adapter.getSnapshot(), { isFileField, extra: { sameAddress: same } })
+  }
 
   useEffect(() => session.subscribe(setReview), [session])
   useEffect(() => adapter.onActiveFieldChange(setActiveFieldId), [adapter])
@@ -130,6 +185,8 @@ export function EmbeddedApp({ adapter, session, assistant, hosts, notesRef, feed
       {portal(<ChatAssistant assistant={assistant} activeFieldId={activeFieldId} helpRequest={helpRequest} feedbackClient={feedbackClient} waitForReply={waitForReply} />, hosts.chat, 'chat')}
       {portal(<FormProgress values={values} embedded onJump={(id) => { const q = firstQuestion(id); if (q) adapter.focusField(q) }} />, hosts.progress, 'progress')}
       {fillHelpers && portal(<SameAddressBox checked={same} onChange={setSame} />, hosts.same, 'same')}
+      {portal(<div className="intro"><HowItWorks canSave={canSave} onStart={onStartForm} /><BeforeYouStart canSave={canSave} /></div>, hosts.intro, 'intro')}
+      {drafts && portal(<DraftBar offer={draftOffer} savingOff={savingOff} onResume={resumeDraft} onDiscard={discardDraft} onToggle={toggleSaving} />, hosts.draft, 'draft')}
       {Object.entries(hosts.fields || {}).map(([id, h]) => (
         <FieldExtras key={id} id={id} hosts={h} values={values} live={live} onHelp={askHelp} />
       ))}

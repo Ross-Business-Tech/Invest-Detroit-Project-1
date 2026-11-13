@@ -434,6 +434,21 @@ Result:
 - **New guide:** `docs/FORMASSEMBLY-INTEGRATION.md` walks Invest Detroit's web team through the Render server, the FormAssembly hidden field, Save & Resume and the thank-you text, the WordPress script tag, and testing.
 - **Emma:** it's their email-marketing tool, so the copilot sends it nothing. Insights stay anonymous counts, downloadable as CSV.
 
+**40. Make the real form look and work like our demo, and remove the document mock-up**
+> Create an add-on for everything on our form that's not on theirs, so it looks almost exactly the same and works exactly the same. They loved our website. Also, remove this (the "Preview of a future feature" document-suggestion box).
+
+Result:
+- **Mock-up removed:** the document-suggestion box is gone from the demo site.
+- **New add-on options** (each turned on with one setting on the script line):
+  - `data-intro` draws "How it works" and "Before you start" above their form, exactly as on the demo.
+  - `data-theme` restyles their FormAssembly form to the demo's look.
+  - `data-drafts` adds the demo's save & resume ("Continue where I left off").
+  - `data-load-font` loads the demo's fonts.
+- **Thank-you page:** the guide now has a ready-made "What happens next" message for FormAssembly, styled like the demo's success screen.
+- **Wording fix:** "the form can't be saved partway through" now changes to "you can save and finish later" wherever saving is on, including on the demo itself.
+- **Not carried over, on purpose:** the money boxes' commas, because their form only accepts numbers.
+- **Tested:** all options on, on the FormAssembly test page, desktop and phone, from a separate web address.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

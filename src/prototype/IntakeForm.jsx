@@ -12,7 +12,6 @@ import { useI18n } from '../components/i18nContext.js'
 import { SAMPLE_APPLICANT } from './sampleApplicant.js'
 import { goToField } from './goToField.js'
 import BeforeYouStart from './BeforeYouStart.jsx'
-import DocSuggestionDemo from './DocSuggestionDemo.jsx'
 import { uploadTips } from '../copilot/uploadTips.js'
 import { equityMath, stateForZip, ZIP_STATE } from '../copilot/formHelpers.js'
 import { liveNotesFor } from '../copilot/liveNotes.js'
@@ -228,7 +227,7 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
         </div>
       )}
 
-      <BeforeYouStart />
+      <BeforeYouStart canSave={!savingOff} />
 
       <div className="proto-tools">
         <span>{t('Prototype tools:')}</span>
@@ -282,14 +281,6 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
                 />
               ))}
             </div>
-            {section.id === 'required_docs' && values.doc_dev_budget && (
-              <DocSuggestionDemo
-                key={values.doc_dev_budget}
-                fileName={values.doc_dev_budget}
-                onAccept={(amount) => onChange('total_budget', amount)}
-                onEdit={() => goToField('total_budget')}
-              />
-            )}
           </fieldset>
         ))}
 
