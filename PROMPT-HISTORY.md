@@ -409,6 +409,15 @@ Result:
 - **Screenshots:** all taken from the app with the fictional sample applicant. "Before" pictures are from our replica of the original form with the copilot off, because the cloud environment can't open investdetroit.com.
 - **Rebuilding:** `tools/build-client-deck.mjs` regenerates the deck from `docs/slides/deck-images/`.
 
+**38. A clean copy of the project for Invest Detroit**
+> We're about to send our GitHub repo to the company. Remove anything that's not relevant, like the prompt history, keep only what the team will need (and the README), and organize everything. Make it a separate repo.
+
+Result: a new repository, `ojhnny/invest-detroit-application-copilot`, holds one fresh commit with no class history, branches or pull requests.
+- **Kept:** the app, server, tests and test tools.
+- **Organized:** the README (with a project map and "run it" steps); `docs/` now holds the setup, architecture, user guide, testing, presentation and data-flow files.
+- **Removed:** the prompt history, class instructions, AI-chat notes, stray screenshots, Ross IT's class setup and here.now publishing commands, the exit email and the video scripts.
+- **Checked:** it builds and passes the same tests (201, test set 42/43). The class repo and the dev site are unchanged.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.
