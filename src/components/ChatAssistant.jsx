@@ -17,7 +17,7 @@ const WELCOME = { role: 'assistant', kind: 'welcome', text: WELCOME_TEXT, source
  *   helpRequest changes when the applicant presses a question's ? button;
  *   feedbackClient (copilot/feedback.js) turns on the rating card below the chat.
  */
-export default function ChatAssistant({ assistant, activeFieldId, subtitle = DEFAULT_SUBTITLE, helpRequest = null, feedbackClient = null }) {
+export default function ChatAssistant({ assistant, activeFieldId, subtitle = DEFAULT_SUBTITLE, helpRequest = null, feedbackClient = null, waitForReply = false }) {
   const { t, info } = useI18n()
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState([WELCOME])
@@ -88,7 +88,13 @@ export default function ChatAssistant({ assistant, activeFieldId, subtitle = DEF
             <div className="chat-avatar" aria-hidden="true">ID</div>
             <div className="chat-heading">
               <h2 id="chat-title">{t('Application Assistant')}</h2>
-              <p>{t(messages.some((m) => m.from === 'openai' || m.from === 'claude') ? CONNECTED_SUBTITLE : subtitle)}</p>
+              {/* On our server the AI may answer, so say nothing about it until the first reply shows who answered. */}
+              {(() => {
+                const aiAnswered = messages.some((m) => m.from === 'openai' || m.from === 'claude')
+                const replied = messages.some((m) => m.role === 'assistant' && m.kind !== 'welcome')
+                if (!aiAnswered && !replied && waitForReply) return null
+                return <p>{t(aiAnswered ? CONNECTED_SUBTITLE : subtitle)}</p>
+              })()}
             </div>
             <button type="button" className="chat-close" aria-label={t('Close assistant')} onClick={() => { setOpen(false); buttonRef.current?.focus() }}>×</button>
           </div>

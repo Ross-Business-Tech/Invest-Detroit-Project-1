@@ -99,7 +99,7 @@ function Page({ locale, onLocaleChange }) {
         </div>
       </footer>
 
-      <ChatAssistant assistant={assistant} activeFieldId={activeFieldId} helpRequest={helpRequest} feedbackClient={feedbackClient} />
+      <ChatAssistant assistant={assistant} activeFieldId={activeFieldId} helpRequest={helpRequest} feedbackClient={feedbackClient} waitForReply={onServerHost()} />
     </>
   )
 }

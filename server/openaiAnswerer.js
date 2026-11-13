@@ -32,7 +32,8 @@ const unsupportedReasoning = (err) => err?.status === 400 && /reasoning|effort/i
 export function createOpenAIAnswerer({ client, model = process.env.OPENAI_MODEL || DEFAULT_OPENAI_MODEL, effort = process.env.OPENAI_EFFORT || 'low', onEvent = () => {} } = {}) {
   // Reads OPENAI_API_KEY from the environment. A slow answer gives up after 30 s (one retry), so the
   // chat falls back to the built-in guide instead of hanging.
-  const api = client || new OpenAI({ timeout: 30_000, maxRetries: 1 })
+  // Spaces or line breaks pasted around the key in Render's settings are ignored.
+  const api = client || new OpenAI({ apiKey: String(process.env.OPENAI_API_KEY || '').trim(), timeout: 30_000, maxRetries: 1 })
   let sendReasoning = true // switched off once if the chosen model doesn't take a reasoning setting
 
   return async ({ modelInput }) => {

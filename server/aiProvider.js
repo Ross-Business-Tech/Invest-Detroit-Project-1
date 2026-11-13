@@ -14,8 +14,8 @@ export function aiProvider(env = process.env) {
   const forced = String(env.AI_PROVIDER || '').trim().toLowerCase()
   if (forced === 'openai') return env.OPENAI_API_KEY ? 'openai' : null
   if (forced === 'anthropic' || forced === 'claude') return env.ANTHROPIC_API_KEY ? 'anthropic' : null
-  if (env.OPENAI_API_KEY) return 'openai'
-  if (env.ANTHROPIC_API_KEY) return 'anthropic'
+  if (String(env.OPENAI_API_KEY || '').trim()) return 'openai'
+  if (String(env.ANTHROPIC_API_KEY || '').trim()) return 'anthropic'
   return null
 }
 
