@@ -378,6 +378,26 @@ Result:
 
 Result: a new file, `docs/AI-HANDOFF.md`, sums up the goal, current status, the decisions already made, the deliverables and the numbers that must stay consistent, the code map, the rules, and the next steps. A new chat reads it first.
 
+**36. Switch the chatbot to OpenAI**
+> We got the API key, but it's a Codex one. Rebuild everything around our Codex API key; take your time.
+
+Result:
+- **OpenAI connection:** the chatbot now answers with OpenAI, using the same instructions, knowledge base and safety checks as before.
+- **Which AI answers:** the key in Render decides: `OPENAI_API_KEY` for OpenAI, `ANTHROPIC_API_KEY` for Claude (kept as an alternative), and neither for the built-in guide.
+- **Failures:** if the AI fails, the chat falls back to the guide, and `/insights` counts the failure by type (for example "401 = wrong key"), never what anyone typed.
+- **Test set:** it can now be rerun with the AI (`--ai`).
+- **Documents:** the setup guide, README, deck, data-flow note, exit email, video scripts and handoff note now say OpenAI, with a new cost estimate of about $20–$35 a month.
+
+**37. Make the University of Michigan key work**
+> It's from UM-GPT (shared U-M's Codex setup page).
+
+Result:
+- **Why the key was rejected:** U-M's "Codex for the Classroom" keys only work through U-M's GPT Toolkit gateway, so OpenAI rejected the key (401).
+- **The fix:** two more Render settings, `OPENAI_BASE_URL=https://api.toolkit.umgpt.umich.edu/v1` and `OPENAI_MODEL=gpt-5.6-terra`.
+- **Hardening:** the server now ignores stray spaces around the key, and retries without any optional setting a gateway rejects.
+- **Subtitle:** the chat no longer says "AI not connected" before anyone has asked anything.
+- **Result:** the chatbot answered live with "AI helper" showing.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

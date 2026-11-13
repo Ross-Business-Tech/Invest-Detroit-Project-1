@@ -25,7 +25,7 @@
 
 ## What it would take to run it for real
 
-- **Accounts:** it runs on Business+Tech accounts, which end with the sprint. Invest Detroit needs its own OpenAI API and Render accounts, then adds `OPENAI_API_KEY` in Render ([setup](docs/AI-SETUP.md)).
+- **Accounts:** it runs on Business+Tech accounts, which end with the sprint. The pilot's AI uses a student's University of Michigan GPT Toolkit key. Invest Detroit needs its own OpenAI API and Render accounts, then adds `OPENAI_API_KEY` in Render ([setup](docs/AI-SETUP.md)).
 - **Cost (estimate):** about $0.01–$0.04 per chat question, so about $5–$20 a month at 500 questions. Hosting is about $7 a month, plus about $6 for the optional database: about $20–$35 a month in total. Daily caps and an OpenAI budget limit cap the worst case.
 - **Data:** no chat text is stored; SSNs are blocked from the chat; the staff summary goes only into FormAssembly.
 - **Ownership:** [NAMED OWNER AT INVEST DETROIT] owns the knowledge base and prompt, reviews the `/insights` page monthly, and reruns the test set before any change.
