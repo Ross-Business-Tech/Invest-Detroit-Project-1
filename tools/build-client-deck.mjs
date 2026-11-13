@@ -33,12 +33,12 @@ const HEAD = 'Cambria', BODY = 'Calibri'
 const pres = new pptxgen()
 pres.layout = 'LAYOUT_16x9' // 10 x 5.625 in
 pres.title = 'Invest Detroit Application Copilot: client deck'
-pres.author = '[Team name]'
+pres.author = 'Invest Detroit Team #1'
 
 pres.defineSlideMaster({
   title: 'CONTENT', background: { color: WHITE },
   objects: [
-    { text: { text: 'Invest Detroit Application Copilot  ·  [Team name]  ·  [Date]', options: { x: 0.5, y: 5.28, w: 7, h: 0.25, fontFace: BODY, fontSize: 10, color: MID, margin: 0 } } },
+    { text: { text: 'Invest Detroit Application Copilot  ·  Invest Detroit Team #1  ·  November 17, 2026', options: { x: 0.5, y: 5.28, w: 7, h: 0.25, fontFace: BODY, fontSize: 10, color: MID, margin: 0 } } },
     { placeholder: { options: { name: 'title', type: 'title', x: 0.5, y: 0.62, w: 9, h: 0.6, fontFace: HEAD, fontSize: 28, bold: true, color: INK, margin: 0, valign: 'middle', align: 'left' }, text: '' } },
   ],
   slideNumber: { x: 9.0, y: 5.28, w: 0.5, h: 0.25, fontFace: BODY, fontSize: 10, color: MID, align: 'right' },
@@ -132,7 +132,7 @@ const card = (slide, x, y, w, h, head, body, color = INK, fill = GRAY, hs = 15, 
   s.addText('INVEST DETROIT  ·  REAL ESTATE/C&I IN-TAKE FORM', { x: 0.6, y: 0.7, w: 6, h: 0.3, fontFace: BODY, fontSize: 12, bold: true, color: YEL, margin: 0, charSpacing: 2, isTextBox: true })
   s.addText('Catch application mistakes before they reach your team', { x: 0.6, y: 1.2, w: 5.6, h: 1.9, fontFace: HEAD, fontSize: 38, bold: true, color: WHITE, margin: 0, valign: 'top', isTextBox: true })
   s.addText('An AI Application Copilot: a guided review, a plain-language assistant and a staff summary, added on top of the form you already use.', { x: 0.6, y: 3.25, w: 5.3, h: 0.9, fontFace: BODY, fontSize: 16, color: 'D6DBD8', margin: 0, valign: 'top', isTextBox: true })
-  s.addText('[Team name]  ·  Ross School of Business  ·  [Date: November 17, 2026]', { x: 0.6, y: 4.75, w: 6.2, h: 0.3, fontFace: BODY, fontSize: 13, color: YEL, margin: 0, isTextBox: true })
+  s.addText('Invest Detroit Team #1  ·  Ross School of Business  ·  November 17, 2026', { x: 0.6, y: 4.75, w: 6.2, h: 0.3, fontFace: BODY, fontSize: 13, color: YEL, margin: 0, isTextBox: true })
   await pic(s, 'chat-rates.jpg', { x: 6.6, y: 0.5, w: 3.0, h: 4.6 }, 'The assistant answering a question about loan rates, quoting Invest Detroit\u2019s published ranges with the source named')
 }
 
@@ -556,7 +556,7 @@ await feature({
   s.addText('Thank you', { x: 0.6, y: 1.2, w: 8, h: 1.1, fontFace: HEAD, fontSize: 54, bold: true, color: WHITE, margin: 0, isTextBox: true })
   s.addText('Questions?', { x: 0.6, y: 2.3, w: 8, h: 0.7, fontFace: BODY, fontSize: 26, color: YEL, margin: 0, isTextBox: true })
   s.addText([{ text: 'Try it: ', options: { color: 'D6DBD8' } }, { text: 'invest-detroit-project-1.onrender.com', options: { color: WHITE, bold: true, hyperlink: { url: LIVE, tooltip: 'Open the live copilot' } } }], { x: 0.6, y: 3.4, w: 8, h: 0.4, fontFace: BODY, fontSize: 18, margin: 0, isTextBox: true })
-  s.addText('[Team name]  ·  Ross School of Business  ·  [Date]  ·  All sample data is fictional', { x: 0.6, y: 4.7, w: 8.5, h: 0.3, fontFace: BODY, fontSize: 12, color: 'AAB2AE', margin: 0, isTextBox: true })
+  s.addText('Invest Detroit Team #1: Johnny Lin, Ginny Liu, Shantanu Shah, Samantha Luu  ·  November 17, 2026', { x: 0.6, y: 4.7, w: 8.5, h: 0.3, fontFace: BODY, fontSize: 12, color: 'AAB2AE', margin: 0, isTextBox: true })
 }
 
 await pres.writeFile({ fileName: OUT })

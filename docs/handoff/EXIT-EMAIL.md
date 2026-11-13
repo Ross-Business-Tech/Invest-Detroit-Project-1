@@ -5,7 +5,7 @@ Send from the team lead after the presentation, **once the Drive folder is share
 ---
 
 **To:** [Client contact at Invest Detroit]
-**Cc:** [AI Solutions Specialist], [team members]
+**Cc:** [AI Solutions Specialist], Ginny Liu, Shantanu Shah, Samantha Luu
 **Subject:** Application Copilot: handoff folder and next steps
 
 Hi [Name],
@@ -37,5 +37,5 @@ If anything in the knowledge base doesn't match current Invest Detroit policy, t
 It was a pleasure working with your team.
 
 Best regards,
-[Team lead name], on behalf of [team names]
+Johnny Lin, on behalf of Invest Detroit Team #1 (Johnny Lin, Ginny Liu, Shantanu Shah, Samantha Luu)
 Ross School of Business, Business+Tech AI Sprint

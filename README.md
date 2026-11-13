@@ -1,7 +1,7 @@
 # Invest Detroit Application Copilot
 
 **Purpose:** helps applicants fill in Invest Detroit's Real Estate/C&I In-Take Form correctly the first time.
-**Live link:** https://invest-detroit-project-1.onrender.com (backup: https://invest-detroit.vercel.app/) · **Team:** [TEAM NAMES] · **Client:** Invest Detroit, Real Estate lending · **Date:** November 17, 2026
+**Live link:** https://invest-detroit-project-1.onrender.com (backup: https://invest-detroit.vercel.app/) · **Team:** Invest Detroit Team #1 (Johnny Lin, Ginny Liu, Shantanu Shah, Samantha Luu) · **Client:** Invest Detroit, Real Estate lending · **Date:** November 17, 2026
 
 ## What it does
 

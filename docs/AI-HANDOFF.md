@@ -49,9 +49,9 @@ They're all in `docs/handoff/`; its `README.md` has the checklist.
 
 | Item | Where | Still needed |
 |---|---|---|
-| One-page README (+ full prompt) | `README.md` | Render link, team names, a named owner at Invest Detroit |
+| One-page README (+ full prompt) | `README.md` | a named owner at Invest Detroit (team: Invest Detroit Team #1: Johnny Lin, Ginny Liu, Shantanu Shah, Samantha Luu) |
 | Test results sheet | `docs/handoff/Invest-Detroit-Copilot-Test-Results.xlsx` | (none) |
-| Slide deck, 34 slides (rebuild: tools/build-client-deck.mjs) | `docs/slides/Invest-Detroit-Copilot-Client-Deck.pptx/.pdf` | team name, date, link |
+| Slide deck, 34 slides (rebuild: tools/build-client-deck.mjs) | `docs/slides/Invest-Detroit-Copilot-Client-Deck.pptx/.pdf` | (team, date and link filled in) |
 | User guide, 7 pages | `docs/handoff/Invest-Detroit-Copilot-User-Guide.pdf/.docx` (source `USER-GUIDE.md`) | video links |
 | Demo videos | scripts in `docs/handoff/DEMO-VIDEO-SCRIPTS.md` | **the team records them** |
 | Exit email | `docs/handoff/EXIT-EMAIL.md` | send after the presentation, once the data deletion is really done |
@@ -112,5 +112,5 @@ The deck was generated with pptxgenjs from a script that lived in the old sessio
 
 1. Get the Render link and add it to the README, user guide, deck and PR #2.
 2. Run `tools/check-chat.mjs` and the test set with `--ai`; update the score everywhere if it changes.
-3. Fill in the team names and the named owner; help record the videos from the scripts.
+3. Fill in the named owner; help record the videos from the scripts.
 4. Optional: fix C14 (ZIP/city-limits wording). Add it as a new test case first, and report the change honestly in the score history.

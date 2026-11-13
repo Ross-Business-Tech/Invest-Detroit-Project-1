@@ -449,6 +449,11 @@ Result:
 - **Not carried over, on purpose:** the money boxes' commas, because their form only accepts numbers.
 - **Tested:** all options on, on the FormAssembly test page, desktop and phone, from a separate web address.
 
+**41. Add our team**
+> These are my teammates (Ginny Liu, Shantanu Shah, Samantha Luu). Put my name first, Johnny Lin, and just use "Invest Detroit Team #1".
+
+Result: "Invest Detroit Team #1" now appears on the deck's title slide and in every slide's footer. The README, the deck's closing slide and the exit email list Johnny Lin, Ginny Liu, Shantanu Shah, Samantha Luu. Both repositories are updated.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.
