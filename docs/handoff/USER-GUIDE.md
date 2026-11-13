@@ -5,7 +5,7 @@ subtitle: "Invest Detroit Real Estate/C&I In-Take Form · November 2026"
 
 # Quick start
 
-**Link:** [ADD RENDER LINK]  ·  **Videos:** [ADD APPLICANT VIDEO LINK] · [ADD STAFF VIDEO LINK] · [ADD 60-SECOND OVERVIEW LINK]
+**Link:** https://invest-detroit-project-1.onrender.com  ·  **Videos:** [ADD APPLICANT VIDEO LINK] · [ADD STAFF VIDEO LINK] · [ADD 60-SECOND OVERVIEW LINK]
 
 **Applicants:**
 
@@ -89,7 +89,7 @@ Every application comes with a short **Application Copilot summary**. It is alwa
 
 ## 2. Check usage insights (monthly)
 
-Open **[site link]/insights** and sign in with the staff password (Render shows it under Environment, as `INSIGHTS_PASSWORD`). The page shows counts only, never names or messages:
+Open **https://invest-detroit-project-1.onrender.com/insights** and sign in with the staff password (Render shows it under Environment, as `INSIGHTS_PASSWORD`). The page shows counts only, never names or messages:
 
 - forms started vs. submitted;
 - where people stop;
