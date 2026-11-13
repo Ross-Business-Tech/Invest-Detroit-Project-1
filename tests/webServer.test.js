@@ -42,3 +42,31 @@ test('text files are sent compressed when the browser accepts it', { skip: !buil
     assert.equal((await head('identity'))['content-encoding'], undefined)
   } finally { server.close() }
 })
+
+test('Invest Detroit\'s website may call the API; other websites may not', async () => {
+  const saved = { ...process.env }
+  delete process.env.OPENAI_API_KEY; delete process.env.ANTHROPIC_API_KEY
+  const server = createWebServer({ origins: ['https://www.investdetroit.com'] }).listen(0)
+  const base = `http://localhost:${server.address().port}`
+  const ask = (origin, method = 'POST') => fetch(base + '/api/assistant', { method, headers: { 'content-type': 'application/json', origin }, body: method === 'POST' ? JSON.stringify({ message: 'What does AMI mean?' }) : undefined })
+  try {
+    const pre = await ask('https://www.investdetroit.com', 'OPTIONS')
+    assert.equal(pre.status, 204)
+    assert.equal(pre.headers.get('access-control-allow-origin'), 'https://www.investdetroit.com')
+    assert.match(pre.headers.get('access-control-allow-headers'), /content-type/)
+    const ok = await ask('https://www.investdetroit.com')
+    assert.equal(ok.status, 200)
+    assert.equal(ok.headers.get('access-control-allow-origin'), 'https://www.investdetroit.com')
+    assert.equal((await ask('https://evil.example')).status, 403)
+    assert.equal((await ask(base)).status, 200) // the site's own pages, as before
+  } finally {
+    server.close()
+    process.env = saved
+  }
+})
+
+test('ALLOWED_ORIGINS sets the list; the default is investdetroit.com', async () => {
+  const { allowedOrigins, DEFAULT_ALLOWED_ORIGINS } = await import('../server/webServer.js')
+  assert.deepEqual(allowedOrigins({}), DEFAULT_ALLOWED_ORIGINS)
+  assert.deepEqual(allowedOrigins({ ALLOWED_ORIGINS: 'https://a.org/, https://b.org' }), ['https://a.org', 'https://b.org'])
+})

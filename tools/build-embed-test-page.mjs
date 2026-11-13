@@ -123,6 +123,8 @@ const page = `<!doctype html>
     <h1 style="text-align:center">Real Estate/C&amp;I In-Take Form</h1>
     ${FORM_INTRO.map((p) => `<p>${esc(p)}</p>`).join('\n    ')}
 ${sections}
+    <!-- Hidden field Invest Detroit adds in FormAssembly for the staff summary (any tfa id works). -->
+    <input type="hidden" id="tfa_copilot_summary" name="tfa_copilot_summary" value="">
     <div class="actions" id="${FORM_ASSEMBLY_FORM_ID}-A"><input type="submit" data-label="Submit" class="primaryAction" id="${FORM_ASSEMBLY_SUBMIT_ID}" value="Submit"></div>
   </form>
 </div></div>
@@ -143,7 +145,11 @@ ${sections}
       var done = document.createElement('p');
       done.className = 'submitted';
       done.textContent = 'The form\\'s own Submit handler ran: on the real site, this is where FormAssembly would send the application. (Test page: nothing was sent.)';
-      this.querySelector('.actions').after(done);
+      var summary = document.createElement('pre');
+      summary.id = 'test-summary';
+      summary.style.cssText = 'white-space:pre-wrap;background:#f4f5f4;padding:12px;font-size:13px';
+      summary.textContent = 'Hidden staff-summary field received:\\n\\n' + (document.getElementById('tfa_copilot_summary').value || '(empty)');
+      this.querySelector('.actions').after(done, summary);
     });
   }, 800);
 
@@ -169,7 +175,7 @@ ${sections}
     testStatus.textContent = 'Answer labels translated to Spanish (like the site\\'s translation menu). Reviews should still work.';
   });
 </script>
-<script src="/embed/copilot.js" defer data-launcher-bottom="84px"></script>
+<script src="/embed/copilot.js" defer data-launcher-bottom="84px" data-summary-field="tfa_copilot_summary" data-fill-helpers="true" data-progress-top="55px"></script>
 </body>
 </html>
 `

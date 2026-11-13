@@ -1,23 +1,32 @@
-// Add-on script for Invest Detroit's live "Need Support?" page.
+// Add-on script for Invest Detroit's live "Need Support?" page (WordPress + FormAssembly).
 //
-// Built to dist/embed/copilot.js by `npm run build`. Load it on the page that hosts the
-// FormAssembly intake form:
+// Built to dist/embed/copilot.js by `npm run build`, and served by our server at
+// https://<server>/embed/copilot.js. Add ONE tag to the page that shows the FormAssembly form
+// (in WordPress, or in the form's own custom-code area):
 //
-//   <script src="https://…/embed/copilot.js" defer
-//           data-launcher-bottom="84px"                 (optional: lift the chat button)
-//           data-assistant-endpoint="https://…"           (optional: connect a real AI)
+//   <script src="https://<server>/embed/copilot.js" defer
+//           data-summary-field="tfa_1234"                (recommended: hidden field for the staff summary)
+//           data-launcher-bottom="84px"                  (optional: lift the chat button)
+//           data-progress-top="80px"                     (optional: room for a sticky site header)
+//           data-fill-helpers="true"                     (optional: "same as home address" box, state from ZIP)
 //           data-locale="es"                             (optional: otherwise follows <html lang>)
-//           data-feedback-endpoint="https://…"           (optional: turns on the chat rating card)
-//           data-summary-field="tfa_1234"></script>    (optional: hidden field that receives the staff summary)
+//           data-server="https://…"                      (optional: our server, if the script is hosted elsewhere;
+//                                                         "none" = no server: built-in answers, no ratings or counts)
+//           data-assistant-endpoint / data-feedback-endpoint   (optional: override single endpoints)
+//   ></script>
 //
 // What it does:
 //   1. Waits for FormAssembly form 4907942 to appear on the page.
 //   2. Adds the "Review My Application" panel just above the form's own Submit button, and
 //      locks Submit until a review passes.
-//   3. Adds the "Need help?" chat button in the corner.
-// It only reads the form. It never fills in, changes or submits answers. The one exception is
-// opt-in: with data-summary-field, at Submit it writes the review summary (for Invest Detroit's
-// staff) into that hidden field, which Invest Detroit adds to their form for this purpose.
+//   3. Adds the "Need help?" chat in the corner (answers from our server: AI + guardrails, or the
+//      built-in knowledge base if the server can't be reached), a ? button next to each question,
+//      notes under questions as they're answered, upload tips, file checks and a progress bar.
+//   4. Sends anonymous counts (never answers or messages) to our server's /insights, and chat
+//      star ratings to /api/feedback.
+// It reads the form and never submits it. It changes answers only with data-fill-helpers, and
+// then only to copy the home address or fill in a state. With data-summary-field, at Submit it
+// writes the review summary (for Invest Detroit's staff) into that hidden field.
 //
 // Fail-safe: if anything goes wrong (form not found, a bug, a changed form), the add-on removes
 // itself and unlocks Submit, so the official form always keeps working on its own.
@@ -25,43 +34,59 @@
 // Its screens live inside shadow roots, so its styles and the page's styles can't affect each other.
 
 import { createRoot } from 'react-dom/client'
-import css from '../components/copilot.css?inline'
-import { FailSafe, EmbeddedReview, EmbeddedChat, PageLanguage } from './EmbeddedApps.jsx'
+import baseCss from '../components/copilot.css?inline'
+import extrasCss from './extras.css?inline'
+import { FailSafe, EmbeddedApp, PageLanguage } from './EmbeddedApps.jsx'
 import { localeFromLang } from '../copilot/i18n/index.js'
 import { createFormAssemblyAdapter } from '../copilot/adapters/formAssemblyAdapter.js'
-import { FORM_ASSEMBLY_FORM_ID, FORM_ASSEMBLY_SUBMIT_ID } from '../copilot/adapters/formAssemblyMap.js'
+import { FORM_ASSEMBLY_FORM_ID, FORM_ASSEMBLY_SUBMIT_ID, FORM_ASSEMBLY_MAP } from '../copilot/adapters/formAssemblyMap.js'
 import { createReviewSession } from '../copilot/reviewSession.js'
-import { createAssistant, httpTransport, transportFromConfig } from '../copilot/assistant.js'
+import { createAssistant, httpTransport, withFallback } from '../copilot/assistant.js'
+import { guideTransport } from '../copilot/guideTransport.js'
+import { startMetrics } from '../copilot/metrics.js'
+import { formProgress } from '../copilot/formHelpers.js'
 import { createFeedbackClient } from '../copilot/feedback.js'
 import { buildStaffSummary } from '../copilot/staffSummary.js'
 import { track } from '../copilot/events.js'
 import { PROGRAM } from '../copilot/config.js'
-import { CONNECTED_SUBTITLE } from '../components/chatText.js'
 
-export const VERSION = '0.1.0'
+export const VERSION = '0.2.0'
 
 // Settings from the <script> tag. document.currentScript only exists while this file first runs.
 const scriptTag = typeof document !== 'undefined' ? document.currentScript : null
+const data = scriptTag?.dataset || {}
+const scriptOrigin = (() => { try { return new URL(scriptTag.src).origin } catch { return null } })()
+// Our server (chat, ratings, counts): where this script came from, unless data-server says otherwise.
+const server = data.server === 'none' ? null : (data.server || scriptOrigin || '').replace(/\/$/, '') || null
+const endpoint = (attr, path) => (attr === 'none' ? null : attr || (server ? server + path : null))
 const SETTINGS = {
-  autoMount: scriptTag?.dataset.autoMount !== 'false',
-  launcherBottom: scriptTag?.dataset.launcherBottom || null,
-  assistantEndpoint: scriptTag?.dataset.assistantEndpoint || null,
-  waitMs: Number(scriptTag?.dataset.waitMs) || 15000,
-  locale: scriptTag?.dataset.locale ? localeFromLang(scriptTag.dataset.locale) : null, // default: follow the page
-  // Rating card under the chat. Off unless Invest Detroit gives an endpoint that saves ratings.
-  feedbackEndpoint: scriptTag?.dataset.feedbackEndpoint || null,
-  summaryField: scriptTag?.dataset.summaryField || null,
+  autoMount: data.autoMount !== 'false',
+  launcherBottom: data.launcherBottom || null,
+  progressTop: data.progressTop || '0px',
+  assistantEndpoint: endpoint(data.assistantEndpoint, '/api/assistant'),
+  feedbackEndpoint: endpoint(data.feedbackEndpoint, '/api/feedback'),
+  eventsEndpoint: endpoint(data.eventsEndpoint, '/api/events'),
+  waitMs: Number(data.waitMs) || 15000,
+  locale: data.locale ? localeFromLang(data.locale) : null, // default: follow the page
+  summaryField: data.summaryField || null,
+  fillHelpers: data.fillHelpers === 'true',
 }
 
-function makeHost(className) {
-  const host = document.createElement('div')
+// One copy of the styles, shared by every shadow root (falls back to a <style> per root).
+const CSS = baseCss + '\n' + extrasCss
+let sharedSheet = null
+try { sharedSheet = new CSSStyleSheet(); sharedSheet.replaceSync(CSS) } catch { sharedSheet = null }
+
+function makeHost(className, { inline = false } = {}) {
+  const host = document.createElement(inline ? 'span' : 'div')
   host.className = className
   host.setAttribute('data-invest-detroit-copilot', VERSION)
+  if (inline) host.style.display = 'inline-block'
   const shadow = host.attachShadow({ mode: 'open' })
-  const style = document.createElement('style')
-  style.textContent = css
-  const mountPoint = document.createElement('div')
-  shadow.append(style, mountPoint)
+  if (sharedSheet && 'adoptedStyleSheets' in shadow) shadow.adoptedStyleSheets = [sharedSheet]
+  else { const style = document.createElement('style'); style.textContent = CSS; shadow.append(style) }
+  const mountPoint = document.createElement(inline ? 'span' : 'div')
+  shadow.append(mountPoint)
   return { host, mountPoint }
 }
 
@@ -76,6 +101,8 @@ function waitForForm(formId, timeoutMs) {
     const timer = setTimeout(() => { observer.disconnect(); resolve(null) }, timeoutMs)
   })
 }
+
+const cssEscape = (v) => (window.CSS?.escape ? window.CSS.escape(v) : String(v).replace(/[^\w-]/g, '\\$&'))
 
 let mounted = null
 
@@ -105,20 +132,19 @@ export async function mount(options = {}) {
     const adapter = createFormAssemblyAdapter({ root: form })
     const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
     const session = createReviewSession({ getSnapshot: adapter.getSnapshot, stepMs: reduce ? 120 : 650, onEvent: track })
-    const assistant = createAssistant({
-      transport: opts.assistantEndpoint ? httpTransport(opts.assistantEndpoint) : transportFromConfig(),
-      onEvent: track,
-    })
+    // The chat asks our server (AI with guardrails); if it can't be reached, the built-in guide answers.
+    const transport = opts.assistantEndpoint
+      ? Object.assign(withFallback(httpTransport(opts.assistantEndpoint), guideTransport), { lenientScope: true })
+      : guideTransport
+    const assistant = createAssistant({ transport, onEvent: track })
+    const place = (host, insert) => { insert(host.host); cleanups.push(() => host.host.remove()); return host.mountPoint }
 
+    const hosts = { fields: {} }
     // Review panel, just above the form's Submit button.
     const submit = form.querySelector(`#${FORM_ASSEMBLY_SUBMIT_ID}`)
     const anchor = document.getElementById(`${form.id}-A`) || submit
     if (!anchor) throw new Error('Submit button not found')
-    const review = makeHost('idc-review-host')
-    anchor.parentNode.insertBefore(review.host, anchor)
-    const reviewRoot = createRoot(review.mountPoint)
-    reviewRoot.render(<FailSafe onError={failOpen}><PageLanguage fixed={opts.locale}><EmbeddedReview session={session} adapter={adapter} onError={failOpen} /></PageLanguage></FailSafe>)
-    cleanups.push(() => reviewRoot.unmount(), () => review.host.remove())
+    hosts.review = place(makeHost('idc-review-host'), (h) => anchor.parentNode.insertBefore(h, anchor))
 
     // Chat button in the corner.
     const chat = makeHost('idc-chat-host')
@@ -126,12 +152,56 @@ export async function mount(options = {}) {
       chat.host.style.setProperty('--cp-launcher-bottom', opts.launcherBottom)
       chat.host.style.setProperty('--cp-launcher-bottom-phone', opts.launcherBottom)
     }
-    document.body.append(chat.host)
-    const chatRoot = createRoot(chat.mountPoint)
-    const subtitle = opts.assistantEndpoint ? CONNECTED_SUBTITLE : undefined
+    hosts.chat = place(chat, (h) => document.body.append(h))
+
+    // Progress bar, stuck to the top of the screen while the form scrolls by.
+    const progress = makeHost('idc-progress-host')
+    Object.assign(progress.host.style, { position: 'sticky', top: opts.progressTop, zIndex: '50' })
+    hosts.progress = place(progress, (h) => form.insertBefore(h, form.firstChild))
+
+    // Per question: ? button inside the label, upload tip before the input, notes at the end.
+    for (const [fieldId, entry] of Object.entries(FORM_ASSEMBLY_MAP)) {
+      const { container, label } = adapter.elementsFor(fieldId)
+      if (!container) continue
+      const h = {}
+      if (label && entry.kind !== 'checkbox') h.help = place(makeHost('idc-help-host', { inline: true }), (el) => label.append(el))
+      if (entry.kind === 'file') {
+        const input = container.querySelector('.inputWrapper') || container.querySelector('input[type="file"]')
+        if (input) h.tips = place(makeHost('idc-tips-host'), (el) => input.parentNode.insertBefore(el, input))
+      }
+      h.notes = place(makeHost('idc-notes-host'), (el) => container.append(el))
+      hosts.fields[fieldId] = h
+    }
+    // Opt-in: "same as home address" box just above the business address.
+    const bizAddress = adapter.elementsFor('business_address').container
+    if (opts.fillHelpers && bizAddress) hosts.same = place(makeHost('idc-same-host'), (el) => bizAddress.parentNode.insertBefore(el, bizAddress))
+
+    const notesRef = { current: {} }
     const feedbackClient = createFeedbackClient({ endpoint: opts.feedbackEndpoint, onEvent: track })
-    chatRoot.render(<FailSafe onError={failOpen}><PageLanguage fixed={opts.locale}><EmbeddedChat assistant={assistant} adapter={adapter} subtitle={subtitle} feedbackClient={feedbackClient} /></PageLanguage></FailSafe>)
-    cleanups.push(() => chatRoot.unmount(), () => chat.host.remove())
+    const appHost = makeHost('idc-app-host')
+    appHost.host.hidden = true
+    const root = createRoot(place(appHost, (h) => document.body.append(h)))
+    root.render(
+      <FailSafe onError={failOpen}><PageLanguage fixed={opts.locale}>
+        <EmbeddedApp adapter={adapter} session={session} assistant={assistant} hosts={hosts} notesRef={notesRef}
+          feedbackClient={feedbackClient} waitForReply={!!opts.assistantEndpoint} fillHelpers={opts.fillHelpers} onError={failOpen} />
+      </PageLanguage></FailSafe>,
+    )
+    cleanups.unshift(() => root.unmount())
+
+    // Anonymous counts for /insights on our server (never answers, messages or notes).
+    if (opts.eventsEndpoint) {
+      const send = (payload) => fetch(opts.eventsEndpoint, { method: 'POST', mode: 'cors', keepalive: true, headers: { 'content-type': 'application/json' }, body: payload }).catch(() => {})
+      cleanups.push(startMetrics({ endpoint: opts.eventsEndpoint, enabled: true, send }))
+    }
+    let submitted = false
+    const onLeave = () => {
+      if (submitted) return
+      const section = formProgress(adapter.getSnapshot()).sections.find((s) => s.done < s.total)?.id
+      if (section) track({ type: 'form_left', section })
+    }
+    addEventListener('pagehide', onLeave)
+    cleanups.push(() => removeEventListener('pagehide', onLeave))
 
     // Lock Submit until a review passes, and re-lock when an answer changes.
     cleanups.push(session.subscribe((s) => adapter.setSubmitEnabled(s.canSubmit)))
@@ -143,13 +213,15 @@ export async function mount(options = {}) {
       if (!guardOn || e.target !== form) return
       if (session.getState().canSubmit) {
         // Staff summary goes inside the application, to Invest Detroit's own system only.
-        const target = opts.summaryField && (form.querySelector(`#${CSS.escape(opts.summaryField)}`) || form.querySelector(`[name="${CSS.escape(opts.summaryField)}"]`))
-        if (target) target.value = buildStaffSummary({ issues: session.getState().issues, locale: document.documentElement.lang || 'en' })
+        const target = opts.summaryField && (form.querySelector(`#${cssEscape(opts.summaryField)}`) || form.querySelector(`[name="${cssEscape(opts.summaryField)}"]`))
+        if (target) target.value = buildStaffSummary({ issues: session.getState().issues, notes: notesRef.current, locale: document.documentElement.lang || 'en' })
+        submitted = true
+        track({ type: 'form_submitted' })
         return
       }
       e.preventDefault()
       e.stopImmediatePropagation()
-      review.host.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      document.querySelector('.idc-review-host')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
     document.addEventListener('submit', guard, true)
     cleanups.push(() => document.removeEventListener('submit', guard, true), () => session.dispose())

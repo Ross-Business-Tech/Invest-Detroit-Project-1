@@ -19,9 +19,12 @@ export function toCounted(e) {
   }
 }
 
-/** Starts sending counts in small batches. Returns a stop function. Does nothing off our server. */
-export function startMetrics({ endpoint = '/api/events', hostname, send } = {}) {
-  if (!onServerHost(hostname)) return () => {}
+/**
+ * Starts sending counts in small batches. Returns a stop function. Does nothing off our server,
+ * unless `enabled` is true (the add-on on Invest Detroit's page, which sends to our server).
+ */
+export function startMetrics({ endpoint = '/api/events', hostname, send, enabled } = {}) {
+  if (!(enabled ?? onServerHost(hostname))) return () => {}
   const queue = []
   const post = send || ((payload) => {
     const blob = new Blob([payload], { type: 'application/json' })

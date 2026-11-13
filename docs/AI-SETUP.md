@@ -149,7 +149,8 @@ The dashboard shows:
 | `ASSISTANT_DAILY_LIMIT` | `500` | AI answers per day for the whole site |
 | `ASSISTANT_SALT` | random at start | Keeps visitor counting steady across restarts |
 | `DATABASE_URL` | none | Postgres for counts, ratings and limits |
-| `INSIGHTS_PASSWORD` | none (dashboard off) | Password for `/insights` |
+| `INSIGHTS_PASSWORD` | none (dashboard off) | Password for `/insights` (add `?format=csv` to download the counts) |
+| `ALLOWED_ORIGINS` | investdetroit.com and www.investdetroit.com | Websites allowed to call the chat, ratings and counts: the add-on on Invest Detroit's page. Comma-separated. See [FORMASSEMBLY-INTEGRATION.md](FORMASSEMBLY-INTEGRATION.md). |
 | `ANTHROPIC_API_KEY` | none | Optional alternative: Claude answers instead when no OpenAI key is set (or when `AI_PROVIDER=anthropic`). Its model is set with `ASSISTANT_MODEL` (default `claude-opus-5-5`). |
 
 ## Cost

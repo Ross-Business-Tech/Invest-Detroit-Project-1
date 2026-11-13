@@ -19,6 +19,8 @@ services:
         sync: false                 # Render asks for the value; it is never stored in this file
       - key: OPENAI_MODEL           # optional: change if the key only allows certain models
         value: gpt-6.1-sol
+      - key: ALLOWED_ORIGINS        # websites allowed to call the chat (the add-on on Invest Detroit's site)
+        value: https://investdetroit.com,https://www.investdetroit.com
       - key: DATABASE_URL           # keeps insights, ratings and daily limits across restarts
         fromDatabase:
           name: invest-detroit-copilot-db

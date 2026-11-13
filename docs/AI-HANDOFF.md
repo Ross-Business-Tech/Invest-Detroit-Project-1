@@ -94,7 +94,7 @@ The deck was generated with pptxgenjs from a script that lived in the old sessio
   - Every on-screen string must be translated; `tests/i18n.test.js` enforces this.
 - `src/prototype/`: the replica form, progress bar, "How it works", "Before you start", `draft.js` (save and resume), sample applicant.
 - `src/components/`: review panel, chat, fields, success dialog.
-- `src/embed/`: the FormAssembly add-on.
+- `src/embed/`: the FormAssembly add-on (v0.2.0: review, chat, ? buttons, live notes, upload tips, file checks, progress bar, staff summary with notes, ratings and counts via the server; opt-in fill helpers). Install guide: `docs/FORMASSEMBLY-INTEGRATION.md` (WordPress, FormAssembly, Emma).
 - `server/`: `webServer.js` (Render), `assistantHandler.js`, `aiProvider.js`, `openaiAnswerer.js`, `claudeAnswerer.js` (alternative), `modelReply.js`, `systemPrompt.js`, `knowledgeContext.js`, `store.js` (Postgres or memory), `insights.js`.
 - `api/`: Vercel-style functions.
 - `tools/`: `run-test-set.mjs`, `build-results-sheet.py`, `measure-impact.mjs`, `check-chat.mjs`.

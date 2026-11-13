@@ -418,6 +418,22 @@ Result: a new repository, `ojhnny/invest-detroit-application-copilot`, holds one
 - **Removed:** the prompt history, class instructions, AI-chat notes, stray screenshots, Ross IT's class setup and here.now publishing commands, the exit email and the video scripts.
 - **Checked:** it builds and passes the same tests (201, test set 42/43). The class repo and the dev site are unchanged.
 
+**39. Make sure every feature carries over to the real FormAssembly form**
+> Double-check that all our new features are easily integrable into FormAssembly, which their original form is built on. Make sure the code is suitable and the embedded parts transfer over. Update both repos. I also heard they use WordPress, and MyEmma for database/insights, so make sure the backend is ready to be sent over.
+
+Result:
+- **What was missing:** the add-on for the real form only had the review, the chat and the staff summary.
+- **What it adds now:**
+  - the progress bar, a **?** button by each question, and notes as questions are answered ("About $1.45 million", the 10% equity math, "loan is larger than the budget");
+  - upload tips and file checks;
+  - the applicant's "this is correct because…" notes in the staff summary;
+  - AI answers, ratings and usage counts through our server.
+  - The address helpers are optional.
+- **Server:** it now accepts calls from investdetroit.com (and refuses other websites), and `/insights` can download a CSV.
+- **Tested:** everything was checked on the FormAssembly test page from a different web address, as on the real site.
+- **New guide:** `docs/FORMASSEMBLY-INTEGRATION.md` walks Invest Detroit's web team through the Render server, the FormAssembly hidden field, Save & Resume and the thank-you text, the WordPress script tag, and testing.
+- **Emma:** it's their email-marketing tool, so the copilot sends it nothing. Insights stay anonymous counts, downloadable as CSV.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

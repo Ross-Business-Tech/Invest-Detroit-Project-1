@@ -9,8 +9,15 @@
 //   focusField(fieldId)          -> scrolls to and focuses that question ("Go to field")
 //   setSubmitEnabled(enabled)    -> locks or unlocks the form's own Submit button
 //
-// It only reads the page. It never fills in, changes or submits answers, and it never reads
-// fields that aren't mapped (the live form's SSN field is deliberately unmapped).
+// Extras for the add-on's per-question help (live FormAssembly pages only):
+//   elementsFor(fieldId)         -> { container: #tfa_N-D, label: #tfa_N-L } where present
+//   onFieldLeave(cb)             -> calls cb(fieldId) when the applicant leaves a question
+//   setValue(fieldId, value)     -> fills in a text answer (used ONLY by the opt-in fill helpers,
+//                                   such as "same as home address"; off unless turned on)
+//
+// It reads the page and never submits it. It never reads fields that aren't mapped (the live
+// form's SSN field is deliberately unmapped), and it never reads a file's contents: only its
+// name, size and type, for the file checks.
 
 import { FORM_ASSEMBLY_MAP, FORM_ASSEMBLY_SUBMIT_ID } from './formAssemblyMap.js'
 import { FIELDS_BY_ID } from '../formDefinition.js'
@@ -72,6 +79,10 @@ export function createFormAssemblyAdapter({ root = document, map = FORM_ASSEMBLY
       for (const [fieldId, entry] of Object.entries(map)) {
         const v = readField(root, entry, lookups[fieldId])
         if (v !== undefined) values[fieldId] = v
+        if (entry.kind === 'file') {
+          const f = root.querySelector(`#${entry.id}`)?.files?.[0]
+          if (f) (values._files ||= {})[fieldId] = { name: f.name, size: f.size, type: f.type }
+        }
       }
       return values
     },
@@ -98,6 +109,30 @@ export function createFormAssemblyAdapter({ root = document, map = FORM_ASSEMBLY
       if (!el) return false
       el.scrollIntoView?.({ behavior: 'smooth', block: 'center' })
       el.focus?.({ preventScroll: true })
+      return true
+    },
+
+    elementsFor(fieldId) {
+      const entry = map[fieldId]
+      if (!entry) return {}
+      const byId = (suffix) => (root.getElementById ? root.getElementById(`${entry.id}${suffix}`) : root.querySelector(`#${entry.id}${suffix}`))
+      return { container: byId('-D'), label: byId('-L') }
+    },
+
+    onFieldLeave(cb) {
+      const handler = (e) => { const id = fieldIdOf(e.target); if (id) cb(id) }
+      root.addEventListener('focusout', handler)
+      return () => root.removeEventListener('focusout', handler)
+    },
+
+    setValue(fieldId, value) {
+      const entry = map[fieldId]
+      const el = entry?.kind === 'text' && root.querySelector(`#${entry.id}`)
+      if (!el || el.value === value) return false
+      el.value = value
+      // Let FormAssembly's own scripts (validation, conditional questions) see the change.
+      el.dispatchEvent(new Event('input', { bubbles: true }))
+      el.dispatchEvent(new Event('change', { bubbles: true }))
       return true
     },
 

@@ -4,7 +4,11 @@
 //
 //   npm run build && npm start        # http://localhost:3000 (Render sets PORT itself)
 //
-// The API key is read from the ANTHROPIC_API_KEY environment variable by api/assistant.js.
+// The AI key is read from OPENAI_API_KEY (or ANTHROPIC_API_KEY) by api/assistant.js.
+//
+// Calls from Invest Detroit's own website: the add-on on investdetroit.com calls /api/* on this
+// server from another web address, which browsers only allow when the server says so (CORS).
+// ALLOWED_ORIGINS lists those addresses, comma-separated; the default allows investdetroit.com.
 
 import { aiProvider, PROVIDER_NAME } from './aiProvider.js'
 import http from 'node:http'
@@ -91,10 +95,42 @@ function serveStatic(req, res) {
   fs.createReadStream(file).pipe(res)
 }
 
-export function createWebServer() {
+export const DEFAULT_ALLOWED_ORIGINS = ['https://investdetroit.com', 'https://www.investdetroit.com']
+
+export function allowedOrigins(env = process.env) {
+  const list = String(env.ALLOWED_ORIGINS || '').split(',').map((s) => s.trim().replace(/\/$/, '')).filter(Boolean)
+  return list.length ? list : DEFAULT_ALLOWED_ORIGINS
+}
+
+/**
+ * CORS for /api/*: same-site calls pass as before; calls from a listed website get the
+ * headers browsers need; calls from any other website are refused. Returns true when handled.
+ */
+function corsFor(req, res, origins) {
+  const origin = req.headers.origin
+  if (!origin) return false
+  const self = `${req.headers['x-forwarded-proto'] || 'http'}://${req.headers.host}`
+  if (origin === self) return false
+  if (!origins.includes(origin)) {
+    res.writeHead(403, { 'content-type': 'application/json' })
+    res.end('{"error":{"code":"origin_not_allowed"}}')
+    return true
+  }
+  res.setHeader('access-control-allow-origin', origin)
+  res.setHeader('vary', 'Origin')
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204, { 'access-control-allow-methods': 'POST, OPTIONS', 'access-control-allow-headers': 'content-type', 'access-control-max-age': '600' })
+    res.end()
+    return true
+  }
+  return false
+}
+
+export function createWebServer({ origins = allowedOrigins() } = {}) {
   return http.createServer((req, res) => {
     const pathname = new URL(req.url, 'http://x').pathname
     const fail = () => { if (!res.headersSent) { res.writeHead(500); res.end() } }
+    if (pathname.startsWith('/api/') && corsFor(req, res, origins)) return undefined
     if (pathname === '/api/assistant') return runJson(req, res, (rq, rs) => assistant(rq, rs)).catch(fail)
     if (pathname === '/api/events') return runJson(req, res, (rq, rs) => eventsHandler(rq, rs, getStore())).catch(fail)
     if (pathname === '/api/feedback') return runJson(req, res, (rq, rs) => feedbackHandler(rq, rs, getStore())).catch(fail)

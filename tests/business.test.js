@@ -74,6 +74,10 @@ test('the insights dashboard is off without a password, and asks for it when set
   assert.match(res.body, /forms started/)
   assert.match(res.body, /100%/)
   assert.equal(res.headers['x-robots-tag'], 'noindex')
+  res = fakeRes(); await insightsHandler({ url: '/insights?format=csv', headers: { authorization: right } }, res, store)
+  assert.match(res.headers['content-type'], /text\/csv/)
+  assert.match(res.body, /^category,item,count\n/)
+  assert.match(res.body, /"form","start",1/)
   if (saved === undefined) delete process.env.INSIGHTS_PASSWORD; else process.env.INSIGHTS_PASSWORD = saved
 })
 

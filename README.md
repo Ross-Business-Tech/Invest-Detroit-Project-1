@@ -84,5 +84,6 @@ source ids your answer actually relies on; general guidance needs none.
 
 - Rerun the tests: `node tools/run-test-set.mjs` (steps are in the results sheet, "How to rerun" tab)
 - Handoff package: [docs/handoff/](docs/handoff/) (user guide, data-flow note, exit email draft, video scripts)
+- Putting it on Invest Detroit's real FormAssembly form (WordPress, FormAssembly, Emma): [docs/FORMASSEMBLY-INTEGRATION.md](docs/FORMASSEMBLY-INTEGRATION.md)
 - How it is built: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md); setting up the AI key and hosting: [docs/AI-SETUP.md](docs/AI-SETUP.md)
 - Longer project overview for the build team: [docs/PROJECT-OVERVIEW.md](docs/PROJECT-OVERVIEW.md)

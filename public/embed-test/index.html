@@ -196,6 +196,8 @@
       <div class="oneField" id="tfa_581-D"><span class="oneChoice"><input type="checkbox" value="tfa_581" id="tfa_581" name="tfa_581"><label class="label postField" for="tfa_581"><span class="input-checkbox-faux"></span>I understand that by submitting this information I am only being considered for a loan and am not guaranteed any kind of financing. I understand that I am expected to provide information as requested by Invest Detroit in a timely manner as part of the lending review, underwriting and approval process.*</label></span></div>
       <div class="oneField" id="tfa_585-D"><span class="oneChoice"><input type="checkbox" value="tfa_585" id="tfa_585" name="tfa_585"><label class="label postField" for="tfa_585"><span class="input-checkbox-faux"></span>I authorize Invest Detroit and any of the funds, affiliates, or agents associated therewith to make any credit or due diligence investigations necessary to evaluate and underwrite an application for a loan.*</label></span></div>
     </fieldset>
+    <!-- Hidden field Invest Detroit adds in FormAssembly for the staff summary (any tfa id works). -->
+    <input type="hidden" id="tfa_copilot_summary" name="tfa_copilot_summary" value="">
     <div class="actions" id="4907942-A"><input type="submit" data-label="Submit" class="primaryAction" id="submit_button" value="Submit"></div>
   </form>
 </div></div>
@@ -216,7 +218,11 @@
       var done = document.createElement('p');
       done.className = 'submitted';
       done.textContent = 'The form\'s own Submit handler ran: on the real site, this is where FormAssembly would send the application. (Test page: nothing was sent.)';
-      this.querySelector('.actions').after(done);
+      var summary = document.createElement('pre');
+      summary.id = 'test-summary';
+      summary.style.cssText = 'white-space:pre-wrap;background:#f4f5f4;padding:12px;font-size:13px';
+      summary.textContent = 'Hidden staff-summary field received:\n\n' + (document.getElementById('tfa_copilot_summary').value || '(empty)');
+      this.querySelector('.actions').after(done, summary);
     });
   }, 800);
 
@@ -242,6 +248,6 @@
     testStatus.textContent = 'Answer labels translated to Spanish (like the site\'s translation menu). Reviews should still work.';
   });
 </script>
-<script src="/embed/copilot.js" defer data-launcher-bottom="84px"></script>
+<script src="/embed/copilot.js" defer data-launcher-bottom="84px" data-summary-field="tfa_copilot_summary" data-fill-helpers="true" data-progress-top="55px"></script>
 </body>
 </html>

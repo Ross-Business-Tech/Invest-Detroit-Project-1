@@ -104,7 +104,7 @@ function MoneyInput({ inputProps, value, onChange, id }) {
 }
 
 /** Short notes under a field: live check results, calculations, file checks. */
-function Notes({ id, notes }) {
+export function Notes({ id, notes }) {
   const { t } = useI18n()
   const list = (notes || []).filter(Boolean)
   if (!list.length) return null

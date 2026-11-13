@@ -5,7 +5,12 @@ import { useEffect, useState } from 'react'
 import { formProgress } from '../copilot/formHelpers.js'
 import { useI18n } from '../components/i18nContext.js'
 
-export default function FormProgress({ values }) {
+/**
+ * @param {{ values: object, onJump?: (sectionId: string) => void, embedded?: boolean }} props
+ *   onJump: how to reach a section (the add-on jumps to its first question on the live form);
+ *   embedded: on the live page the add-on positions the bar itself.
+ */
+export default function FormProgress({ values, onJump, embedded = false }) {
   const { t } = useI18n()
   const { sections, done, total } = formProgress(values)
   const pct = total ? Math.round((done / total) * 100) : 0
@@ -13,19 +18,19 @@ export default function FormProgress({ values }) {
 
   // Sit just under the sticky site header, whatever its height on this screen.
   useEffect(() => {
-    const header = document.querySelector('.site-header')
-    if (!header) return
+    const header = embedded ? null : document.querySelector('.site-header')
+    if (!header) return undefined
     const update = () => setTop(header.offsetHeight)
     update()
     const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(update) : null
     ro?.observe(header)
     return () => ro?.disconnect()
-  }, [])
+  }, [embedded])
 
-  const jump = (id) => document.getElementById(`section-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  const jump = onJump || ((id) => document.getElementById(`section-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
 
   return (
-    <nav className="form-progress" style={{ top }} aria-label={t('Form progress')}>
+    <nav className={embedded ? 'form-progress embedded' : 'form-progress'} style={embedded ? undefined : { top }} aria-label={t('Form progress')}>
       <div className="fp-summary">
         <span className="fp-count">{t('{done} of {total} required answers', { done, total })}</span>
         <div className="fp-track" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct} aria-label={t('Form progress')}>

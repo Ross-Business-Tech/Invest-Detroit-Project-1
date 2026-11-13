@@ -115,7 +115,7 @@ table{width:100%;border-collapse:collapse}td{padding:5px 4px;border-top:1px soli
 .empty,.note{color:#515e59;font-size:13px}.warn{background:#fff3d6;padding:8px 12px;margin-bottom:16px}
 </style></head><body><main>
 <h1>Application Copilot: usage insights</h1>
-<p class="sub">Last ${days} days. Counts only: no messages, answers, notes, names or IP addresses are stored.</p>
+<p class="sub">Last ${days} days. Counts only: no messages, answers, notes, names or IP addresses are stored. <a href="?days=${days}&amp;format=csv">Download as CSV</a></p>
 ${storeKind === 'memory' ? '<p class="warn">Counts are kept in memory and reset when the server restarts. Add a database (DATABASE_URL) to keep them.</p>' : ''}
 <div class="stats">
 ${stat(starts, 'forms started')}${stat(submits, 'forms submitted')}${stat(starts ? Math.round((submits / starts) * 100) + '%' : '–', 'of started forms submitted')}
@@ -147,7 +147,18 @@ export async function insightsHandler(req, res, store) {
     res.setHeader('www-authenticate', 'Basic realm="Copilot insights", charset="UTF-8"')
     return res.end('Password required')
   }
-  const days = Math.min(Math.max(Number(new URL(req.url, 'http://x').searchParams.get('days')) || 30, 1), 365)
+  const params = new URL(req.url, 'http://x').searchParams
+  const days = Math.min(Math.max(Number(params.get('days')) || 30, 1), 365)
+  if (params.get('format') === 'csv') {
+    // The same counts as a spreadsheet, for staff reports (open in Excel or Google Sheets).
+    const rows = Object.entries(await store.totals(days)).sort(([a], [b]) => a.localeCompare(b))
+    const cell = (s) => `"${String(s).replace(/"/g, '""')}"`
+    res.statusCode = 200
+    res.setHeader('content-type', 'text/csv; charset=utf-8')
+    res.setHeader('content-disposition', `attachment; filename="copilot-insights-${days}d.csv"`)
+    res.setHeader('cache-control', 'no-store')
+    return res.end(['category,item,count', ...rows.map(([k, v]) => { const i = k.indexOf(':'); return [cell(k.slice(0, i)), cell(k.slice(i + 1)), v].join(',') })].join('\n') + '\n')
+  }
   res.statusCode = 200
   res.setHeader('content-type', 'text/html; charset=utf-8')
   res.setHeader('cache-control', 'no-store')
