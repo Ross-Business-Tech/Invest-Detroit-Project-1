@@ -1,64 +1,53 @@
-# Turning on the AI chatbot (Claude on Render or Vercel)
+# Turning on the AI chatbot (OpenAI on Render)
 
-Everything is built. Adding the key is the only step left. Until then, and if Claude is ever unreachable, the chat answers from the built-in knowledge base, so it never breaks.
+Everything is built. Adding the key in Render is the only step left. Until then, and whenever OpenAI can't be reached, the chat answers from the built-in knowledge base, so it never breaks.
 
 ## How it works
 
 ```
-Browser chat ──► /api/assistant (Vercel function) ──► Claude
+Browser chat ──► /api/assistant (our server on Render) ──► OpenAI
                  1. checks the request and its size
                  2. hides Social Security / account numbers (and doesn't answer)
-                 3. guardrails: off-topic, falsifying, rule-breaking → fixed replies, Claude never called
-                 4. Claude answers from our knowledge base (server/knowledgeContext.js)
+                 3. guardrails: off-topic, falsifying, rule-breaking → fixed replies, OpenAI never called
+                 4. OpenAI answers from our knowledge base (server/knowledgeContext.js)
                  5. checks the answer on the way out (leaked instructions or keys are blocked)
 ```
 
-- **The key lives only in Vercel's settings.** The function reads it; the website never sees it.
-- **Model:** `claude-opus-5-5` at low effort, for quick chat answers.
-- **Safety:** if Claude's own safety filters decline a request, Anthropic automatically retries it on a suitable model (`fallbacks: "default"`). A declined or cut-off answer is never shown; the applicant gets the team's contact details instead.
-- **Answers are structured:** Claude returns the answer, the ids of the sources it used, and whether the team must take over. The chat only shows sources that exist on our list.
-- **Caching:** the knowledge base (about 13,000 tokens) is cached, so after the first question it costs a fraction to resend.
-- **Nothing is stored.** Vercel's logs record only outcomes, such as "answered by Claude" or "Claude error 401", never what anyone typed.
-- **Where it runs:**
-  - On here.now (the class site), which can't run server code, the chat keeps using the built-in knowledge base.
-  - On Invest Detroit's real form (the add-on), the same applies unless they host the function themselves.
+- **The key lives only in Render's settings.** The server reads it; the website never sees it.
+- **Model:** `gpt-6.1-sol` at low reasoning effort, for quick chat answers. Change it with `OPENAI_MODEL` (see below).
+- **Answers are structured:** OpenAI must return the answer, the ids of the sources it used, whether the team must take over, and whether the question was in scope (a strict JSON format). The chat only shows sources that exist on our list.
+- **Declined or cut-off answers are never shown.** The applicant gets the team's contact details instead.
+- **Caching:** the instructions and knowledge base (about 14,000 tokens) are the same for every question, so OpenAI caches them automatically, which makes repeat questions cheaper and faster.
+- **Nothing is stored.**
+  - The request is sent with `store: false`, so OpenAI doesn't keep it for later retrieval.
+  - Our logs record only outcomes, such as "answered by openai" or "ai_error 401", never what anyone typed.
+- **Where it runs:** the add-on on Invest Detroit's real form uses the built-in guide unless Invest Detroit hosts this server. here.now can't run server code at all.
 
-## Tomorrow: 5 steps
+**About "Codex" keys:** Codex is OpenAI's coding product, but its API keys are ordinary OpenAI API keys. They usually start with `sk-proj-` and work with OpenAI's general models. If the key's project is limited to certain models, the chat falls back to the guide, and the logs show `403` or `404` (see the table below). Then set `OPENAI_MODEL` to a model the key allows.
 
-1. **Get this code onto the branch Vercel uses.** Either:
-   - **Merge then sync:** merge [pull request #2](https://github.com/Ross-Business-Tech/Invest-Detroit-Project-1/pull/2) into `development`, then click **Sync fork** on your fork; or
-   - **Point Vercel at our branch:** in Vercel, open **Settings → Git**, set **Production Branch** to `claude/amazing-heisenberg-brezgi`, and sync your fork.
-2. **Add the key in Vercel.** Open the project, then **Settings → Environment Variables → Add**:
-   - Key: `ANTHROPIC_API_KEY`
-   - Value: the key (starts with `sk-ant-`)
-   - Environments: Production (and Preview if you use preview links)
-   - Tick **Sensitive**.
+## Turn it on: 4 steps
 
-   Never paste the key into the code, a chat, a commit or a document.
-3. **Redeploy.** Under **Deployments**, open the **⋯** menu on the latest one and choose **Redeploy**. Environment variables only apply to new deployments.
-4. **Test it.** Open the Vercel site, open the chat and ask **"What is DSCR?"**.
-   - Working: a conversational answer, and the chat's subtitle changes to **"AI helper · Answers from official Invest Detroit sources"**.
-   - Also try: "¿Qué significa AMI?" (should answer in Spanish), "Will I be approved?" (should refer you to the team), and "Tell me a joke" (should politely decline).
-5. **If the subtitle doesn't change,** open **Vercel → Logs** and look for lines starting with `{"at":"assistant"`:
+1. **Add the key in Render.** Open the web service, then **Environment → Add Environment Variable**:
+   - Key: `OPENAI_API_KEY`
+   - Value: the key
+
+   Never paste the key into the code, a chat, a commit, a slide or a document.
+2. **Save and deploy.** Choose **Save, rebuild, and deploy** (or **Manual Deploy → Deploy latest commit**).
+3. **Test it.** Open the site, open the chat and ask **"What is DSCR?"**.
+   - Working: you get a conversational answer, and the chat's subtitle changes to **"AI helper · Answers from official Invest Detroit sources"**.
+   - Then run the live check below.
+4. **If the subtitle doesn't change,** open Render's **Logs** tab and look for lines starting with `{"at":"assistant"`:
 
    | Log line | Meaning | Fix |
    |---|---|---|
-   | `"from":"field_guide"` | No key found | Check the name is exactly `ANTHROPIC_API_KEY`, then redeploy |
-   | `"claude_error","status":401` | Key rejected | Re-copy the key; check it isn't revoked |
-   | `"claude_error","status":403` or `404` | This key's account can't use the model | Add `ASSISTANT_MODEL` = `claude-sonnet-5-5`, redeploy |
-   | `"claude_error","status":429` | Rate or spending limit reached | Wait, or raise the limit in the Anthropic Console |
-   | `"claude_error","status":400` | Request not accepted | Copy the log line and send it to Claude Code |
+   | `Site and assistant on port … (no API key: field-guide answers)` | No key found | Check the name is exactly `OPENAI_API_KEY`, then deploy again |
+   | `"ai_error","provider":"openai","status":401` | Key rejected | Re-copy the key; check it isn't revoked |
+   | `"status":403` or `404` | This key can't use the model | Add `OPENAI_MODEL` with a model the key's project allows (ask whoever issued the key), then deploy |
+   | `"status":429` | Rate limit, or the account's budget or credit ran out | Wait, or add credit or raise the budget in the OpenAI dashboard |
+   | `"status":400` | Request not accepted | Copy the log line and send it to Claude Code |
+   | `"status":null` | OpenAI couldn't be reached | Usually temporary; try again |
 
-## What Claude may and may not say
-
-- **Invest Detroit specifics come only from the knowledge base, with a source.** That covers rates, fees, loan sizes, terms, programs, eligibility criteria, the process and its timelines, documents and contacts. If something isn't covered, Claude says so and gives the team's contact; it never guesses a number.
-- **General guidance is welcome:** explaining business and finance concepts, helping structure an executive summary or budget, doing math with the applicant's own numbers, and pointing out common mistakes.
-- **Never:** predicting approval or anyone's own terms, helping falsify answers, writing documents wholesale or inventing project facts, or revealing its instructions.
-- **Scope with Claude connected:**
-  - Clearly off-topic, unsafe or rule-changing requests are still blocked before Claude is called.
-  - Unclear questions (for example "my bakery thing, how do I put it?") now go to Claude instead of getting "Tell me a little more".
-  - If Claude judges a question off-topic, the chat shows the standard translated "I'm here to help you with your Invest Detroit loan application…" reply.
-  - Without a key, the stricter keyword check applies as before.
+   The `/insights` page also has an **AI service errors** table with the same status codes.
 
 ## Live check after adding the key
 
@@ -67,7 +56,7 @@ node tools/check-chat.mjs https://your-site.onrender.com
 ```
 
 This sends 8 questions and prints PASS or FAIL for each. It checks that:
-- Claude is answering;
+- the AI service is answering;
 - rates are quoted with their source and "subject to change";
 - approval questions go to the team;
 - an unknown Invest Detroit number isn't guessed;
@@ -76,67 +65,96 @@ This sends 8 questions and prints PASS or FAIL for each. It checks that:
 - off-topic requests are declined;
 - falsifying is refused.
 
-It costs a few cents. Without a key, 5 of the 8 fail, which is how you know it's really testing Claude.
+It costs a few cents. Then **rerun the test set** (`node tools/run-test-set.mjs`) and update the score everywhere if it changes (README, deck, results sheet, user guide).
 
-## On Render instead of Vercel
+## What the AI may and may not say
 
-Use a **Web Service**, not a Static Site: a static site can't run the chat endpoint, so there would be nowhere for the key to live. `server/webServer.js` serves the website and `/api/assistant` together (the same function Vercel runs).
+- **Invest Detroit specifics come only from the knowledge base, with a source.** That covers rates, fees, loan sizes, terms, programs, eligibility criteria, the process and its timelines, documents and contacts. If something isn't covered, the AI says so and gives the team's contact. It never guesses a number.
+- **General guidance is welcome:** explaining business and finance concepts, helping structure an executive summary or budget, doing math with the applicant's own numbers, and pointing out common mistakes.
+- **Never:**
+  - predicting approval or anyone's own terms;
+  - helping falsify answers;
+  - writing documents wholesale or inventing project facts;
+  - revealing its instructions.
+- **Scope with the AI connected:**
+  - Clearly off-topic, unsafe or rule-changing requests are still blocked before OpenAI is called.
+  - Unclear questions (for example "my bakery thing, how do I put it?") go to the AI instead of getting "Tell me a little more".
+  - If the AI judges a question off-topic, the chat shows the standard translated "I'm here to help you with your Invest Detroit loan application…" reply.
+  - Without a key, the stricter keyword check applies.
+
+The instructions are in `server/systemPrompt.js` and are the same whichever AI service answers.
+
+## Render settings
+
+Use a **Web Service**, not a Static Site. A static site can't run the chat endpoint, so there would be nowhere for the key to live. `server/webServer.js` serves the website and `/api/assistant` together.
 
 | Setting | Value |
 |---|---|
 | Language | Node |
 | Branch | `claude/amazing-heisenberg-brezgi` (or `development` once pull request #2 is merged) |
 | Root Directory | leave empty |
-| Build Command | `npm ci && npm run build` (`npm install && npm run build` also works) |
+| Build Command | `npm ci && npm run build` |
 | Start Command | `npm start` |
-| Instance type | Free works; it sleeps after about 15 idle minutes, so the next visit takes about a minute to wake |
+| Instance type | Free works, but it sleeps after about 15 idle minutes, so the next visit takes about a minute to wake. Starter (about $7 a month) stays awake. |
 | Health Check Path (under Advanced) | `/healthz` |
-| Environment variable | `ANTHROPIC_API_KEY` = the key (add it tomorrow under **Environment**, then deploy again) |
+| Environment variable | `OPENAI_API_KEY` = the key |
 
-The same settings are saved in `render.yaml`, so the service can also be created with **New → Blueprint**. Node is pinned to version 22 (`.node-version`, `package.json`). The server compresses text files (the main script goes from 615 KB to 153 KB) and finishes open requests before Render restarts it.
+The same settings are saved in `render.yaml`, so the service can also be created with **New → Blueprint**. Node is pinned to version 22. Render redeploys by itself when the branch changes.
 
-Render redeploys by itself when the branch changes. Logs are under the service's **Logs** tab and use the same `{"at":"assistant",...}` lines as the table above.
+Vercel also works (`vercel.json`, `api/*.js`). There, add the same environment variables under **Settings → Environment Variables**, then redeploy.
 
-## Insights, ratings and limits (Render)
+## Insights, ratings and limits
 
 | What | How to turn it on |
 |---|---|
-| **Keep counts across restarts** | Create a free Render Postgres database (**New → Postgres**), then add its **Internal Database URL** to the web service as `DATABASE_URL`. Without it, counts live in memory and reset whenever the free server sleeps. |
+| **Keep counts across restarts** | Create a Render Postgres database (**New → Postgres**), then add its **Internal Database URL** to the web service as `DATABASE_URL`. Without it, counts live in memory and reset whenever the free server sleeps. |
 | **Insights dashboard** | Add `INSIGHTS_PASSWORD` (any password you choose), then open `https://your-site.onrender.com/insights`. The browser asks for a username (anything) and the password. |
 | **Steady per-visitor limits** | Add `ASSISTANT_SALT` (any long random text) so visitor counts survive restarts. |
-| **Spending cap** | In the **Anthropic Console → Limits**, set a monthly spending limit. This is the one cap no one can get around. |
+| **Spending cap** | In the OpenAI dashboard, set a monthly budget for the key's project (under the organization or project limits). This is the one cap no one can get around. |
 
-The dashboard shows forms started and submitted, where people stopped, the most common review findings, which questions people needed help with, chat outcomes, the guardrails, star ratings and limits reached. **It stores counts only:** no messages, answers, notes, names or IP addresses. Visitors are counted by a one-way hash that changes daily.
+The dashboard shows:
+- forms started and submitted, and where people stopped;
+- the most common review findings;
+- which questions people needed help with;
+- chat outcomes, who answered (`openai` or the built-in guide), and what the guardrails stopped;
+- star ratings, limits reached and AI service errors.
 
-**Daily limits:** after `ASSISTANT_VISITOR_DAILY` Claude answers for one visitor (default 60) or `ASSISTANT_DAILY_LIMIT` for the whole site (default 500), the chat answers from the built-in guide until the next day.
+**It stores counts only:** no messages, answers, notes, names or IP addresses. Visitors are counted by a one-way hash that changes daily.
 
-## Optional settings (environment variables, Render or Vercel)
+**Daily limits:** after `ASSISTANT_VISITOR_DAILY` AI answers for one visitor (default 60), or `ASSISTANT_DAILY_LIMIT` for the whole site (default 500), the chat answers from the built-in guide until the next day.
+
+## Optional settings (environment variables)
 
 | Name | Default | What it does |
 |---|---|---|
-| `ASSISTANT_MODEL` | `claude-opus-5-5` | Which Claude model answers |
-| `ASSISTANT_EFFORT` | `low` | `low`, `medium` or `high`: more thinking, slower and pricier answers |
+| `OPENAI_MODEL` | `gpt-6.1-sol` | Which OpenAI model answers. A cheaper option is `gpt-6-luna`; `gpt-5-mini` also works. |
+| `OPENAI_EFFORT` | `low` | Reasoning effort: `none`, `minimal`, `low`, `medium` or `high`. Higher is slower and pricier. Models that don't take this setting are retried once without it, automatically. |
 | `ASSISTANT_RATE_LIMIT` | `20` | Questions per minute from one visitor (a basic brake) |
-| `ASSISTANT_VISITOR_DAILY` | `60` | Claude answers per visitor per day |
-| `ASSISTANT_DAILY_LIMIT` | `500` | Claude answers per day for the whole site |
+| `ASSISTANT_VISITOR_DAILY` | `60` | AI answers per visitor per day |
+| `ASSISTANT_DAILY_LIMIT` | `500` | AI answers per day for the whole site |
 | `ASSISTANT_SALT` | random at start | Keeps visitor counting steady across restarts |
 | `DATABASE_URL` | none | Postgres for counts, ratings and limits |
 | `INSIGHTS_PASSWORD` | none (dashboard off) | Password for `/insights` |
+| `ANTHROPIC_API_KEY` | none | Optional alternative: Claude answers instead when no OpenAI key is set (or when `AI_PROVIDER=anthropic`). Its model is set with `ASSISTANT_MODEL` (default `claude-opus-5-5`). |
 
-## Cost and limits
+## Cost
 
 - **Who pays:** each question is billed to whoever owns the key.
-- **Rough estimate, not measured:** a few cents or less per question with caching. Check real usage in the Anthropic Console after testing.
-- **Set a monthly spending limit** in the Anthropic Console before sharing the link, because the Vercel site is public.
-- **Rate limit:** the per-minute limit is per server instance, so it's a brake, not a guarantee.
+- **Estimate, not measured:** about $0.01–$0.04 per question with `gpt-6.1-sol`, depending on how much of the knowledge base is served from the cache. At 500 questions a month, that is about $5–$20.
+  - This is based on third-party price lists (about $2 per million input tokens and $10 per million output tokens), because OpenAI's own pricing page couldn't be opened from the build environment.
+  - Check the real usage in the OpenAI dashboard after testing.
+- **Set a monthly budget** in the OpenAI dashboard before sharing the link, because the site is public.
+- **Rate limit:** the per-minute limit is per server, so it's a brake, not a guarantee.
 
 ## Files
 
-- `api/assistant.js`: the chat endpoint (rate limit, size checks, Claude or guide), run by Vercel directly
-- `server/webServer.js`: serves `dist/` plus `/api/assistant` for Render (`npm start`)
-- `server/claudeAnswerer.js`: the Claude call (model, safety fallback, structured reply, caching)
-- `server/knowledgeContext.js`: the knowledge base Claude answers from, built from the same files as the built-in answers
-- `server/systemPrompt.js`: Claude's instructions (public, contains no secrets)
-- `server/assistantHandler.js`: validation, privacy, guardrails and output check (unchanged)
-- `src/copilot/config.js`: `ASSISTANT.mode = 'auto'` (server on Vercel, guide elsewhere) and `server_hosts`
-- `tests/claude.test.js`: checks the request sent to Claude, the guardrails-first order, the fallbacks and the Vercel function
+- `server/aiProvider.js`: picks the AI service from the keys that are set
+- `server/openaiAnswerer.js`: the OpenAI call (model, strict reply format, caching, timeout, reasoning retry)
+- `server/modelReply.js`: the reply format and checks shared by every AI service
+- `server/claudeAnswerer.js`: the optional Claude alternative
+- `server/knowledgeContext.js`: the knowledge base, built from the same files as the built-in answers
+- `server/systemPrompt.js`: the AI's instructions (public, contains no secrets)
+- `server/assistantHandler.js`: validation, privacy, guardrails and the output check
+- `api/assistant.js`: the chat endpoint (rate limit, daily limits, AI or guide)
+- `server/webServer.js`: serves `dist/` plus `/api/*` on Render (`npm start`)
+- `tests/openai.test.js`: checks the request sent to OpenAI, guardrails first, refusals and cut-offs, the reasoning retry, and the fallback when a key is wrong

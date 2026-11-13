@@ -7,7 +7,7 @@
 
 - **Problem:** applicants submit the intake form with mistakes and gaps that screening staff then chase by email. It is for **the applicant** (developer or business owner) and **the screening staff member** who reads the application.
 - **Flow:** applicant fills in the form → presses **Review My Application** → gets a plain-language list of problems to fix, items to double-check and tips. A chat assistant answers questions about the form. At Submit, a short staff summary of what was flagged goes with the application.
-- **AI vs. fixed rules:** the review is **fixed rules and math** (e.g. loan larger than budget), so it gives the same answer every time. Only the **chat** uses AI (Claude), to explain terms and questions. Invest Detroit facts (rates, fees, steps) come only from a knowledge base built from Invest Detroit's documents, with the source shown; without Claude, the chat answers straight from it.
+- **AI vs. fixed rules:** the review is **fixed rules and math** (e.g. loan larger than budget), so it gives the same answer every time. Only the **chat** uses AI (OpenAI), to explain terms and questions. Invest Detroit facts (rates, fees, steps) come only from a knowledge base built from Invest Detroit's documents, with the source shown; without an AI key, the chat answers straight from it.
 - **Built with:** a React website and a small Node server on Render. Data: Invest Detroit's 4 documents, its website, and public sources (HUD, City of Detroit).
 
 ## How well it works
@@ -19,24 +19,24 @@
 ## What it can't do
 
 - **Handles poorly:** unfamiliar wording. The first run missed "make my revenue look higher" and Small Business rate questions (now fixed). It can't read uploaded PDFs, only their names and sizes.
-- **Languages:** screens in 5 languages; chat answers are English until Claude is connected.
+- **Languages:** screens in 5 languages; chat answers are English until the OpenAI key is connected.
 - **Never trust it alone with:** approval, eligibility, a borrower's rate or terms, credit judgments, or legal and tax advice. Staff decide all of these.
 - **Data:** built and tested on made-up sample applicants only.
 
 ## What it would take to run it for real
 
-- **Accounts:** it runs on Business+Tech accounts, which end with the sprint. Invest Detroit needs its own Anthropic (Claude) API and Render accounts, then adds `ANTHROPIC_API_KEY` in Render ([setup](docs/AI-SETUP.md)).
-- **Cost (estimate):** about $0.02–$0.09 per chat question, so about $10–$45 a month at 500 questions. Hosting is about $7 a month, plus about $6 for the optional database. Daily caps and an Anthropic spending limit cap the worst case.
+- **Accounts:** it runs on Business+Tech accounts, which end with the sprint. Invest Detroit needs its own OpenAI API and Render accounts, then adds `OPENAI_API_KEY` in Render ([setup](docs/AI-SETUP.md)).
+- **Cost (estimate):** about $0.01–$0.04 per chat question, so about $5–$20 a month at 500 questions. Hosting is about $7 a month, plus about $6 for the optional database: about $20–$35 a month in total. Daily caps and an OpenAI budget limit cap the worst case.
 - **Data:** no chat text is stored; SSNs are blocked from the chat; the staff summary goes only into FormAssembly.
 - **Ownership:** [NAMED OWNER AT INVEST DETROIT] owns the knowledge base and prompt, reviews the `/insights` page monthly, and reruns the test set before any change.
 - **Next steps (ranked):**
   1. Install the add-on on the live FormAssembly form for a 30-day trial.
   2. Staff confirm the knowledge-base facts.
-  3. Connect Claude and rerun the test set.
+  3. Connect the OpenAI key and rerun the test set.
 
 ---
 
-## Full prompt (Claude's instructions, from `server/systemPrompt.js`)
+## Full prompt (the AI's instructions, from `server/systemPrompt.js`)
 
 Before each question, the server also adds the knowledge base (`server/knowledgeContext.js`), and the guardrails screen each message first.
 
@@ -84,5 +84,5 @@ source ids your answer actually relies on; general guidance needs none.
 
 - Rerun the tests: `node tools/run-test-set.mjs` (steps are in the results sheet, "How to rerun" tab)
 - Handoff package: [docs/handoff/](docs/handoff/) (user guide, data-flow note, exit email draft, video scripts)
-- How it is built: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md); setting up Claude and hosting: [docs/AI-SETUP.md](docs/AI-SETUP.md)
+- How it is built: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md); setting up the AI key and hosting: [docs/AI-SETUP.md](docs/AI-SETUP.md)
 - Longer project overview for the build team: [docs/PROJECT-OVERVIEW.md](docs/PROJECT-OVERVIEW.md)

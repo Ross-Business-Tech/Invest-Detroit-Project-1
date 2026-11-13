@@ -227,11 +227,12 @@ Not built. ("Talk to a person" was removed from the chat at the team's request.)
   - An axe check (WCAG 2.1 A/AA plus best practices) is clean on desktop and phone.
   - The banner text is dark on yellow, links are `#7a5000`, the heading order is fixed, and the page has labeled landmarks.
 
-## Claude on Vercel (ready, key pending)
+## The AI service on Render or Vercel (OpenAI; Claude optional)
 
-`api/assistant.js` is a Vercel function that sends every question through `handleAssistantRequest()`:
-- **With `ANTHROPIC_API_KEY` set:** allowed questions go to Claude (`server/claudeAnswerer.js`). It uses `claude-opus-5-5` at low effort, a server-side refusal fallback, a JSON-schema reply (answer, source ids, needs_staff) and the cached knowledge base from `server/knowledgeContext.js`.
-- **Without a key, or if Claude fails:** the field guide answers.
+`api/assistant.js` (run by Vercel directly, or by `server/webServer.js` on Render) sends every question through `handleAssistantRequest()`:
+- **With `OPENAI_API_KEY` set:** allowed questions go to OpenAI (`server/openaiAnswerer.js`, Responses API). It uses `gpt-6.1-sol` (`OPENAI_MODEL`) at low reasoning effort, a strict JSON-schema reply (answer, source ids, needs_staff, in_scope), `store: false`, and the instructions plus the knowledge base from `server/knowledgeContext.js` as one cacheable prefix.
+- **With only `ANTHROPIC_API_KEY` set:** Claude answers instead (`server/claudeAnswerer.js`). `server/aiProvider.js` makes the choice; the reply format and checks are shared (`server/modelReply.js`).
+- **Without a key, or if the AI service fails:** the field guide answers, and the failure is counted by HTTP status on `/insights`.
 
 The browser uses `ASSISTANT.mode = 'auto'`. On a host in `server_hosts` (for example `.vercel.app`) it calls `/api/assistant` and falls back to the field guide on any failure; elsewhere, including here.now and the add-on, it uses the field guide. The rating card shows only on here.now, where Site Data exists. See `docs/AI-SETUP.md` for the key steps.
 

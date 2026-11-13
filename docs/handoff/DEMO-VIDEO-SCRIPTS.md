@@ -47,5 +47,5 @@ Three short recordings: one per user role, plus a 60-second overview.
 | 0:12 | The same example caught by Review My Application | "With the copilot: 10 of 10, before Submit." |
 | 0:25 | The chat quoting a rate with its source | "An assistant that answers from Invest Detroit's own documents, and never predicts approval." |
 | 0:38 | The test results sheet | "Tested on 43 examples: 42 correct, including all 14 'must never' cases." |
-| 0:48 | The 30-day trial slide | "To keep it: your own Claude and hosting accounts (about $25–$60 a month, estimated), a named owner, and a 30-day trial." |
+| 0:48 | The 30-day trial slide | "To keep it: your own OpenAI and hosting accounts (about $20–$35 a month, estimated), a named owner, and a 30-day trial." |
 | 0:58 | End card with the link | "[ADD RENDER LINK]" |

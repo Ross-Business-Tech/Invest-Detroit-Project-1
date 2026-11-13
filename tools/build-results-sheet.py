@@ -1,10 +1,12 @@
 # Run: python3 tools/build-results-sheet.py  (after node tools/run-test-set.mjs)
+#      python3 tools/build-results-sheet.py --ai  (after node tools/run-test-set.mjs --ai)
 # Turns docs/handoff/test-results.json into Invest-Detroit-Copilot-Test-Results.xlsx for Google Sheets.
-import json, pathlib
+import json, pathlib, sys
+AI = '--ai' in sys.argv
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 here = pathlib.Path(__file__).resolve().parent.parent / 'docs' / 'handoff'
-data = json.loads((here / 'test-results.json').read_text())
+data = json.loads((here / ('test-results-ai.json' if AI else 'test-results.json')).read_text())
 rows = data['rows']
 wb = Workbook()
 ws = wb.active; ws.title = 'Results'
@@ -15,7 +17,7 @@ ws['A2'] = 'Score'; ws['B2'] = data['score']; ws['B2'].font = Font(bold=True, si
 ws['C2'] = ' · '.join(f"{k} {p}/{t}" for k, (p, t) in data['byCategory'].items())
 misses = [r for r in rows if not r['pass']]
 ws['A3'] = 'Main miss'; ws['C3'] = '; '.join(f"{r['id']}: {r['input']}. {r['notes']}" for r in misses) or 'none'
-ws['A4'] = 'How it was run'; ws['C4'] = 'Expected answers were written before each run. Form rows use the real review rules; chat rows use the built-in field-guide answers (Claude not yet connected). Rerun: node tools/run-test-set.mjs'
+ws['A4'] = 'How it was run'; ws['C4'] = 'Expected answers were written before each run. Form rows use the real review rules; chat rows use ' + ('the AI service (OpenAI); a person reviewed each FAIL.' if AI else 'the built-in field-guide answers (AI key not connected).') + ' Rerun: node tools/run-test-set.mjs'
 for c in ('A2', 'A3', 'A4'): ws[c].font = bold
 head = ['ID', 'Area', 'Category', 'Input', 'Expected (written before running)', 'Actual', 'Pass/Fail', 'Notes']
 ws.append([]); ws.append(head)
@@ -51,13 +53,14 @@ steps = [
     '1. Open the project folder on a computer with Node.js 22 installed and run: npm ci',
     '2. Run: node tools/run-test-set.mjs   (prints PASS/FAIL per example and the score; writes docs/handoff/test-results.csv)',
     '3. Optional, for this spreadsheet: python3 tools/build-results-sheet.py',
-    '4. With Claude connected on the live site, also run: node tools/check-chat.mjs https://<your-site>   (8 live checks)',
-    '5. Compare the score with the one at the top of the Results tab.',
+    '4. With the OpenAI key: OPENAI_API_KEY=<key> node tools/run-test-set.mjs --ai  (same examples answered by OpenAI; a person reads every FAIL), then python3 tools/build-results-sheet.py --ai',
+    '5. On the live site: node tools/check-chat.mjs https://<your-site>   (8 live checks)',
+    '6. Compare the score with the one at the top of the Results tab.',
     '',
     'Rule: rerun the full set before changing the prompt. If the score drops, do not use the change.',
     'To add an example: add a row to docs/handoff/test-set.json with the expected answer written BEFORE you run it.',
 ]
 for s in steps: k.append([s])
 k['A1'].font = Font(bold=True, size=13, color=navy); k.column_dimensions['A'].width = 120
-out = here / 'Invest-Detroit-Copilot-Test-Results.xlsx'
+out = here / ('Invest-Detroit-Copilot-Test-Results-AI.xlsx' if AI else 'Invest-Detroit-Copilot-Test-Results.xlsx')
 wb.save(out); print('wrote', out)

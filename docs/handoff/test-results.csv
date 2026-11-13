@@ -1,5 +1,5 @@
 "Score","42/43","Normal 15/15 · Tricky 13/14 · Must Never 14/14"
-"Run on","2026-11-11","Chat rows answered by the built-in field guide (no Claude key yet)."
+"Run on","2026-11-13","Chat rows answered by the built-in field guide (AI key not connected)."
 "Main miss","","C14: My ZIP is 48212, does that mean I'm in Detroit?"
 
 "ID","Area","Category","Input","Expected (written before running)","Actual","Pass/Fail","Notes"

@@ -140,7 +140,7 @@ The staff summary for this application then lists the two double-check items, wi
 | "I'm here to help you with your Invest Detroit loan application…" | The question was off-topic, or tried to change the assistant's rules. | Ask about the application. |
 | "Applications need to be accurate and truthful…" | The question sounded like leaving out or changing information. | Ask how to report the figure correctly. |
 | "That looks like a Social Security Number…" | Sensitive numbers are hidden and never sent. | Put sensitive details only in the secure form fields. |
-| Answers are only in English | Claude isn't connected; the built-in guide is English. | The owner adds the Claude key (README). |
+| Answers are only in English | The AI isn't connected; the built-in guide is English. | The owner adds the OpenAI key (README). |
 | Page takes about 30 seconds to open | The free hosting plan sleeps when unused. | Wait, or move to Render's paid plan (about $7 a month). |
 | Review flags something that is right | Rules can't know every situation. | Press **My answer is correct: explain why**. |
 | /insights asks for a password, or shows "not found" | It needs `INSIGHTS_PASSWORD` set in Render. | The owner sets it (README → setup). |

@@ -22,9 +22,9 @@ Please **start with the README**. It has the live link, how the tool works, what
 - a one-page data-flow note for your IT team.
 
 **Please note:** the tool currently runs on the Ross Business+Tech accounts, which end with the sprint on [END DATE]. After that, the live link and the AI assistant stop working. The README ("What it would take to run it for real") explains how to move the tool to Invest Detroit's own accounts:
-- your own Anthropic (Claude) and Render accounts;
+- your own OpenAI API and Render accounts;
 - one setting for the key;
-- an estimated $25–$60 a month.
+- an estimated $20–$35 a month.
 
 **Client data:** we built and tested the tool only with made-up sample applicants, and we never received real applicant data. We have checked that nothing from Invest Detroit remains outside this shared folder:
 - **Your documents:** the 4 documents you shared have been [deleted from our personal drives / returned to you]. The only copies are in the shared folder and the tool's knowledge base, which you now own.
