@@ -21,12 +21,10 @@ services:
         value: gpt-6.1-sol
       - key: ALLOWED_ORIGINS        # websites allowed to call the chat (the add-on on Invest Detroit's site)
         value: https://investdetroit.com,https://www.investdetroit.com
-      - key: DATABASE_URL           # keeps insights, ratings and daily limits across restarts
+      - key: DATABASE_URL           # keeps usage counts, ratings and daily limits across restarts
         fromDatabase:
           name: invest-detroit-copilot-db
           property: connectionString
-      - key: INSIGHTS_PASSWORD      # password for /insights; Render generates one (see the Environment tab)
-        generateValue: true
       - key: ASSISTANT_SALT         # keeps per-visitor daily limits steady across restarts
         generateValue: true
 

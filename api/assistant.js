@@ -17,7 +17,7 @@ import crypto from 'node:crypto'
 import { handleAssistantRequest, guideAnswerer } from '../server/assistantHandler.js'
 import { aiProvider, createAnswerer } from '../server/aiProvider.js'
 import { getStore } from '../server/store.js'
-import { recordChat } from '../server/insights.js'
+import { recordChat } from '../server/usage.js'
 
 const MAX_BODY = 64 * 1024
 const num = (name, fallback) => Number(process.env[name]) || fallback

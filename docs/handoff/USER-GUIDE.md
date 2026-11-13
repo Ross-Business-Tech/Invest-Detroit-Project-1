@@ -15,7 +15,7 @@ subtitle: "Invest Detroit Real Estate/C&I In-Take Form · November 2026"
 4. For each **Please double-check** item, fix the answer or press **My answer is correct: explain why**.
 5. Press **Submit**.
 
-**Screening staff:** read the **Application Copilot summary** that comes with each application before you start screening. Once a month, open **/insights** to see where applicants get stuck.
+**Screening staff:** read the **Application Copilot summary** that comes with each application before you start screening.
 
 **Who to contact:**
 
@@ -87,19 +87,9 @@ Every application comes with a short **Application Copilot summary**. It is alwa
 
 **What to do:** check each double-check item against the uploaded documents first. If there's a note, judge whether it explains the item. If there's no note, that's your first follow-up question.
 
-## 2. Check usage insights (monthly)
+## 2. Usage reports
 
-Open **https://invest-detroit-project-1.onrender.com/insights** and sign in with the staff password (Render shows it under Environment, as `INSIGHTS_PASSWORD`). The page shows counts only, never names or messages:
-
-- forms started vs. submitted;
-- where people stop;
-- the most common review findings;
-- which **?** buttons are pressed most;
-- chat topics and star ratings.
-
-A question that gets many **?** presses, or a common finding, usually means the form's wording could be clearer.
-
-![Insights dashboard](img/10-insights.jpg)
+The copilot also counts, anonymously, where applicants stop, which questions they need help with and how they rate the chat. These counts go into Invest Detroit's own reporting system; ask your data team for the report. A question that gets many **?** presses, or a common review finding, usually means the form's wording could be clearer.
 
 # Understanding the results: one example
 
@@ -143,6 +133,5 @@ The staff summary for this application then lists the two double-check items, wi
 | Answers are only in English | The AI isn't connected; the built-in guide is English. | The owner adds the OpenAI key (README). |
 | Page takes about 30 seconds to open | The free hosting plan sleeps when unused. | Wait, or move to Render's paid plan (about $7 a month). |
 | Review flags something that is right | Rules can't know every situation. | Press **My answer is correct: explain why**. |
-| /insights asks for a password, or shows "not found" | It needs `INSIGHTS_PASSWORD` set in Render. | The owner sets it (README → setup). |
 
 *Screenshots use the fictional sample applicant "Jordan Ellis". No real people or data appear in this guide.*

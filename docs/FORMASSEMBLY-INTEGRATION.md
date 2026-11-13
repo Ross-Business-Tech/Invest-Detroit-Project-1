@@ -15,7 +15,7 @@ The copilot is **one script tag** plus a small server. It works on top of the ex
  │     upload tips, Review My Application,      │  ───►  /api/assistant      chat (OpenAI + guardrails)
  │     chat  ← all drawn by the add-on          │  ───►  /api/feedback       star ratings (counts)
  │                                              │  ───►  /api/events         usage counts
- │  Submit → FormAssembly, as today             │        /insights           staff dashboard (password)
+ │  Submit → FormAssembly, as today             │        /api/usage          counts for your own system (token)
  │  (with the staff summary in a hidden field)  │
  └──────────────────────────────────────────────┘
  Emma: not involved (see "Emma" below).
@@ -38,7 +38,7 @@ The copilot is **one script tag** plus a small server. It works on top of the ex
 | Upload tips; empty, oversized or wrong-type file checks | ✅ Automatic | Tip before each required upload. Only the file's name, size and type are read, never its contents. |
 | Progress bar with section chips | ✅ Automatic | Sticks to the top of the form; `data-progress-top` makes room for a sticky site header |
 | Five languages (incl. Arabic right to left) | ✅ Automatic | Follows the page's language; answers are read by FormAssembly's option codes, so translated pages still work |
-| Star ratings, usage insights (`/insights`) | ✅ Automatic | Sent to our server; counts only |
+| Star ratings and usage counts | ✅ Automatic | Counts only, for Invest Detroit's own system: export, webhook or page events ([DATA-PIPELINE.md](DATA-PIPELINE.md)) |
 | "Business address is the same as my home address"; state from a Michigan ZIP | ⚙️ Opt-in | `data-fill-helpers="true"`. These fill in answers, so they're off unless turned on. The business address boxes are locked while the box is ticked, as on the demo. |
 | "How it works" ("Which form is right for you?" cards, the 4 steps) and the "Before you start" checklist | ⚙️ Opt-in | `data-intro="true"`: drawn above the form exactly as on the demo site, in all 5 languages |
 | The demo form's look (section headings with yellow lines, larger boxes, "$" in money boxes, red outline on questions to fix, yellow Submit button) | ⚙️ Opt-in | `data-theme="copilot"`: restyles only this form. The "$" is display-only; the answer stays a plain number. Add `data-load-font="true"` if the site doesn't already use the Lato font. |
@@ -56,7 +56,7 @@ WordPress can't run the copilot's server (WordPress runs PHP; the copilot is Nod
    |---|---|
    | `OPENAI_API_KEY` | Invest Detroit's own OpenAI API key |
    | `ALLOWED_ORIGINS` | `https://investdetroit.com,https://www.investdetroit.com` (the default). Add a staging address if you test there. |
-   | `INSIGHTS_PASSWORD` | a password for the `/insights` dashboard |
+   | `USAGE_EXPORT_TOKEN` and/or `USAGE_WEBHOOK_URL` | to collect usage counts into your own system ([DATA-PIPELINE.md](DATA-PIPELINE.md)) |
    | `DATABASE_URL` | a Render Postgres database, so counts survive restarts |
    | `ASSISTANT_SALT` | any long random text |
 3. Open `https://<your-service>.onrender.com/healthz`; it should say `ok`.
@@ -165,7 +165,7 @@ With `data-intro="true"`, "How it works" and "Before you start" appear just abov
    - Review blocks, then unlocks Submit;
    - the chat answers;
    - a test submission shows the summary in the hidden field;
-   - `/insights` counts it.
+   - the counts reach your system (export, webhook or page events).
 3. **Turning it off:** remove the script tag. If anything ever goes wrong while it's on, the add-on removes itself and unlocks Submit, so the official form keeps working.
 
 **If Invest Detroit edits the form** (new or renamed questions), update `src/copilot/adapters/formAssemblyMap.js` and `src/copilot/formDefinition.js` from the page source, regenerate the test page (`node tools/build-embed-test-page.mjs`), and run `npm test`. Until then, a changed question is simply skipped: its extras don't appear, and the form still works.
@@ -174,8 +174,7 @@ With `data-intro="true"`, "How it works" and "Before you start" appear just abov
 
 Emma is Invest Detroit's email-marketing tool: mailing lists, newsletters and email reports. **The copilot doesn't need Emma, and doesn't send anything to it.**
 - **Applicants' contact details and answers** still go only to FormAssembly, exactly as today. If FormAssembly is already connected to Emma (for example to add applicants to a mailing list), that keeps working unchanged. Leave the new staff-summary field **out** of any such connection: it's for screening staff, not marketing.
-- **Insights** are anonymous counts (forms started, review findings, chat topics, ratings). They live in the copilot's own database and dashboard, not in a marketing list.
-  - To use them in a report, open `/insights` and choose **Download as CSV** (or open `/insights?format=csv`), then use the spreadsheet in Excel or Google Sheets.
+- **Usage counts** are anonymous counts (forms started, review findings, chat topics, ratings). They go into Invest Detroit's own data system ([DATA-PIPELINE.md](DATA-PIPELINE.md)), not into a marketing list.
 - **Never** put chat messages, applicant notes or staff summaries into Emma.
 
 ## What to review before going live (privacy and security)

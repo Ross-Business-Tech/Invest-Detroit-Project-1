@@ -29,8 +29,12 @@
 //   3. Adds the "Need help?" chat in the corner (answers from our server: AI + guardrails, or the
 //      built-in knowledge base if the server can't be reached), a ? button next to each question,
 //      notes under questions as they're answered, upload tips, file checks and a progress bar.
-//   4. Sends anonymous counts (never answers or messages) to our server's /insights, and chat
-//      star ratings to /api/feedback.
+//   4. Sends anonymous counts (never answers or messages) to our server (/api/events) and chat
+//      star ratings to /api/feedback, for Invest Detroit's own data pipeline (docs/DATA-PIPELINE.md).
+//      data-events-endpoint="none" stops sending counts to our server.
+//   5. Announces the same counts on the page itself, as a browser event named
+//      "investdetroit:copilot" (detail: { type, key }), so a site's own analytics or tag manager
+//      can collect them directly.
 // It reads the form and never submits it. It changes answers only with data-fill-helpers, and
 // then only to copy the home address or fill in a state. With data-summary-field, at Submit it
 // writes the review summary (for Invest Detroit's staff) into that hidden field.
@@ -53,12 +57,12 @@ import { FORM_ASSEMBLY_FORM_ID, FORM_ASSEMBLY_SUBMIT_ID, FORM_ASSEMBLY_MAP } fro
 import { createReviewSession } from '../copilot/reviewSession.js'
 import { createAssistant, httpTransport, withFallback } from '../copilot/assistant.js'
 import { guideTransport } from '../copilot/guideTransport.js'
-import { startMetrics } from '../copilot/metrics.js'
+import { startMetrics, toCounted } from '../copilot/metrics.js'
 import { formProgress } from '../copilot/formHelpers.js'
 import { FIELDS_BY_ID } from '../copilot/formDefinition.js'
 import { createFeedbackClient } from '../copilot/feedback.js'
 import { buildStaffSummary } from '../copilot/staffSummary.js'
-import { track } from '../copilot/events.js'
+import { track, onTrack } from '../copilot/events.js'
 import { PROGRAM } from '../copilot/config.js'
 
 export const VERSION = '0.2.0'
@@ -241,7 +245,11 @@ export async function mount(options = {}) {
     )
     cleanups.unshift(() => root.unmount())
 
-    // Anonymous counts for /insights on our server (never answers, messages or notes).
+    // The same anonymous counts as browser events on the page, for the site's own analytics.
+    cleanups.push(onTrack((e) => {
+      for (const c of toCounted(e)) window.dispatchEvent(new CustomEvent('investdetroit:copilot', { detail: { ...c } }))
+    }))
+    // Anonymous counts to our server, for Invest Detroit's data pipeline (never answers, messages or notes).
     if (opts.eventsEndpoint) {
       const send = (payload) => fetch(opts.eventsEndpoint, { method: 'POST', mode: 'cors', keepalive: true, headers: { 'content-type': 'application/json' }, body: payload }).catch(() => {})
       cleanups.push(startMetrics({ endpoint: opts.eventsEndpoint, enabled: true, send }))

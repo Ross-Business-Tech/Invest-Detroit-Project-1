@@ -36,7 +36,7 @@ Three short recordings: one per user role, plus a 60-second overview.
 | 0:15 | The submitted sample: open **What Invest Detroit's team receives** | "Each application comes with a short Application Copilot summary." |
 | 0:35 | Point to each line | "Whether the review passed, each item to double-check, the applicant's own note, and the language they used." |
 | 1:00 | The uploaded documents (sample files) | "The human check: compare each flagged item against the documents. A note is the applicant's claim, not proof. No note? That's your first follow-up question." |
-| 1:25 | /insights (sample data) | "Once a month, check /insights: where people stop and which questions confuse them. Counts only, no names." |
+| 1:25 | The Review panel and ? buttons | "Common review findings and ? presses are counted anonymously in Invest Detroit's own reports, so the form's wording can be improved." |
 | 1:45 | End card | "Limitation: it doesn't read uploaded files or confirm Detroit city limits. Those checks stay with you." |
 
 ## Video 3: 60-second overview (leadership)

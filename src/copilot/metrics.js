@@ -1,6 +1,6 @@
 // Sends privacy-safe usage counts to our server (/api/events), only on hosts that run it.
 // Each event is a type and a key such as { type: 'review_issue', key: 'loan_gt_budget' }:
-// never an answer, a message, a note or a file. See server/insights.js for what is accepted.
+// never an answer, a message, a note or a file. See server/usage.js for what is accepted.
 import { onTrack } from './events.js'
 import { onServerHost } from './hosting.js'
 

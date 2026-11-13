@@ -62,7 +62,7 @@ The University of Michigan's Codex keys only work through U-M's own gateway, not
    | `"status":400` | Request not accepted | The line includes a short `detail`; copy the line (it never contains the key) and send it to Claude Code |
    | `"status":null` | OpenAI couldn't be reached | Usually temporary; try again |
 
-   The `/insights` page also has an **AI service errors** table with the same status codes.
+   The usage counts also record these as `ai_error` with the same status codes (see [DATA-PIPELINE.md](DATA-PIPELINE.md)).
 
 ## Live check after adding the key
 
@@ -118,16 +118,16 @@ The same settings are saved in `render.yaml`, so the service can also be created
 
 Vercel also works (`vercel.json`, `api/*.js`). There, add the same environment variables under **Settings → Environment Variables**, then redeploy.
 
-## Insights, ratings and limits
+## Usage counts, ratings and limits
 
 | What | How to turn it on |
 |---|---|
 | **Keep counts across restarts** | Create a Render Postgres database (**New → Postgres**), then add its **Internal Database URL** to the web service as `DATABASE_URL`. Without it, counts live in memory and reset whenever the free server sleeps. |
-| **Insights dashboard** | Add `INSIGHTS_PASSWORD` (any password you choose), then open `https://your-site.onrender.com/insights`. The browser asks for a username (anything) and the password. |
+| **Send the counts to Invest Detroit's own system** | `USAGE_EXPORT_TOKEN` (JSON export) and/or `USAGE_WEBHOOK_URL` + `USAGE_WEBHOOK_SECRET` (push). See [DATA-PIPELINE.md](DATA-PIPELINE.md). |
 | **Steady per-visitor limits** | Add `ASSISTANT_SALT` (any long random text) so visitor counts survive restarts. |
 | **Spending cap** | In the OpenAI dashboard, set a monthly budget for the key's project (under the organization or project limits). This is the one cap no one can get around. |
 
-The dashboard shows:
+There is no dashboard: Invest Detroit reads the counts into its own system. The counts cover:
 - forms started and submitted, and where people stopped;
 - the most common review findings;
 - which questions people needed help with;
@@ -149,7 +149,8 @@ The dashboard shows:
 | `ASSISTANT_DAILY_LIMIT` | `500` | AI answers per day for the whole site |
 | `ASSISTANT_SALT` | random at start | Keeps visitor counting steady across restarts |
 | `DATABASE_URL` | none | Postgres for counts, ratings and limits |
-| `INSIGHTS_PASSWORD` | none (dashboard off) | Password for `/insights` (add `?format=csv` to download the counts) |
+| `USAGE_EXPORT_TOKEN` | none (export off) | Turns on `GET /api/usage`, the counts by day as JSON for Invest Detroit's pipeline ([DATA-PIPELINE.md](DATA-PIPELINE.md)) |
+| `USAGE_WEBHOOK_URL`, `USAGE_WEBHOOK_SECRET` | none (off) | Sends each new count to Invest Detroit's system, signed ([DATA-PIPELINE.md](DATA-PIPELINE.md)) |
 | `ALLOWED_ORIGINS` | investdetroit.com and www.investdetroit.com | Websites allowed to call the chat, ratings and counts: the add-on on Invest Detroit's page. Comma-separated. See [FORMASSEMBLY-INTEGRATION.md](FORMASSEMBLY-INTEGRATION.md). |
 | `ANTHROPIC_API_KEY` | none | Optional alternative: Claude answers instead when no OpenAI key is set (or when `AI_PROVIDER=anthropic`). Its model is set with `ASSISTANT_MODEL` (default `claude-opus-5-5`). |
 

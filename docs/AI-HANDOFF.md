@@ -12,7 +12,7 @@ A student team (Ross School of Business, Business+Tech AI Sprint) built an **AI 
 - **Guardrails:** off-topic, cheating/integrity, prompt injection, SSN redaction.
 - **A staff summary** sent with each application.
 - **Save and resume:** on the device only.
-- **A password-protected `/insights` usage page:** counts only.
+- **Usage counts for Invest Detroit's own data pipeline** (no dashboard; removed at the student's request): `GET /api/usage` export, webhook, page events, or the `copilot_counts` table. See `docs/DATA-PIPELINE.md`.
 - **An embeddable add-on** for the real FormAssembly form.
 
 **The final presentation to the client is November 17, 2026.**
@@ -38,7 +38,7 @@ A student team (Ross School of Business, Business+Tech AI Sprint) built an **AI 
   - Code: `server/openaiAnswerer.js` (Responses API, strict JSON reply, `store: false`, 30-second timeout, retries without optional settings a gateway rejects), `server/aiProvider.js` (picks the service from the keys), `server/modelReply.js` (shared reply format).
   - Open points: the class key may be for coursework only (ask the instructor); the site is public, so suggest `ASSISTANT_DAILY_LIMIT=100`; Invest Detroit needs its own OpenAI key after handover.
   - This workspace can't reach onrender.com or U-M's gateway (network policy), so live checks are run by the student or in a session with those domains allowed.
-  - Optional settings: `INSIGHTS_PASSWORD`, `DATABASE_URL`, `ASSISTANT_SALT`, `ASSISTANT_DAILY_LIMIT` (default 500), `ASSISTANT_VISITOR_DAILY` (default 60).
+  - Optional settings: `USAGE_EXPORT_TOKEN`, `USAGE_WEBHOOK_URL`, `DATABASE_URL`, `ASSISTANT_SALT`, `ASSISTANT_DAILY_LIMIT` (default 500), `ASSISTANT_VISITOR_DAILY` (default 60).
   - Still to do: `node tools/check-chat.mjs <site>` (8 live checks) and `OPENAI_API_KEY=… OPENAI_BASE_URL=… OPENAI_MODEL=… node tools/run-test-set.mjs --ai` from a computer that can reach the gateway. The 42/43 score was measured with the built-in guide.
 - **here.now preview:** taken down on purpose; its content was replaced with "This preview is no longer available" (expires November 18). **Do not run `npm run publish:preview`**: it would bring the app back on that link. Render is now the main link.
 - **Tests:** `npm test` (192 passing). The `npm run smoke` browser check is skipped in this sandbox; use Playwright with `executablePath: '/opt/pw-browsers/chromium'` instead.
@@ -81,7 +81,7 @@ The deck was generated with pptxgenjs from a script that lived in the old sessio
 - **The review never uses AI.** AI checks must never block Submit.
 - **No reading of uploaded PDFs.** Files are checked only for type, size and empty files. Upload tips are a collapsible blue "TIP".
 - **The staff summary** is built in the browser and goes only into a hidden FormAssembly field (add-on option `data-summary-field`). It is never stored by our server and is in English.
-- **Insights store counts only:** allow-listed event types and keys. Never chat text, names or raw IP addresses. Per-visitor limits use a daily salted hash.
+- **Usage counts only:** allow-listed event types and keys. Never chat text, names or raw IP addresses. Per-visitor limits use a daily salted hash.
 - **Sensitive fields:** the SSN field is disabled in the prototype, and the chat redacts SSN-like numbers. Staff names are placeholders. All sample data is fictional ("Jordan Ellis").
 - **"Before you start"** is collapsed by default, and the progress chips fit on one row.
 
@@ -95,7 +95,7 @@ The deck was generated with pptxgenjs from a script that lived in the old sessio
 - `src/prototype/`: the replica form, progress bar, "How it works", "Before you start", `draft.js` (save and resume), sample applicant.
 - `src/components/`: review panel, chat, fields, success dialog.
 - `src/embed/`: the FormAssembly add-on (v0.2.0: review, chat, ? buttons, live notes, upload tips, file checks, progress bar, staff summary with notes, ratings and counts via the server; opt-in fill helpers, intro (How it works + Before you start), demo look (`data-theme`), save & resume on device, demo fonts). The document-suggestion mock-up was removed from the demo at the student's request. Install guide: `docs/FORMASSEMBLY-INTEGRATION.md` (WordPress, FormAssembly, Emma).
-- `server/`: `webServer.js` (Render), `assistantHandler.js`, `aiProvider.js`, `openaiAnswerer.js`, `claudeAnswerer.js` (alternative), `modelReply.js`, `systemPrompt.js`, `knowledgeContext.js`, `store.js` (Postgres or memory), `insights.js`.
+- `server/`: `webServer.js` (Render), `assistantHandler.js`, `aiProvider.js`, `openaiAnswerer.js`, `claudeAnswerer.js` (alternative), `modelReply.js`, `systemPrompt.js`, `knowledgeContext.js`, `store.js` (Postgres or memory, webhook), `usage.js` (events, ratings, export).
 - `api/`: Vercel-style functions.
 - `tools/`: `run-test-set.mjs`, `build-results-sheet.py`, `measure-impact.mjs`, `check-chat.mjs`.
 - `docs/`: `AI-SETUP.md` (key and hosting steps), `ARCHITECTURE.md`, `RESEARCH-NOTES.md`, `PROJECT-OVERVIEW.md` (the old long README).

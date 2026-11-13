@@ -7,11 +7,5 @@
     "api/assistant.js": {
       "maxDuration": 60
     }
-  },
-  "rewrites": [
-    {
-      "source": "/insights",
-      "destination": "/api/insights"
-    }
-  ]
+  }
 }

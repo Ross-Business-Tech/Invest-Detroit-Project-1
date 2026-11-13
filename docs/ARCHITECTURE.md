@@ -199,7 +199,7 @@ Checked there at phone and desktop sizes, from a different web address than the 
 - the Submit lock;
 - the review with an applicant note, and that note in the hidden summary;
 - chat, ratings and counts reaching the server cross-site;
-- the counts appearing on `/insights`.
+- the counts reaching the export, the webhook and the page events (see [DATA-PIPELINE.md](DATA-PIPELINE.md)).
 
 The test page is generated from our own field map, so the **final check must happen on the real page** (the guide's step 6).
 
@@ -227,11 +227,11 @@ Not built. ("Talk to a person" was removed from the chat at the team's request.)
   - The prototype shows it in the success pop-up.
   - The add-on writes it into a hidden FormAssembly field when given `data-summary-field`, so it travels only with the application to Invest Detroit's own system.
   - It is never sent to our server.
-- **Usage insights** (`src/copilot/metrics.js` → `/api/events`, `server/insights.js`, `server/store.js`):
+- **Usage counts** (`src/copilot/metrics.js` → `/api/events`, `server/usage.js`, `server/store.js`):
   - Only on our server hosts. Events are sent as type and key pairs (`review_issue:loan_gt_budget`, `form_exit:business_info`), and the server accepts only allow-listed types and keys.
   - The chat endpoint also counts outcomes by category.
   - Counts are kept in Postgres (`DATABASE_URL`) or in memory.
-  - `/insights` is the dashboard, protected by `INSIGHTS_PASSWORD` (HTTP Basic, constant-time compare, `noindex`).
+  - There is no dashboard. Invest Detroit reads the counts into its own system from the table `copilot_counts`, from `GET /api/usage` (`USAGE_EXPORT_TOKEN`), or from the webhook (`USAGE_WEBHOOK_URL`). The add-on also announces each count on the page as the browser event `investdetroit:copilot`. See [DATA-PIPELINE.md](DATA-PIPELINE.md).
 - **Ratings on the server:** `/api/feedback` takes the same request and reply shape as here.now Site Data, so the rating card is unchanged. `FEEDBACK.server_endpoint` is used on server hosts.
 - **Limits:**
   - per-minute per IP, kept in memory;
@@ -248,7 +248,7 @@ Not built. ("Talk to a person" was removed from the chat at the team's request.)
 `api/assistant.js` (run by Vercel directly, or by `server/webServer.js` on Render) sends every question through `handleAssistantRequest()`:
 - **With `OPENAI_API_KEY` set:** allowed questions go to OpenAI (`server/openaiAnswerer.js`, Responses API). It uses `gpt-6.1-sol` (`OPENAI_MODEL`) at low reasoning effort, a strict JSON-schema reply (answer, source ids, needs_staff, in_scope), `store: false`, and the instructions plus the knowledge base from `server/knowledgeContext.js` as one cacheable prefix.
 - **With only `ANTHROPIC_API_KEY` set:** Claude answers instead (`server/claudeAnswerer.js`). `server/aiProvider.js` makes the choice; the reply format and checks are shared (`server/modelReply.js`).
-- **Without a key, or if the AI service fails:** the field guide answers, and the failure is counted by HTTP status on `/insights`.
+- **Without a key, or if the AI service fails:** the field guide answers, and the failure is counted by HTTP status (`ai_error:<status>`).
 
 The browser uses `ASSISTANT.mode = 'auto'`. On a host in `server_hosts` (for example `.vercel.app`) it calls `/api/assistant` and falls back to the field guide on any failure; elsewhere, including here.now and the add-on, it uses the field guide. The rating card shows only on here.now, where Site Data exists. See `docs/AI-SETUP.md` for the key steps.
 

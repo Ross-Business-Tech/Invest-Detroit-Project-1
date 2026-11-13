@@ -186,7 +186,7 @@ const card = (slide, x, y, w, h, head, body, color = INK, fill = GRAY, hs = 15, 
     ['9', 'Five languages', 'Including Arabic, right to left'],
     ['10', 'Save and resume', 'Come back later on the same device'],
     ['11', 'Staff summary', 'What staff receive with the application'],
-    ['12', 'Insights page', 'Counts only, to improve the form'],
+    ['12', 'Usage data', 'Counts only, into your own system'],
   ]
   feats.forEach((f, i) => {
     const col = i % 3, row = Math.floor(i / 3), x = 0.5 + col * 3.05, y = 1.4 + row * 0.8, w = 2.9
@@ -195,7 +195,7 @@ const card = (slide, x, y, w, h, head, body, color = INK, fill = GRAY, hs = 15, 
     s.addText(f[0], { x: x + 0.1, y: y + 0.15, w: 0.4, h: 0.4, fontFace: BODY, fontSize: 13, bold: true, color: INK, align: 'center', valign: 'middle', margin: 0, isTextBox: true })
     s.addText([{ text: f[1], options: { bold: true, fontSize: 13, breakLine: true } }, { text: f[2], options: { fontSize: 11, color: MID } }], { x: x + 0.6, y, w: w - 0.68, h: 0.7, fontFace: BODY, color: INK, valign: 'middle', margin: 0, isTextBox: true })
   })
-  detail(s, 'Plus a FormAssembly add-on (slide 22) so all of this can run on Invest Detroit’s real form page.', 0.5, 4.72)
+  detail(s, 'Plus a FormAssembly add-on (slide 21) so all of this can run on Invest Detroit’s real form page.', 0.5, 4.72)
 }
 
 // 6. How it works
@@ -265,7 +265,7 @@ await feature({
   what: 'Press the yellow ? next to a question to get what it means, an example with numbers, and common mistakes. A Source link shows where the answer comes from.',
   why: 'Lending terms confuse first-time borrowers, and they should not have to email staff to ask.',
   better: 'The original gives no help text. Applicants guess, or leave the page to look things up.',
-  det: 'Works without the AI (from a built-in field guide) and gets richer with it. Every ? press is counted on the insights page.',
+  det: 'Works without the AI (from a built-in field guide) and gets richer with it. Every ? press is counted (anonymously) for Invest Detroit’s own reports.',
   shots: [['help-panel.jpg', 'Help panel for What is your total budget, with an example and a source']],
   textW: 4.6, imgBox: { x: 5.5, y: 1.35, w: 4.0, h: 3.3 }, notes: 'Feature 4. Press the ? beside total budget. The assistant opens with a worked example, common mistakes and the source documents.',
 })
@@ -376,16 +376,6 @@ await feature({
 })
 
 await feature({
-  title: '12b. Staff insights page', tag: 'Staff tool',
-  what: 'A password-protected /insights page with counts only: forms started vs. submitted, where people stop, the most common review findings, which ? buttons get pressed, chat topics and star ratings.',
-  why: 'A common finding or a heavily pressed ? tells you which question to reword on the form itself.',
-  better: 'The original gives no visibility into where applicants struggle.',
-  det: 'No names, answers, messages or IP addresses are stored. The numbers shown here come from our own test session, not real applicants.',
-  shots: [['insights.jpg', 'Insights dashboard with counts only']],
-  tall: true, notes: 'The counts on this screenshot come from our own test session (a few forms and reviews), not from real applicants. The page needs the INSIGHTS_PASSWORD setting turned on in Render; it is off on the current service.',
-})
-
-await feature({
   title: 'Add-on for FormAssembly', tag: 'How it goes live',
   what: 'One line of script on Invest Detroit’s FormAssembly page adds the review, assistant and staff summary on top of the live form.',
   why: 'Invest Detroit already runs its intake on FormAssembly, so the copilot should fit, not replace it.',
@@ -493,19 +483,19 @@ await feature({
 
 // 29. Cost
 {
-  const s = content(`What it costs: about ${NUMBERS.cost} a month`, 'Running it', `Estimate, not a measurement. About $0.01 to $0.04 per chat question; at an assumed ${NUMBERS.questions} questions a month that is about $5 to $20. Hosting on Render is about $7 a month, plus about $6 for the optional database that keeps the insights counts. Total about $20 to $35. Prices come from third-party lists; the question volume is our assumption. Daily caps and an OpenAI budget limit cap the worst case.`)
+  const s = content(`What it costs: about ${NUMBERS.cost} a month`, 'Running it', `Estimate, not a measurement. About $0.01 to $0.04 per chat question; at an assumed ${NUMBERS.questions} questions a month that is about $5 to $20. Hosting on Render is about $7 a month, plus about $6 for the optional database that keeps the usage counts. Total about $20 to $35. Prices come from third-party lists; the question volume is our assumption. Daily caps and an OpenAI budget limit cap the worst case.`)
   stat(s, 0.5, 1.4, 2.8, 2.0, '$5–$20', 'AI chat', `about $0.01–$0.04 per question, at ${NUMBERS.questions} questions a month`, INK, GRAY)
   stat(s, 3.6, 1.4, 2.8, 2.0, '~$7', 'Hosting (Render)', 'the website and server', INK, GRAY)
-  stat(s, 6.7, 1.4, 2.8, 2.0, '~$6', 'Database (optional)', 'keeps the insights counts', INK, GRAY)
+  stat(s, 6.7, 1.4, 2.8, 2.0, '~$6', 'Database (optional)', 'keeps the usage counts', INK, GRAY)
   card(s, 0.5, 3.55, 9.0, 1.05, `Total: about ${NUMBERS.cost} a month (estimate)`, 'The question volume is our assumption. Daily caps and an OpenAI budget limit cap the worst case. Invest Detroit would use its own OpenAI and Render accounts.', GRN, PALEGRN, 14, 13)
   detail(s, 'The pilot ran on a student’s University of Michigan GPT Toolkit key and Business+Tech accounts, which end with the sprint.')
 }
 
 // 30. Privacy
 {
-  const s = content('Privacy: what is and isn’t stored', 'Data', 'Data handling in one slide. No chat text is stored. SSNs are blocked from the chat and the SSN form field is disabled. Insights are counts only. The staff summary goes only into a hidden FormAssembly field. The AI key lives only in the hosting settings, never in code. Everything was built and tested with made-up sample applicants.')
-  card(s, 0.5, 1.4, 4.4, 3.2, 'Not stored or sent', '• Chat messages are not stored\n• SSNs are hidden from the chat and the SSN field is disabled\n• No names, answers, notes or IP addresses on the insights page\n• Form answers are not sent to our server', GRN, PALEGRN, 16, 14)
-  card(s, 5.1, 1.4, 4.4, 3.2, 'Stored, and where', '• Saved answers: on the applicant’s own device for 7 days, never an SSN\n• Staff summary: only in a hidden field in FormAssembly\n• Insights: anonymous counts (optional database)\n• AI key: only in the hosting settings, never in code', INK, GRAY, 16, 14)
+  const s = content('Privacy: what is and isn’t stored', 'Data', 'Data handling in one slide. No chat text is stored. SSNs are blocked from the chat and the SSN form field is disabled. Usage data is counts only. The staff summary goes only into a hidden FormAssembly field. The AI key lives only in the hosting settings, never in code. Everything was built and tested with made-up sample applicants.')
+  card(s, 0.5, 1.4, 4.4, 3.2, 'Not stored or sent', '• Chat messages are not stored\n• SSNs are hidden from the chat and the SSN field is disabled\n• No names, answers, notes or IP addresses in the usage counts\n• Form answers are not sent to our server', GRN, PALEGRN, 16, 14)
+  card(s, 5.1, 1.4, 4.4, 3.2, 'Stored, and where', '• Saved answers: on the applicant’s own device for 7 days, never an SSN\n• Staff summary: only in a hidden field in FormAssembly\n• Usage counts: anonymous, for Invest Detroit’s own database\n• AI key: only in the hosting settings, never in code', INK, GRAY, 16, 14)
   detail(s, 'A one-page data-flow note for Invest Detroit’s IT team is in the handoff package.')
 }
 
@@ -526,9 +516,9 @@ await feature({
 
 // 32. Recommendation
 {
-  const s = content('Recommendation: a 30-day trial', 'Next', 'Our recommendation. Run it for 30 days with Real Estate screening staff and every applicant on the Need Support page, with the add-on on the live form. Measure follow-up emails per application and applications needing fixes, before vs. during the trial, plus star ratings on /insights. Before it starts: staff confirm the facts, Invest Detroit’s web team approves the one-line add-on, and the test set is rerun with the AI.')
+  const s = content('Recommendation: a 30-day trial', 'Next', 'Our recommendation. Run it for 30 days with Real Estate screening staff and every applicant on the Need Support page, with the add-on on the live form. Measure follow-up emails per application and applications needing fixes, before vs. during the trial, plus star ratings from the usage counts. Before it starts: staff confirm the facts, Invest Detroit’s web team approves the one-line add-on, and the test set is rerun with the AI.')
   card(s, 0.5, 1.4, 4.4, 1.6, '1. Who and what', 'Real Estate screening staff and every applicant on the Need Support page, for 30 days, with the add-on on the live form.', INK, GRAY, 15, 13)
-  card(s, 5.1, 1.4, 4.4, 1.6, '2. How we’ll know it works', 'Follow-up emails per application and applications needing fixes, before vs. during the trial; star ratings on /insights.', INK, GRAY, 15, 13)
+  card(s, 5.1, 1.4, 4.4, 1.6, '2. How we’ll know it works', 'Follow-up emails per application and applications needing fixes, before vs. during the trial; star ratings from the usage counts.', INK, GRAY, 15, 13)
   card(s, 0.5, 3.1, 4.4, 1.55, '3. Before it starts', 'Staff confirm the facts; your web team approves the one-line add-on; the test set is rerun with the AI (keep 42/43 or better).', INK, GRAY, 15, 13)
   card(s, 5.1, 3.1, 4.4, 1.55, '4. What it takes to keep', `Your own OpenAI and Render accounts (about ${NUMBERS.cost} a month, estimated) and a named owner, about 1 hour a week.`, INK, GRAY, 15, 13)
 }
@@ -545,7 +535,7 @@ await feature({
     [c('2'), c('Web team approves the one-line add-on on the live form'), ph('[Invest Detroit web team]'), ph('[Date]')],
     [c('3'), c('Connect Invest Detroit’s OpenAI key; rerun the test set (keep 42/43 or better)'), ph('[NAMED OWNER AT INVEST DETROIT]'), ph('[Date]')],
     [c('4'), c('Start the 30-day trial'), ph('[NAMED OWNER AT INVEST DETROIT]'), ph('[Date]')],
-    [c('5'), c('Review /insights monthly; rerun the test set before any change'), ph('[NAMED OWNER AT INVEST DETROIT]'), c('Monthly')],
+    [c('5'), c('Review the usage counts monthly; rerun the test set before any change'), ph('[NAMED OWNER AT INVEST DETROIT]'), c('Monthly')],
   ], { x: 0.5, y: 1.4, w: 9.0, colW: [0.4, 4.4, 2.8, 1.4], rowH: 0.5, border: { type: 'solid', pt: 0.5, color: LINE }, fill: { color: WHITE } })
   detail(s, 'Orange text in [brackets] is a placeholder to fill in before presenting.')
 }

@@ -470,6 +470,21 @@ Result: a line-by-line comparison of the demo form and the add-on found seven ga
 
 One demo sentence was left out on purpose: "file stays on your device", because on the real form files are sent to Invest Detroit. Tested: 11 new checks plus all earlier ones pass (autosave included).
 
+**43. Replace the insights page with a pipeline into Invest Detroit's database**
+> We don't need the insights page: we'll build a direct integration pipeline into their database. If there's any way to make this easier for them without breaking anything, do it. Remove the insights page code, but keep anything relevant, because the Invest Detroit team won't use the page; they have their own system.
+
+Result:
+- **Removed:** the `/insights` dashboard, its password and its CSV download.
+- **Kept:** the anonymous counting (it feeds their pipeline) and the daily counter store (the AI spending limits depend on it).
+- **Added four ways to get the counts into their system:**
+  - a token-protected JSON export, `GET /api/usage`;
+  - a signed webhook that pushes each new count (`USAGE_WEBHOOK_URL`);
+  - browser events on their own page for their analytics (`investdetroit:copilot`);
+  - documented direct reads of the `copilot_counts` table.
+- **New guide:** `docs/DATA-PIPELINE.md` explains each way, with a dictionary of every category. The staff summary already reaches their system through FormAssembly.
+- **Documents updated:** the user guide, data-flow page, deck (now 33 slides) and setup guides.
+- **Tested:** the add-on on the FormAssembly test page sent counts through all four paths.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

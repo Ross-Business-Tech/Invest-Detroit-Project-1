@@ -18,7 +18,7 @@ import { fileURLToPath } from 'node:url'
 import zlib from 'node:zlib'
 import assistant from '../api/assistant.js'
 import { getStore } from './store.js'
-import { eventsHandler, feedbackHandler, insightsHandler } from './insights.js'
+import { eventsHandler, feedbackHandler, usageHandler } from './usage.js'
 
 const DIST = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'dist')
 const MAX_BODY = 64 * 1024
@@ -134,7 +134,7 @@ export function createWebServer({ origins = allowedOrigins() } = {}) {
     if (pathname === '/api/assistant') return runJson(req, res, (rq, rs) => assistant(rq, rs)).catch(fail)
     if (pathname === '/api/events') return runJson(req, res, (rq, rs) => eventsHandler(rq, rs, getStore())).catch(fail)
     if (pathname === '/api/feedback') return runJson(req, res, (rq, rs) => feedbackHandler(rq, rs, getStore())).catch(fail)
-    if (pathname === '/insights') return insightsHandler(req, res, getStore()).catch(fail)
+    if (pathname === '/api/usage') return runJson(req, res, (rq, rs) => usageHandler({ ...rq, url: req.url }, rs, getStore())).catch(fail)
     if (pathname === '/healthz') { res.writeHead(200, { 'content-type': 'text/plain' }); return res.end('ok') }
     return serveStatic(req, res)
   })

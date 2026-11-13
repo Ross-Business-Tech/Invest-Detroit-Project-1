@@ -1,7 +1,8 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { createMemoryStore } from '../server/store.js'
-import { eventsHandler, feedbackHandler, insightsHandler, recordChat, renderDashboard } from '../server/insights.js'
+import { createMemoryStore, createWebhookForwarder } from '../server/store.js'
+import { eventsHandler, feedbackHandler, usageHandler, recordChat } from '../server/usage.js'
+import crypto from 'node:crypto'
 import assistant from '../api/assistant.js'
 import { toCounted } from '../src/copilot/metrics.js'
 import { buildStaffSummary } from '../src/copilot/staffSummary.js'
@@ -58,33 +59,48 @@ test('star ratings are saved through our server', async () => {
   assert.equal((await store.totals())['rating:4'], 1)
 })
 
-test('the insights dashboard is off without a password, and asks for it when set', async () => {
+test('the usage export for Invest Detroit\'s pipeline is off without a token, and needs it when set', async () => {
   const store = createMemoryStore()
-  const saved = process.env.INSIGHTS_PASSWORD
-  delete process.env.INSIGHTS_PASSWORD
-  let res = fakeRes(); await insightsHandler({ url: '/insights', headers: {} }, res, store); assert.equal(res.statusCode, 404)
-  process.env.INSIGHTS_PASSWORD = 'pilot-pass'
-  res = fakeRes(); await insightsHandler({ url: '/insights', headers: {} }, res, store); assert.equal(res.statusCode, 401)
-  const wrong = 'Basic ' + Buffer.from('staff:nope').toString('base64')
-  res = fakeRes(); await insightsHandler({ url: '/insights', headers: { authorization: wrong } }, res, store); assert.equal(res.statusCode, 401)
-  await store.incr('form:start'); await store.incr('form:submit'); await store.incr('rating:5')
-  const right = 'Basic ' + Buffer.from('staff:pilot-pass').toString('base64')
-  res = fakeRes(); await insightsHandler({ url: '/insights', headers: { authorization: right } }, res, store)
+  const saved = process.env.USAGE_EXPORT_TOKEN
+  delete process.env.USAGE_EXPORT_TOKEN
+  let res = fakeRes(); await usageHandler({ method: 'GET', url: '/api/usage', headers: {} }, res, store); assert.equal(res.statusCode, 404)
+  process.env.USAGE_EXPORT_TOKEN = 'pipeline-token'
+  res = fakeRes(); await usageHandler({ method: 'GET', url: '/api/usage', headers: { authorization: 'Bearer nope' } }, res, store); assert.equal(res.statusCode, 401)
+  await store.incr('form:start'); await store.incr('review_issue:loan_gt_budget', 2); await store.incr('rating:5')
+  await store.incr('visitor:abc123'); await store.incr('ai:daily') // internal counters
+  res = fakeRes(); await usageHandler({ method: 'GET', url: '/api/usage?days=7', headers: { authorization: 'Bearer pipeline-token' } }, res, store)
   assert.equal(res.statusCode, 200)
-  assert.match(res.body, /forms started/)
-  assert.match(res.body, /100%/)
-  assert.equal(res.headers['x-robots-tag'], 'noindex')
-  res = fakeRes(); await insightsHandler({ url: '/insights?format=csv', headers: { authorization: right } }, res, store)
-  assert.match(res.headers['content-type'], /text\/csv/)
-  assert.match(res.body, /^category,item,count\n/)
-  assert.match(res.body, /"form","start",1/)
-  if (saved === undefined) delete process.env.INSIGHTS_PASSWORD; else process.env.INSIGHTS_PASSWORD = saved
+  const day = new Date().toISOString().slice(0, 10)
+  assert.deepEqual(res.payload.rows, [
+    { day, category: 'form', item: 'start', count: 1 },
+    { day, category: 'rating', item: '5', count: 1 },
+    { day, category: 'review_issue', item: 'loan_gt_budget', count: 2 },
+  ])
+  assert.equal(res.payload.to, day)
+  assert.equal(res.headers['cache-control'], 'no-store')
+  if (saved === undefined) delete process.env.USAGE_EXPORT_TOKEN; else process.env.USAGE_EXPORT_TOKEN = saved
 })
 
-test('the dashboard escapes anything it shows', () => {
-  const html = renderDashboard({ 'review_issue:<script>alert(1)</script>': 3 }, { days: 30, storeKind: 'memory' })
-  assert.ok(!html.includes('<script>alert'))
-  assert.match(html, /reset when the server restarts/)
+test('the webhook sends new counts to Invest Detroit\'s system, signed, without internal counters', async () => {
+  const sent = []
+  const hook = createWebhookForwarder({ url: 'https://example.org/hook', secret: 's3cret', intervalMs: 60000, fetchImpl: async (url, opts) => { sent.push({ url, opts }); return { ok: true } } })
+  const store = createMemoryStore(hook)
+  await store.incr('chat_from:openai'); await store.incr('visitor:abc'); await store.incr('ai:daily'); await store.incr('field_help:total_budget')
+  await hook.flush(); hook.stop()
+  assert.equal(sent.length, 1)
+  const body = JSON.parse(sent[0].opts.body)
+  assert.equal(body.source, 'invest-detroit-copilot')
+  assert.deepEqual(body.events.map((e) => `${e.category}:${e.item}:${e.added}`), ['chat_from:openai:1', 'field_help:total_budget:1'])
+  const sig = 'sha256=' + crypto.createHmac('sha256', 's3cret').update(sent[0].opts.body).digest('hex')
+  assert.equal(sent[0].opts.headers['x-copilot-signature'], sig)
+})
+
+test('a webhook that is down never breaks counting', async () => {
+  const hook = createWebhookForwarder({ url: 'https://example.org/hook', intervalMs: 60000, fetchImpl: async () => { throw new Error('down') } })
+  const store = createMemoryStore(hook)
+  assert.equal(await store.incr('form:start'), 1)
+  await hook.flush(); hook.stop()
+  assert.equal((await store.totals())['form:start'], 1)
 })
 
 test('daily limits switch the AI off for that visitor (and site) and answer from the guide', async () => {

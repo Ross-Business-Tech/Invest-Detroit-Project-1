@@ -28,7 +28,7 @@
 - **Accounts:** it runs on Business+Tech accounts, which end with the sprint. The pilot's AI uses a student's University of Michigan GPT Toolkit key. Invest Detroit needs its own OpenAI API and Render accounts, then adds `OPENAI_API_KEY` in Render ([setup](docs/AI-SETUP.md)).
 - **Cost (estimate):** about $0.01–$0.04 per chat question, so about $5–$20 a month at 500 questions. Hosting is about $7 a month, plus about $6 for the optional database: about $20–$35 a month in total. Daily caps and an OpenAI budget limit cap the worst case.
 - **Data:** no chat text is stored; SSNs are blocked from the chat; the staff summary goes only into FormAssembly.
-- **Ownership:** [NAMED OWNER AT INVEST DETROIT] owns the knowledge base and prompt, reviews the `/insights` page monthly, and reruns the test set before any change.
+- **Ownership:** [NAMED OWNER AT INVEST DETROIT] owns the knowledge base and prompt, reviews the usage counts in Invest Detroit's own reporting monthly ([pipeline](docs/DATA-PIPELINE.md)), and reruns the test set before any change.
 - **Next steps (ranked):**
   1. Install the add-on on the live FormAssembly form for a 30-day trial.
   2. Staff confirm the knowledge-base facts.
@@ -85,5 +85,6 @@ source ids your answer actually relies on; general guidance needs none.
 - Rerun the tests: `node tools/run-test-set.mjs` (steps are in the results sheet, "How to rerun" tab)
 - Handoff package: [docs/handoff/](docs/handoff/) (user guide, data-flow note, exit email draft, video scripts)
 - Putting it on Invest Detroit's real FormAssembly form (WordPress, FormAssembly, Emma): [docs/FORMASSEMBLY-INTEGRATION.md](docs/FORMASSEMBLY-INTEGRATION.md)
+- Getting the usage counts into Invest Detroit's own database: [docs/DATA-PIPELINE.md](docs/DATA-PIPELINE.md)
 - How it is built: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md); setting up the AI key and hosting: [docs/AI-SETUP.md](docs/AI-SETUP.md)
 - Longer project overview for the build team: [docs/PROJECT-OVERVIEW.md](docs/PROJECT-OVERVIEW.md)
