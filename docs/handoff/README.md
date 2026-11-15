@@ -12,6 +12,7 @@ Everything for the client's shared Google Drive folder. Put the [one-page README
 | 6. User guide | [Invest-Detroit-Copilot-User-Guide.pdf](Invest-Detroit-Copilot-User-Guide.pdf) (+ .docx for Google Docs) | Ready; add the video links |
 | 7. Exit email | [EXIT-EMAIL.md](EXIT-EMAIL.md) | Draft; send after the presentation |
 | Extra: data-flow note for IT | [Invest-Detroit-Copilot-Data-Flow.pdf](Invest-Detroit-Copilot-Data-Flow.pdf) | Ready |
+| Extra: backend guide for IT | [Invest-Detroit-Copilot-Backend-Guide.pdf](Invest-Detroit-Copilot-Backend-Guide.pdf) (source [BACKEND-GUIDE.md](BACKEND-GUIDE.md)) | Ready |
 | Extra: reusable test kit | [test-set.json](test-set.json) + `node tools/run-test-set.mjs` (steps are in the sheet's "How to rerun" tab) | Ready |
 
 ## Handoff checklist

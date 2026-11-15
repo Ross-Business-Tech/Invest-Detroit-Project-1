@@ -515,6 +515,13 @@ Result: the deck is now 22 slides in plain words, with speaker notes kept.
 - **Fewer slides:** the section dividers are gone (a small label marks each section), and the guardrails, privacy, hosting, reliability and impact slides were merged or shortened.
 - **Same story:** the need, a live demo bookmark, how it works, limits and cost, and next steps, plus a backup slide of questions we expect.
 
+**47. A backend guide for the Invest Detroit team**
+> Make a comprehensive PDF of how our backend works, in somewhat simple terms: limitations, what the team at Invest Detroit should be wary of before using our code, what our code is currently using that they might have to reconfigure, and how to improve it.
+
+Result: a 12-page PDF, `Invest-Detroit-Copilot-Backend-Guide.pdf`, with its source `BACKEND-GUIDE.md`.
+- **How it works:** the three layers, the journey of one chat question, the knowledge base, what the AI will and won't do, and what data is kept.
+- **For handoff:** a table of every setting to change, what is written into the code, limitations, 13 things to be careful about, suggested improvements and a day-one checklist.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.
