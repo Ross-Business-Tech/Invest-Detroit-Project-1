@@ -48,6 +48,12 @@ Press the yellow **?** next to any question. The assistant explains the question
 
 ![Help for "What is your total budget?"](img/03-help.jpg)
 
+To ask your own question, open **Need help?** at the bottom right and type it. Answers from the chat are not an approval decision. If you ask "Will I be approved?", the assistant explains that only the Invest Detroit team decides.
+
+![Chat with the assistant](img/06-chat.jpg)
+
+![The assistant answering "Will I be approved?"](img/07-chat-limit.jpg)
+
 ## 4. Review My Application
 
 When you're done, press **Review My Application**. It takes a few seconds and shows three groups:
@@ -101,8 +107,8 @@ The copilot also counts, anonymously, where applicants stop, which questions the
 |---|---|---|
 | **Must fix:** Loan is larger than the total budget | $2,000,000 is more than the $1,450,000 project. Usually a typo. | Correct the loan to $600,000. Submit unlocks. |
 | **Double-check:** Affordability units don't match total units | 8 units, but the AMI boxes add up to 6. | Either fix the count, or explain: "Two units are market-rate." |
-| **Double-check:** Office/Commercial section is empty | A mixed-use project usually has office or retail space. | Fill it in, or explain why it doesn't apply. |
-| **Good to know:** Don't start construction before closing | Invest Detroit's lending guide asks borrowers to wait. | Nothing to fix. |
+| **Double-check:** Office/Commercial Project section is empty | A mixed-use project usually has office or retail space. | Fill it in, or explain why it doesn't apply. |
+| **Good to know:** Please don't start construction before closing | Invest Detroit's lending guide asks borrowers to wait. | Nothing to fix. |
 
 The staff summary for this application then lists the two double-check items, with the applicant's note under the first.
 
