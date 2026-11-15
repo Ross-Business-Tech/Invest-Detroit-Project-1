@@ -495,6 +495,18 @@ Result:
   - **After the fix** (city-limits wording and Michigan ZIP codes): 46/46. Rates, documents and off-topic questions still get their usual answers.
 - **Documents updated:** the score is updated everywhere, with an honest note that the fix was made with these questions in view.
 
+**45. Remake the presentation as a stakeholder deck**
+> Remake the Google Slides. Don't include information about the features, because I'll go through the demo myself. Pretend it's a presentation to stakeholders: a first section on stakeholders and problem statements, then a section on backend infrastructure (how the AI uses the knowledge base before the AI, limitations, cost), then ways to make the project stronger. Focus on the backend and how it's built. Pretend you're a team at Invest Detroit watching.
+
+Result: a new 33-slide deck, `Invest-Detroit-Copilot-Final-Presentation.pptx` (and PDF), with speaker notes on every slide.
+- **The need:** stakeholders, where the intake form sits in the process, what applicants run into on the original form, problem statements, and our approach.
+- **Live demo:** a bookmark slide to switch to the website.
+- **How it's built:** the architecture, what is AI and what is fixed rules, how one chat question is answered, the knowledge base ("grounded, not trained"), what the AI may and may not say, safety checks, privacy and data flow, the WordPress and FormAssembly fit, hosting on Render, the data pipeline to their database, reliability, and testing and results.
+- **Limits and cost:** limitations, cost, and risks.
+- **Making it stronger:** a roadmap, the 30-day trial, and what it takes to run it for real.
+- **Also:** a backup slide of questions we expect.
+The old screenshot deck is kept as a feature reference.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.
