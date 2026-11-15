@@ -67,8 +67,6 @@ function dark(notes) {
   return s
 }
 
-/** Section divider: a big number, the section name and a one-line promise. */
-
 /** A soft card with a colored stripe on the left. */
 function card(s, x, y, w, h, title, body, { color = INK, fill = GRAY, tsize = 14, bsize = 12, bodyColor = MID } = {}) {
   s.addShape(SH.roundRect, { x, y, w, h, rectRadius: 0.06, fill: { color: fill }, line: { color: fill, width: 0 } })
