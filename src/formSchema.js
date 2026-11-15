@@ -32,7 +32,6 @@ const AMI_LEVELS = ['10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%
 export const FORM_INTRO = [
   'Thank you for your interest in Invest Detroit. We are a mission-based, nonprofit lender, and borrowers must meet a set of criteria so that we can meet our funding requirements, including goals set by our funders.',
   'Please fill out the following contact information and answer the questions below to begin the application process.',
-  'Only completed forms are able to be considered. Partially completed applications will not be saved, and if you close this window or navigate to another page prior to submission the data will be lost.',
 ]
 
 export const SECTIONS = [

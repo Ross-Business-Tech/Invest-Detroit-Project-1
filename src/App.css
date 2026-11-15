@@ -51,6 +51,18 @@
 .form-title { text-align: center; font-size: clamp(24px, 4vw, 32px); font-weight: 900; margin: 0 0 20px; }
 .form-intro p { margin: 0 0 14px; font-size: 15px; }
 
+.before-start { border: 2px solid var(--yellow); border-left-width: 8px; background: #fffdf6; padding: 28px clamp(18px, 3vw, 32px) 30px; margin: 8px 0 32px; }
+.before-start h2 { margin: 0 0 18px; font-size: clamp(22px, 3vw, 26px); font-weight: 900; color: var(--dark); }
+.save-warning { background: var(--dark); color: #fff; padding: 18px 20px; font-size: 17px; line-height: 1.6; margin: 0 0 32px; }
+.save-warning strong { display: block; font-size: 20px; font-weight: 900; color: var(--yellow); margin-bottom: 6px; }
+.before-columns { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 36px; }
+.before-col h3 { font-size: 15px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 16px; padding-bottom: 10px; border-bottom: 2px solid var(--line); }
+.before-col ul { list-style: none; margin: 0; padding: 0; }
+.before-col li { position: relative; padding-left: 22px; margin: 0 0 16px; font-size: 16px; line-height: 1.6; }
+.before-col li::before { content: ''; position: absolute; left: 0; top: 0.55em; width: 9px; height: 9px; border-radius: 50%; background: var(--yellow); }
+.before-note { margin: 28px 0 0; font-size: 14px; color: var(--muted); line-height: 1.6; }
+@media (max-width: 900px) { .before-columns { grid-template-columns: 1fr; gap: 28px; } }
+
 .error-summary { background: var(--error-bg); color: var(--error); border-left: 4px solid var(--error); padding: 12px 14px; margin: 16px 0; font-weight: 700; }
 
 .section { border: 0; padding: 0; margin: 32px 0 0; min-width: 0; }
