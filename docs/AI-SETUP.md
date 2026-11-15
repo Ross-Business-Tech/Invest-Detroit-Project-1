@@ -149,6 +149,7 @@ There is no dashboard: Invest Detroit reads the counts into its own system. The 
 | `ASSISTANT_DAILY_LIMIT` | `500` | AI answers per day for the whole site |
 | `ASSISTANT_SALT` | random at start | Keeps visitor counting steady across restarts |
 | `DATABASE_URL` | none | Postgres for counts, ratings and limits |
+| `DATABASE_SSL` | automatic | `false` or `true` to force TLS off or on for the database (for a self-hosted Postgres) |
 | `USAGE_EXPORT_TOKEN` | none (export off) | Turns on `GET /api/usage`, the counts by day as JSON for Invest Detroit's pipeline ([DATA-PIPELINE.md](DATA-PIPELINE.md)) |
 | `USAGE_WEBHOOK_URL`, `USAGE_WEBHOOK_SECRET` | none (off) | Sends each new count to Invest Detroit's system, signed ([DATA-PIPELINE.md](DATA-PIPELINE.md)) |
 | `ALLOWED_ORIGINS` | investdetroit.com and www.investdetroit.com | Websites allowed to call the chat, ratings and counts: the add-on on Invest Detroit's page. Comma-separated. See [FORMASSEMBLY-INTEGRATION.md](FORMASSEMBLY-INTEGRATION.md). |
@@ -175,3 +176,15 @@ There is no dashboard: Invest Detroit reads the counts into its own system. The 
 - `api/assistant.js`: the chat endpoint (rate limit, daily limits, AI or guide)
 - `server/webServer.js`: serves `dist/` plus `/api/*` on Render (`npm start`)
 - `tests/openai.test.js`: checks the request sent to OpenAI, guardrails first, refusals and cut-offs, the reasoning retry, and the fallback when a key is wrong
+
+## Running it somewhere other than Render
+
+Render is only where we happened to host it. Nothing in the code needs Render. Any server that runs Node 22 works (a virtual machine, a container, another hosting service):
+
+1. `npm ci && npm run build`, then `npm start`. The server listens on the `PORT` setting (3000 if unset) and answers `/healthz` for health checks.
+2. Put it behind HTTPS (the website it serves is HTTPS, so the browser blocks plain HTTP calls).
+3. Set `OPENAI_API_KEY` (plus `OPENAI_BASE_URL` and `OPENAI_MODEL` if using a gateway) and `ALLOWED_ORIGINS` (the website addresses allowed to call it, for example `https://investdetroit.com`) in that host's settings.
+4. Optional: `DATABASE_URL` for counts that survive restarts, `USAGE_EXPORT_TOKEN`, `USAGE_WEBHOOK_URL`/`USAGE_WEBHOOK_SECRET` (see `DATA-PIPELINE.md`).
+5. Point the add-on at it: the script tag's `src` is on that server, or add `data-server="https://your-service-address"`.
+
+The demo replica page only asks the server for AI answers on hosts listed in `server_hosts` in `src/copilot/config.js` (Vercel, Render and localhost). If you serve the replica page from another address, add it there. The FormAssembly add-on does not use that list.

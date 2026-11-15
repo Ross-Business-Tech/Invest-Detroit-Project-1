@@ -54,8 +54,11 @@ function memoryStore() {
 
 function postgresStore(url) {
   const host = (() => { try { return new URL(url).hostname } catch { return '' } })()
-  // Render's internal hostnames have no dots and need no TLS; external ones do.
-  const pool = new pg.Pool({ connectionString: url, max: 3, ssl: host.includes('.') && host !== 'localhost' ? { rejectUnauthorized: false } : false })
+  // Hosted databases with a dotted address use TLS; internal ones (no dots) and localhost do not.
+  // DATABASE_SSL=false (or true) overrides this for any other setup, such as a self-hosted Postgres.
+  const forced = String(process.env.DATABASE_SSL || '').toLowerCase()
+  const useTls = forced === 'true' ? true : forced === 'false' ? false : host.includes('.') && host !== 'localhost'
+  const pool = new pg.Pool({ connectionString: url, max: 3, ssl: useTls ? { rejectUnauthorized: false } : false })
   let ready = null
   const init = () => (ready ??= pool.query(`CREATE TABLE IF NOT EXISTS copilot_counts (
       day date NOT NULL, key text NOT NULL, count integer NOT NULL DEFAULT 0, PRIMARY KEY (day, key))`)

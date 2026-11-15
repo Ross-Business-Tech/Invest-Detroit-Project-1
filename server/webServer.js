@@ -1,8 +1,8 @@
-// One Node server for hosts that run a long-lived process (Render "Web Service"): serves the
+// One Node server for any host that runs a long-lived process (Render, a VM, a container): serves the
 // built website from dist/ and the chat endpoint POST /api/assistant (the same function Vercel
 // runs, so guardrails, the AI service and the field-guide fallback behave identically).
 //
-//   npm run build && npm start        # http://localhost:3000 (Render sets PORT itself)
+//   npm run build && npm start        # http://localhost:3000 (hosts set PORT themselves)
 //
 // The AI key is read from OPENAI_API_KEY (or ANTHROPIC_API_KEY) by api/assistant.js.
 //
@@ -147,7 +147,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   }
   const port = Number(process.env.PORT) || 3000
   const server = createWebServer().listen(port, () => console.log(`Site and assistant on port ${port}${aiProvider() ? ` (${PROVIDER_NAME[aiProvider()]} on)` : ' (no API key: field-guide answers)'}`))
-  // Render stops the old server with SIGTERM when a new version goes live: finish open requests first.
+  // Hosts stop the old server with SIGTERM when a new version goes live: finish open requests first.
   const stop = () => { server.close(() => process.exit(0)); setTimeout(() => process.exit(0), 10000).unref() }
   process.on('SIGTERM', stop)
   process.on('SIGINT', stop)
