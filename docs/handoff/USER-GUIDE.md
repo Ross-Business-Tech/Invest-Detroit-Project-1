@@ -132,7 +132,7 @@ The staff summary for this application then lists the two double-check items, wi
 | What you see | What it means | What to do |
 |---|---|---|
 | "I don't have an approved answer for that question" | The question isn't covered by the knowledge base. | Contact the Invest Detroit team (email and phone are in the message). Staff: tell the owner, so it can be added. |
-| "I want to make sure I help with the right thing…" | The question was unclear. A known example: "My ZIP is 48212, am I in Detroit?" | Ask in other words, or press **?** on the question itself. |
+| "I want to make sure I help with the right thing…" | The question was unclear. | Ask in other words, or press **?** on the question itself. |
 | "I'm here to help you with your Invest Detroit loan application…" | The question was off-topic, or tried to change the assistant's rules. | Ask about the application. |
 | "Applications need to be accurate and truthful…" | The question sounded like leaving out or changing information. | Ask how to report the figure correctly. |
 | "That looks like a Social Security Number…" | Sensitive numbers are hidden and never sent. | Put sensitive details only in the secure form fields. |

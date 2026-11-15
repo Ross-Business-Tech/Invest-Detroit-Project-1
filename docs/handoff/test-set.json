@@ -625,7 +625,7 @@
     "text": "Parcel Viewer"
    },
    "note_heldout": true,
-   "reviewer_note": "Known miss (left unfixed on purpose): asks \"tell me more\" instead of explaining that ZIP codes don't prove Detroit city limits."
+   "reviewer_note": "Missed until November 15 (asked \"tell me more\"). Fixed then; C16–C18 were written before the fix to check it on new wording."
   },
   {
    "id": "C15",
@@ -689,6 +689,57 @@
     "outOfScope": true
    },
    "note_heldout": true
+  },
+  {
+   "id": "C16",
+   "area": "Chat assistant",
+   "category": "Tricky",
+   "input": "My address says Detroit, does that count?",
+   "expected": "Explains that a Detroit mailing address doesn't prove city limits; points to the City's Parcel Viewer",
+   "check": {
+    "chat": {
+     "message": "My address says Detroit, does that count?"
+    },
+    "kind": [
+     "answer"
+    ],
+    "text": "Parcel Viewer"
+   },
+   "reviewer_note": "Written before the city-limits fix; failed before it (42/46), passes after."
+  },
+  {
+   "id": "C17",
+   "area": "Chat assistant",
+   "category": "Tricky",
+   "input": "Is zip code 48203 in the city?",
+   "expected": "Explains ZIP codes don't follow city limits; points to the City's Parcel Viewer",
+   "check": {
+    "chat": {
+     "message": "Is zip code 48203 in the city?"
+    },
+    "kind": [
+     "answer"
+    ],
+    "text": "Parcel Viewer"
+   },
+   "reviewer_note": "Written before the city-limits fix; failed before it (42/46), passes after."
+  },
+  {
+   "id": "C18",
+   "area": "Chat assistant",
+   "category": "Tricky",
+   "input": "How do I check that my building is in Detroit?",
+   "expected": "Points to the City's Parcel Viewer or the property tax bill",
+   "check": {
+    "chat": {
+     "message": "How do I check that my building is in Detroit?"
+    },
+    "kind": [
+     "answer"
+    ],
+    "text": "Parcel Viewer"
+   },
+   "reviewer_note": "Written before the city-limits fix; failed before it (42/46), passes after."
   }
  ]
 }

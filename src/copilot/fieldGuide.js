@@ -152,7 +152,7 @@ export const FIELD_GUIDE = {
   criminal: legal, judgments: legal, bankruptcy_7yr: legal, bankruptcy_24mo: legal,
   in_detroit: {
     explain: 'Only addresses inside Detroit\'s city limits count. Highland Park and Hamtramck are separate cities, even though Detroit surrounds them. A "Detroit" mailing address or ZIP code is not proof: ZIP codes follow mail routes, not city borders. Search the address in the City of Detroit\'s Parcel Viewer (data.detroitmi.gov), or check which city sends the property tax bill. The Real Estate program also has target neighborhoods (including the Strategic Neighborhood Fund areas); the team can tell you whether your address is in one.',
-    keywords: ['city limits', 'highland park', 'hamtramck', 'located', 'detroit city', 'detroit zip', 'parcel viewer', 'inside detroit'],
+    keywords: ['city limits', 'highland park', 'hamtramck', 'located', 'detroit city', 'detroit zip', 'parcel viewer', 'inside detroit', 'part of detroit', 'is in detroit', 'i\'m in detroit', 'im in detroit', 'am i in detroit', 'in the city?', 'within the city', 'address says detroit', 'building in detroit', 'is my property in detroit', 'is my address in detroit', 'is my project in detroit', 'zip code 48', 'zip is 48', 'zip 48', 'is 482', 'in 482'],
     source_ids: ['intake_form_v59', 're_flyer', 'detroit_parcel_viewer'],
   },
   home_state: { explain: 'Use the two-letter state abbreviation in capital letters, like MI for Michigan.', keywords: ['state abbreviation'], source_ids: INTAKE },

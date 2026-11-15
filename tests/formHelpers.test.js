@@ -66,3 +66,12 @@ test('the no-answer reply makes the assistant\'s limits clear', () => {
   assert.match(NO_MATCH, /^I can only help with this form and Invest Detroit's lending process/)
   assert.equal(answerFromGuide(buildRequest({ message: 'Can my cat sign the form?' })).text, NO_MATCH)
 })
+
+test('ticking "same as my home address" counts the business address as answered', async () => {
+  const { formProgress } = await import('../src/copilot/formHelpers.js')
+  const company = (p) => p.sections.find((s) => s.id === 'company_info' || s.label === 'Company')
+  const before = company(formProgress({}))
+  const after = company(formProgress({}, { sameAddress: true }))
+  assert.equal(after.done - before.done, 4)
+  assert.equal(formProgress({}, { sameAddress: true }).done - formProgress({}).done, 4)
+})

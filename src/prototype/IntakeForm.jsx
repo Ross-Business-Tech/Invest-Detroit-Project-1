@@ -236,7 +236,7 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
       </div>
 
       <form key={formKey} className="intake" onSubmit={onSubmit} onFocus={onFocusCapture} noValidate>
-        <FormProgress values={values} />
+        <FormProgress values={values} sameAddress={sameAddress} />
         <h1 className="form-title">{t('Real Estate/C&I In-Take Form')}</h1>
         <div className="form-intro">
           {FORM_INTRO.map((p) => <p key={p}>{t(p)}</p>)}

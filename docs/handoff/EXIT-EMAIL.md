@@ -16,7 +16,7 @@ Thank you for your time today and for your feedback throughout the sprint.
 Please **start with the README**. It has the live link, how the tool works, what it can't do and what it takes to keep it running. The folder also has:
 
 - the slide deck;
-- the test results sheet (42/43);
+- the test results sheet (46/46);
 - the user guide;
 - the demo videos;
 - a one-page data-flow note for your IT team.

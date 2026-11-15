@@ -44,6 +44,8 @@ export function scopeScore(text) {
   let weak = 0
   for (const term of IN_SCOPE_STRONG) if (hasTerm(term, t)) strong += 1
   for (const term of IN_SCOPE_WEAK) if (hasTerm(term, t)) weak += 1
+  // A Michigan ZIP code (48xxx or 49xxx) is about an address on the form, e.g. "Is 48212 in Detroit?"
+  if (/(^|\D)4[89]\d{3}($|\D)/.test(t)) strong += 1
   const help = HELP_PHRASES.test(t)
   return { strong, weak, help, score: strong * 2 + weak + (help ? 2 : 0) }
 }

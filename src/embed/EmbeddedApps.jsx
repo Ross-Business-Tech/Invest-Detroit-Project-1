@@ -232,7 +232,7 @@ export function EmbeddedApp({ adapter, session, assistant, hosts, notesRef, feed
     <>
       {portal(<ReviewPanel state={review} onRun={run} onGoToField={(id) => adapter.focusField(id)} notes={reviewNotes} onNote={(id, text) => setReviewNotes((n) => ({ ...n, [id]: text }))} />, hosts.review, 'review')}
       {portal(<ChatAssistant assistant={assistant} activeFieldId={activeFieldId} helpRequest={helpRequest} feedbackClient={feedbackClient} waitForReply={waitForReply} />, hosts.chat, 'chat')}
-      {portal(<FormProgress values={values} embedded onJump={(id) => { const q = firstQuestion(id); if (q) adapter.focusField(q) }} />, hosts.progress, 'progress')}
+      {portal(<FormProgress values={values} sameAddress={fillHelpers && same} embedded onJump={(id) => { const q = firstQuestion(id); if (q) adapter.focusField(q) }} />, hosts.progress, 'progress')}
       {fillHelpers && portal(<SameAddressBox checked={same} onChange={setSame} />, hosts.same, 'same')}
       {portal(<div className="intro"><HowItWorks canSave={canSave} onStart={onStartForm} /><BeforeYouStart canSave={canSave} /></div>, hosts.intro, 'intro')}
       {portal(<SubmitHelp locked={!review.canSubmit} />, hosts.submit, 'submit')}

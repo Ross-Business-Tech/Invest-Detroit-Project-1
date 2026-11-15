@@ -10,9 +10,9 @@ import { useI18n } from '../components/i18nContext.js'
  *   onJump: how to reach a section (the add-on jumps to its first question on the live form);
  *   embedded: on the live page the add-on positions the bar itself.
  */
-export default function FormProgress({ values, onJump, embedded = false }) {
+export default function FormProgress({ values, onJump, embedded = false, sameAddress = false }) {
   const { t } = useI18n()
-  const { sections, done, total } = formProgress(values)
+  const { sections, done, total } = formProgress(values, { sameAddress })
   const pct = total ? Math.round((done / total) * 100) : 0
   const [top, setTop] = useState(0)
 

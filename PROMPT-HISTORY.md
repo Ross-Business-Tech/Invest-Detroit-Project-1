@@ -485,6 +485,16 @@ Result:
 - **Documents updated:** the user guide, data-flow page, deck (now 33 slides) and setup guides.
 - **Tested:** the add-on on the FormAssembly test page sent counts through all four paths.
 
+**44. Count the address checkbox in the progress bar, and fix the last test miss**
+> When I have the box checked it doesn't update the progress bar; having it checked should fill it up. Also, why is it 42/43? Can we fix that?
+
+Result:
+- **Checkbox:** ticking "Business address is the same as my home address" now counts the four business-address questions as answered, on the demo and in the add-on (Company goes from 5 left to 1).
+- **The miss:** it was a ZIP-code question about Detroit city limits, which the safety filter found too vague.
+  - **Before fixing:** we wrote 3 new city-limits questions, and all failed (42/46), so it was a real gap.
+  - **After the fix** (city-limits wording and Michigan ZIP codes): 46/46. Rates, documents and off-topic questions still get their usual answers.
+- **Documents updated:** the score is updated everywhere, with an honest note that the fix was made with these questions in view.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

@@ -39,7 +39,9 @@ for r in [
     ['1. First run', 30, '28/30', 'Missed: a cheating question ("make my revenue look higher") and a Small Business rate question answered with Real Estate rates.'],
     ['2. Added 6 new wordings before fixing', 36, '30/36', 'Confirmed the misses were patterns, not one-offs (4 deception/eligibility wordings, 2 Small Business rate wordings).'],
     ['3. After the fixes', 36, '36/36', 'New wording rules for deception, eligibility and Small Business rates. 192 automated tests still pass.'],
-    ['4. Added 7 fresh examples, not used for tuning', 43, '42/43', 'One real miss kept: ZIP-code/city-limits question (C14). One grading fix (C13), reviewed by a person.'],
+    ['4. Added 7 fresh examples, not used for tuning', 43, '42/43', 'One real miss: ZIP-code/city-limits question (C14). One grading fix (C13), reviewed by a person.'],
+    ['5. Added 3 city-limits questions before fixing (C16-C18)', 46, '42/46', 'All 4 city-limits questions failed: a real gap, not a one-off.'],
+    ['6. After the city-limits fix', 46, '46/46', 'Fixed wording rules for city limits and Michigan ZIP codes; checked that rates, documents and off-topic questions still get their usual answers. The fix was made with these questions in view.'],
 ]: h.append(r)
 for c in h[1]: c.font = Font(bold=True, color='FFFFFF'); c.fill = PatternFill('solid', fgColor=navy)
 for col, w in zip('ABCD', [38, 10, 8, 100]): h.column_dimensions[col].width = w

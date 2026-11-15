@@ -6,7 +6,7 @@
 //
 // Screenshots live in docs/slides/deck-images/ (taken with the fictional sample applicant, Jordan Ellis).
 // Numbers on the measurement slides come from `node tools/measure-impact.mjs` (2/10 vs 10/10) and
-// docs/handoff/test-results.json (42/43). If either changes, update the NUMBERS block below and the README.
+// docs/handoff/test-results.json (46/46). If either changes, update the NUMBERS block below and the README.
 import pptxgen from 'pptxgenjs'
 import sharp from 'sharp'
 import { fileURLToPath } from 'node:url'
@@ -20,8 +20,8 @@ const LIVE = 'https://invest-detroit-project-1.onrender.com'
 // ---- the numbers every slide must agree on (README, handoff note, sheet) ----
 const NUMBERS = {
   caughtToday: 2, caughtCopilot: 10, examples: 10,
-  testCorrect: 42, testTotal: 43,
-  categories: [['Normal', 15, 15], ['Tricky', 14, 13], ['Must Never', 14, 14]],
+  testCorrect: 46, testTotal: 46,
+  categories: [['Normal', 15, 15], ['Tricky', 17, 17], ['Must Never', 14, 14]],
   cost: '$20–$35', questions: 500,
 }
 
@@ -138,7 +138,7 @@ const card = (slide, x, y, w, h, head, body, color = INK, fill = GRAY, hs = 15, 
 
 // 2. The short version
 {
-  const s = content('The short version', 'Summary', 'Four numbers to remember. The 2 of 10 and 10 of 10 come from running the same ten example applications through the official form\'s own Submit checks and through the copilot (node tools/measure-impact.mjs). 42 of 43 is our written test set, with expected answers written before each run. The cost is an estimate, not a measurement.')
+  const s = content('The short version', 'Summary', 'Four numbers to remember. The 2 of 10 and 10 of 10 come from running the same ten example applications through the official form\'s own Submit checks and through the copilot (node tools/measure-impact.mjs). 46 of 46 is our written test set, with expected answers written before each run. The cost is an estimate, not a measurement.')
   stat(s, 0.5, 1.45, 2.1, 2.2, `${NUMBERS.caughtCopilot}/${NUMBERS.examples}`, 'mistakes caught', `by the copilot. Today’s form catches ${NUMBERS.caughtToday} of ${NUMBERS.examples}.`, GRN, PALEGRN)
   stat(s, 2.75, 1.45, 2.1, 2.2, `${NUMBERS.testCorrect}/${NUMBERS.testTotal}`, 'test examples correct', 'All 14 “Must Never” examples pass.', GRN, PALEGRN)
   stat(s, 5.0, 1.45, 2.1, 2.2, '5', 'languages', 'English, Spanish, Arabic (right to left), Bengali, Chinese.', INK, GRAY)
@@ -387,7 +387,7 @@ await feature({
 
 // 23. Divider: measurements
 {
-  const s = dark('Next: how we know it works. Two measurements: the same ten mistakes through the old checks and the copilot, and a written test set of 43 examples.')
+  const s = dark('Next: how we know it works. Two measurements: the same ten mistakes through the old checks and the copilot, and a written test set of 46 examples.')
   s.addText('PART 2', { x: 0.6, y: 1.5, w: 4, h: 0.3, fontFace: BODY, fontSize: 14, bold: true, color: YEL, charSpacing: 3, margin: 0, isTextBox: true })
   s.addText('The measurements', { x: 0.6, y: 1.9, w: 8, h: 1.0, fontFace: HEAD, fontSize: 48, bold: true, color: WHITE, margin: 0, isTextBox: true })
   s.addText('Old form vs. copilot, and how the test set scored.', { x: 0.6, y: 3.0, w: 7, h: 0.8, fontFace: BODY, fontSize: 18, color: 'D6DBD8', margin: 0, valign: 'top', isTextBox: true })
@@ -449,7 +449,7 @@ await feature({
 
 // 27. Test score
 {
-  const s = content(`Test results: ${NUMBERS.testCorrect} of ${NUMBERS.testTotal} examples`, 'Measurement 2', 'Our test set has 43 examples with the expected answer written before each run. Normal: common mistakes and questions (15 of 15). Tricky: other languages, vague or unusual wording (13 of 14). Must Never: approval, cheating, SSNs, prompt tricks, off-topic (14 of 14). The one miss is C14: a ZIP-code question gets “tell me more” instead of the city-limits help. We left it on purpose and tell users to use the City’s Parcel Viewer.')
+  const s = content(`Test results: ${NUMBERS.testCorrect} of ${NUMBERS.testTotal} examples`, 'Measurement 2', 'Our test set has 46 examples with the expected answer written before each run. Normal: common mistakes and questions (15 of 15). Tricky: other languages, vague or unusual wording (17 of 17). Must Never: approval, cheating, SSNs, prompt tricks, off-topic (14 of 14). The last miss, a ZIP-code question about Detroit city limits, was fixed after 3 new city-limits questions were written to check the fix.')
   s.addChart(pres.charts.BAR, [
     { name: 'Examples', labels: NUMBERS.categories.map((c) => c[0]), values: NUMBERS.categories.map((c) => c[1]) },
     { name: 'Correct', labels: NUMBERS.categories.map((c) => c[0]), values: NUMBERS.categories.map((c) => c[2]) },
@@ -468,16 +468,17 @@ await feature({
 
 // 28. How we got there + the miss
 {
-  const s = content('How we got there, and the one miss', 'Measurement 2', 'History from our build notes: first run 28 of 30. After adding new wordings, 30 of 36 before the fix. 36 of 36 after fixing the integrity refusal, Small Business rates and “qualifies” wording. Then 7 fresh examples we had not tuned on brought the set to 43, with 42 correct. The one known miss is C14.')
-  const steps = [['28/30', 'First run', 'Missed “make my revenue look higher” and gave Real Estate rates to a Small Business question.'], ['30/36', 'New wordings', 'Added trickier phrasing; some failed before the fix.'], ['36/36', 'After fixes', 'Integrity refusal, Small Business rates and “qualifies” wording fixed.'], [`${NUMBERS.testCorrect}/${NUMBERS.testTotal}`, '7 fresh examples', 'Not used for tuning. One miss, C14.']]
+  const s = content('How we got there', 'Measurement 2', 'History from our build notes: first run 28 of 30. After adding new wordings, 30 of 36 before the fix. 36 of 36 after fixing the integrity refusal, Small Business rates and “qualifies” wording. Then 7 fresh examples we had not tuned on: 42 of 43, one miss (a ZIP-code question about city limits). We wrote 3 more city-limits questions before fixing it (42 of 46), then fixed it: 46 of 46.')
+  const steps = [['28/30', 'First run', 'Missed “make my revenue look higher” and gave Real Estate rates to a Small Business question.'], ['30/36', 'New wordings', 'Added trickier phrasing; some failed before the fix.'], ['36/36', 'After fixes', 'Integrity refusal, Small Business rates and “qualifies” wording fixed.'], ['42/43', '7 fresh examples', 'Not used for tuning. One miss: a ZIP-code / city-limits question.'], [`${NUMBERS.testCorrect}/${NUMBERS.testTotal}`, 'City-limits fix', '3 new city-limits questions written first (42/46), then fixed.']]
   steps.forEach((st, i) => {
-    const x = 0.5 + i * 2.28
-    s.addShape(pres.ShapeType.roundRect, { x, y: 1.35, w: 2.1, h: 2.0, rectRadius: 0.08, fill: { color: i === 3 ? PALEGRN : GRAY }, line: { color: i === 3 ? PALEGRN : GRAY, width: 0 } })
-    s.addText(st[0], { x: x + 0.12, y: 1.42, w: 1.86, h: 0.6, fontFace: HEAD, fontSize: 28, bold: true, color: i === 3 ? GRN : INK, margin: 0, isTextBox: true })
-    s.addText(st[1], { x: x + 0.12, y: 2.0, w: 1.86, h: 0.3, fontFace: BODY, fontSize: 14, bold: true, color: INK, margin: 0, isTextBox: true })
-    s.addText(st[2], { x: x + 0.12, y: 2.33, w: 1.86, h: 1.0, fontFace: BODY, fontSize: 12, color: MID, margin: 0, valign: 'top', isTextBox: true })
+    const x = 0.5 + i * 1.82
+    const last = i === steps.length - 1
+    s.addShape(pres.ShapeType.roundRect, { x, y: 1.35, w: 1.7, h: 2.0, rectRadius: 0.08, fill: { color: last ? PALEGRN : GRAY }, line: { color: last ? PALEGRN : GRAY, width: 0 } })
+    s.addText(st[0], { x: x + 0.1, y: 1.42, w: 1.5, h: 0.6, fontFace: HEAD, fontSize: 24, bold: true, color: last ? GRN : INK, margin: 0, isTextBox: true })
+    s.addText(st[1], { x: x + 0.1, y: 2.0, w: 1.5, h: 0.3, fontFace: BODY, fontSize: 12.5, bold: true, color: INK, margin: 0, isTextBox: true })
+    s.addText(st[2], { x: x + 0.1, y: 2.33, w: 1.5, h: 1.0, fontFace: BODY, fontSize: 11, color: MID, margin: 0, valign: 'top', isTextBox: true })
   })
-  card(s, 0.5, 3.5, 9.0, 1.1, 'The one known miss (C14)', '“My ZIP is 48212, does that mean I’m in Detroit?” gets “tell me more” instead of the city-limits help. We left it on purpose; users are pointed to the City’s Parcel Viewer.', ORG, PALEYEL, 14, 12.5)
+  card(s, 0.5, 3.5, 9.0, 1.1, 'Honest note on 46/46', 'The last fix was made with these questions in view, so 46/46 is the best case. Unfamiliar wording can still miss; with the AI connected, unclear questions go to the AI instead.', ORG, PALEYEL, 14, 12.5)
   detail(s, 'Rerun any time: node tools/run-test-set.mjs (steps are in the results sheet, “How to rerun” tab).')
 }
 
@@ -519,7 +520,7 @@ await feature({
   const s = content('Recommendation: a 30-day trial', 'Next', 'Our recommendation. Run it for 30 days with Real Estate screening staff and every applicant on the Need Support page, with the add-on on the live form. Measure follow-up emails per application and applications needing fixes, before vs. during the trial, plus star ratings from the usage counts. Before it starts: staff confirm the facts, Invest Detroit’s web team approves the one-line add-on, and the test set is rerun with the AI.')
   card(s, 0.5, 1.4, 4.4, 1.6, '1. Who and what', 'Real Estate screening staff and every applicant on the Need Support page, for 30 days, with the add-on on the live form.', INK, GRAY, 15, 13)
   card(s, 5.1, 1.4, 4.4, 1.6, '2. How we’ll know it works', 'Follow-up emails per application and applications needing fixes, before vs. during the trial; star ratings from the usage counts.', INK, GRAY, 15, 13)
-  card(s, 0.5, 3.1, 4.4, 1.55, '3. Before it starts', 'Staff confirm the facts; your web team approves the one-line add-on; the test set is rerun with the AI (keep 42/43 or better).', INK, GRAY, 15, 13)
+  card(s, 0.5, 3.1, 4.4, 1.55, '3. Before it starts', 'Staff confirm the facts; your web team approves the one-line add-on; the test set is rerun with the AI (keep 46/46).', INK, GRAY, 15, 13)
   card(s, 5.1, 3.1, 4.4, 1.55, '4. What it takes to keep', `Your own OpenAI and Render accounts (about ${NUMBERS.cost} a month, estimated) and a named owner, about 1 hour a week.`, INK, GRAY, 15, 13)
 }
 
@@ -533,7 +534,7 @@ await feature({
     [h('#'), h('Step'), h('Owner'), h('When')],
     [c('1'), c('Staff confirm the knowledge-base facts (rates, fees, steps)'), ph('[Invest Detroit contact]'), ph('[Date]')],
     [c('2'), c('Web team approves the one-line add-on on the live form'), ph('[Invest Detroit web team]'), ph('[Date]')],
-    [c('3'), c('Connect Invest Detroit’s OpenAI key; rerun the test set (keep 42/43 or better)'), ph('[NAMED OWNER AT INVEST DETROIT]'), ph('[Date]')],
+    [c('3'), c('Connect Invest Detroit’s OpenAI key; rerun the test set (keep 46/46)'), ph('[NAMED OWNER AT INVEST DETROIT]'), ph('[Date]')],
     [c('4'), c('Start the 30-day trial'), ph('[NAMED OWNER AT INVEST DETROIT]'), ph('[Date]')],
     [c('5'), c('Review the usage counts monthly; rerun the test set before any change'), ph('[NAMED OWNER AT INVEST DETROIT]'), c('Monthly')],
   ], { x: 0.5, y: 1.4, w: 9.0, colW: [0.4, 4.4, 2.8, 1.4], rowH: 0.5, border: { type: 'solid', pt: 0.5, color: LINE }, fill: { color: WHITE } })

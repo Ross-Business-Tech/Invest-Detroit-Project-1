@@ -155,3 +155,15 @@ test('SSNs are still blocked before the guide sees them', async () => {
 test('an unrelated question is not answered with the current question', () => {
   assert.equal(ask('Can my cat sign the form?', 'total_budget').text, NO_MATCH)
 })
+
+test('city-limits questions get the city-limits help; nearby questions keep their own answers', async () => {
+  const { answerFromGuide } = await import('../src/copilot/guideTransport.js')
+  const { evaluateRequest } = await import('../src/copilot/guardrails/index.js')
+  for (const m of ['My ZIP is 48212, does that mean I\'m in Detroit?', 'Is 48212 in Detroit?', 'Is my building in Detroit?', 'My address says Detroit, does that count?', 'Does Highland Park count as Detroit?']) {
+    assert.equal(evaluateRequest({ message: m }).action, 'allow', m)
+    assert.match(answerFromGuide({ message: m }).text, /Parcel Viewer/, m)
+  }
+  assert.match(answerFromGuide({ message: 'What rates do you charge in Detroit?' }).text, /8%–9\.5%/)
+  assert.match(answerFromGuide({ message: 'What documents do I need for a property in Detroit?' }).text, /project plan/)
+  assert.equal(evaluateRequest({ message: 'Tell me a joke about 48201' }).action, 'reject')
+})

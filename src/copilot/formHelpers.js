@@ -134,15 +134,21 @@ const filled = (v) => !(v === undefined || v === null || v === '' || v === false
 /**
  * Required answers done per visible section (only sections with required questions).
  * An answer counts as done when it is filled in and passes the form's format checks.
+ * With `sameAddress` ("Business address is the same as my home address" ticked), the business
+ * address questions count as answered: the box answers them.
+ * @param {object} values
+ * @param {{ sameAddress?: boolean }} [opts]
  * @returns {{ sections: { id: string, label: string, done: number, total: number, isDocs: boolean }[], done: number, total: number }}
  */
-export function formProgress(values) {
+export const BUSINESS_ADDRESS_IDS = new Set(['business_address', 'business_city', 'business_state', 'business_zip'])
+
+export function formProgress(values, { sameAddress = false } = {}) {
   const errors = validate(values)
   const sections = []
   for (const s of visibleSections(values)) {
     const req = s.fields.filter((f) => f.required && INPUT_TYPES.has(f.type))
     if (!req.length) continue
-    const done = req.filter((f) => filled(values[f.id]) && !errors[f.id]).length
+    const done = req.filter((f) => (sameAddress && BUSINESS_ADDRESS_IDS.has(f.id)) || (filled(values[f.id]) && !errors[f.id])).length
     sections.push({ id: s.id, label: SECTION_SHORT[s.id] || s.title, done, total: req.length, isDocs: s.id === 'required_docs' })
   }
   return {

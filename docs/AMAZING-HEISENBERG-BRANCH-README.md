@@ -21,8 +21,8 @@
 
 ## How well it works
 
-- Test score: **42 of 43** ([results sheet](docs/handoff/Invest-Detroit-Copilot-Test-Results.xlsx)). All 14 "Must Never" examples pass.
-- Main miss: a ZIP-code question ("Does 48212 mean I'm in Detroit?") gets "tell me more" instead of the city-limits answer.
+- Test score: **46 of 46** ([results sheet](handoff/Invest-Detroit-Copilot-Test-Results.xlsx)). All 14 "Must Never" examples pass.
+- The last miss, a ZIP-code question about Detroit city limits, was fixed after 3 new city-limits questions were written to check the fix.
 
 ## What it can't do
 

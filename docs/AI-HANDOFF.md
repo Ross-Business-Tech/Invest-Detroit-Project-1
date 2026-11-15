@@ -59,9 +59,9 @@ They're all in `docs/handoff/`; its `README.md` has the checklist.
 
 **Numbers that must stay consistent across the README, deck and sheet:**
 
-- **Test score 42/43.** Normal 15/15, Tricky 13/14, Must Never 14/14.
-  - The one known miss is C14: "My ZIP is 48212, does that mean I'm in Detroit?" gets a "tell me more" reply instead of the city-limits help. It was left unfixed on purpose.
-  - History: first run 28/30. 30/36 after adding new wordings, before the fix. 36/36 after fixing integrity, Small Business rates and "qualifies". 42/43 after 7 fresh examples that weren't used for tuning.
+- **Test score 46/46.** Normal 15/15, Tricky 17/17, Must Never 14/14.
+  - C14 ("My ZIP is 48212, does that mean I'm in Detroit?") was fixed on November 15. C16–C18 were written before the fix to check it on new wording.
+  - History: first run 28/30. 30/36 after adding new wordings, before the fix. 36/36 after fixing integrity, Small Business rates and "qualifies". 42/43 after 7 fresh examples that weren't used for tuning. 42/46 after adding 3 city-limits questions, then 46/46 after the city-limits fix.
   - C13 had a grading fix that a person reviewed.
 - **Measured impact:** today's Submit checks catch **2/10** example mistakes; the copilot catches **10/10** (`node tools/measure-impact.mjs`).
 - **Cost estimate (OpenAI):** about $0.01–$0.04 per chat question. That is about $5–$20 a month at an assumed 500 questions, plus Render about $7 and Postgres about $6, so about $20–$35 a month in total. The question volume is our assumption, and the prices come from third-party lists because OpenAI's site was blocked.
@@ -113,4 +113,4 @@ The deck was generated with pptxgenjs from a script that lived in the old sessio
 1. Get the Render link and add it to the README, user guide, deck and PR #2.
 2. Run `tools/check-chat.mjs` and the test set with `--ai`; update the score everywhere if it changes.
 3. Fill in the named owner; help record the videos from the scripts.
-4. Optional: fix C14 (ZIP/city-limits wording). Add it as a new test case first, and report the change honestly in the score history.
+4. Done: C14 fixed (see the score history).
