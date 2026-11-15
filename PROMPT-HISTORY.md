@@ -482,7 +482,7 @@ Result:
   - browser events on their own page for their analytics (`investdetroit:copilot`);
   - documented direct reads of the `copilot_counts` table.
 - **New guide:** `docs/DATA-PIPELINE.md` explains each way, with a dictionary of every category. The staff summary already reaches their system through FormAssembly.
-- **Documents updated:** the user guide, data-flow page, deck (now 33 slides) and setup guides.
+- **Documents updated:** the user guide, data-flow page, deck (now 22 slides) and setup guides.
 - **Tested:** the add-on on the FormAssembly test page sent counts through all four paths.
 
 **44. Count the address checkbox in the progress bar, and fix the last test miss**
@@ -498,7 +498,7 @@ Result:
 **45. Remake the presentation as a stakeholder deck**
 > Remake the Google Slides. Don't include information about the features, because I'll go through the demo myself. Pretend it's a presentation to stakeholders: a first section on stakeholders and problem statements, then a section on backend infrastructure (how the AI uses the knowledge base before the AI, limitations, cost), then ways to make the project stronger. Focus on the backend and how it's built. Pretend you're a team at Invest Detroit watching.
 
-Result: a new 33-slide deck, `Invest-Detroit-Copilot-Final-Presentation.pptx` (and PDF), with speaker notes on every slide.
+Result: a first version of the deck (33 slides; simplified in #46), `Invest-Detroit-Copilot-Final-Presentation.pptx` (and PDF), with speaker notes on every slide.
 - **The need:** stakeholders, where the intake form sits in the process, what applicants run into on the original form, problem statements, and our approach.
 - **Live demo:** a bookmark slide to switch to the website.
 - **How it's built:** the architecture, what is AI and what is fixed rules, how one chat question is answered, the knowledge base ("grounded, not trained"), what the AI may and may not say, safety checks, privacy and data flow, the WordPress and FormAssembly fit, hosting on Render, the data pipeline to their database, reliability, and testing and results.
@@ -506,6 +506,14 @@ Result: a new 33-slide deck, `Invest-Detroit-Copilot-Final-Presentation.pptx` (a
 - **Making it stronger:** a roadmap, the 30-day trial, and what it takes to run it for real.
 - **Also:** a backup slide of questions we expect.
 The old screenshot deck is kept as a feature reference.
+
+**46. Simplify the presentation**
+> I think it's too technical. Put it in simple words and cut down the slides a little.
+
+Result: the deck is now 22 slides in plain words, with speaker notes kept.
+- **Plain words:** no technical terms on the slides (for example "our small online service" instead of server names).
+- **Fewer slides:** the section dividers are gone (a small label marks each section), and the guardrails, privacy, hosting, reliability and impact slides were merged or shortened.
+- **Same story:** the need, a live demo bookmark, how it works, limits and cost, and next steps, plus a backup slide of questions we expect.
 
 ## Tips from this build
 

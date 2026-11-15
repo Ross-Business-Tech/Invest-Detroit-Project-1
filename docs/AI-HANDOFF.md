@@ -51,7 +51,7 @@ They're all in `docs/handoff/`; its `README.md` has the checklist.
 |---|---|---|
 | One-page README (+ full prompt) | `README.md` | a named owner at Invest Detroit (team: Invest Detroit Team #1: Johnny Lin, Ginny Liu, Shantanu Shah, Samantha Luu) |
 | Test results sheet | `docs/handoff/Invest-Detroit-Copilot-Test-Results.xlsx` | (none) |
-| Final presentation, 33 slides, backend-focused, no feature walkthrough (rebuild: tools/build-stakeholder-deck.mjs) | `docs/slides/Invest-Detroit-Copilot-Final-Presentation.pptx/.pdf` | (team, date and link filled in) |
+| Final presentation, 22 slides, plain words, backend-focused, no feature walkthrough (rebuild: tools/build-stakeholder-deck.mjs) | `docs/slides/Invest-Detroit-Copilot-Final-Presentation.pptx/.pdf` | (team, date and link filled in) |
 | Feature reference deck with screenshots, 33 slides (rebuild: tools/build-client-deck.mjs) | `docs/slides/Invest-Detroit-Copilot-Client-Deck.pptx/.pdf` | (optional backup) |
 | User guide, 7 pages | `docs/handoff/Invest-Detroit-Copilot-User-Guide.pdf/.docx` (source `USER-GUIDE.md`) | video links |
 | Demo videos | scripts in `docs/handoff/DEMO-VIDEO-SCRIPTS.md` | **the team records them** |

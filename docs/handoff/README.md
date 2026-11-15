@@ -6,7 +6,7 @@ Everything for the client's shared Google Drive folder. Put the [one-page README
 |---|---|---|
 | 1. README | [../../README.md](../../README.md): save as Google Doc or PDF | Ready (live link and team added); fill in the named owner |
 | 2. Live tool | https://invest-detroit-project-1.onrender.com | Live; test on a phone that isn't the team laptop |
-| 3. Slide deck | **Final presentation** (33 slides: the need, backend, limits and cost, ways to strengthen; no feature walkthrough): [../slides/Invest-Detroit-Copilot-Final-Presentation.pptx](../slides/Invest-Detroit-Copilot-Final-Presentation.pptx) (+ .pdf). Feature reference deck with screenshots: [../slides/Invest-Detroit-Copilot-Client-Deck.pptx](../slides/Invest-Detroit-Copilot-Client-Deck.pptx) | Ready (link, team and date added); fill in the owner placeholders |
+| 3. Slide deck | **Final presentation** (22 slides, plain words: the need, how it works, limits and cost, next steps; no feature walkthrough): [../slides/Invest-Detroit-Copilot-Final-Presentation.pptx](../slides/Invest-Detroit-Copilot-Final-Presentation.pptx) (+ .pdf). Feature reference deck with screenshots: [../slides/Invest-Detroit-Copilot-Client-Deck.pptx](../slides/Invest-Detroit-Copilot-Client-Deck.pptx) | Ready (link, team and date added); fill in the owner placeholders |
 | 4. Test results sheet | [Invest-Detroit-Copilot-Test-Results.xlsx](Invest-Detroit-Copilot-Test-Results.xlsx): upload, then File → Save as Google Sheets | Ready: 46/46 |
 | 5. Demo videos | Scripts: [DEMO-VIDEO-SCRIPTS.md](DEMO-VIDEO-SCRIPTS.md) | **The team needs to record them** |
 | 6. User guide | [Invest-Detroit-Copilot-User-Guide.pdf](Invest-Detroit-Copilot-User-Guide.pdf) (+ .docx for Google Docs) | Ready; add the video links |
