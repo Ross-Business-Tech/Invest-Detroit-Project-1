@@ -507,7 +507,7 @@ await feature({
     ['Decide approval or eligibility', 'It never predicts approval, eligibility or a borrower’s rate. Staff decide.'],
     ['Confirm Detroit city limits', 'Our one test miss: a ZIP-code question. Use the City’s Parcel Viewer.'],
     ['Understand every wording', 'Without the AI it matches known phrases. The first run missed two wordings (now fixed).'],
-    ['Read uploaded documents', 'Files are checked by name and size only, by design, for privacy.'],
+    ['Review uploads with AI', 'AI can’t read what’s inside an uploaded file yet. Files are checked by name and size only.'],
     ['Replace a translator', 'Translations were drafted with AI and need review by a qualified translator.'],
     ['Stay current on its own', 'Rates are copies of your flyers; update them when a flyer changes. Tested on sample data only.'],
   ]
