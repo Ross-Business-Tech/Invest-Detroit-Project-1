@@ -529,6 +529,7 @@ Result: the "Fill with sample applicant" demo button is now controlled by one se
 - **Turn it off:** set `VITE_SHOW_SAMPLE_BUTTON=false` on the host and redeploy, or change one line in `src/prototype/demoSettings.js`.
 - **Delete it:** delete that file and the lines marked `DEMO: sample applicant button` in `IntakeForm.jsx`; the sample data stays because the tests use it.
 - **Documented** in the handoff README, the backend guide's settings table and the FormAssembly guide.
+- **Backend guide PDF rebuilt** with the new setting. `node tools/build-backend-guide.mjs` now rebuilds it from `BACKEND-GUIDE.md` in one step.
 
 ## Tips from this build
 

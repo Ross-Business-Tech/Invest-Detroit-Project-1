@@ -40,4 +40,5 @@ The demo site has a "Fill with sample applicant" button above the form that fill
 
 - **Test results:** `node tools/run-test-set.mjs && python3 tools/build-results-sheet.py`
 - **Measured impact:** `node tools/measure-impact.mjs`
+- **Backend guide PDF:** `node tools/build-backend-guide.mjs` (built from [BACKEND-GUIDE.md](BACKEND-GUIDE.md))
 - **User guide PDF:** built from [USER-GUIDE.md](USER-GUIDE.md). Screenshots are in `img/`, taken from the app with the sample applicant.
