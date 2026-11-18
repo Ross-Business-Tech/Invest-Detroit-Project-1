@@ -5,9 +5,7 @@
 
 ## Demo video (2.5 minutes)
 
-[![Watch the demo video: the form, progress bar and chat assistant](docs/media/demo-video-thumbnail.jpg)](docs/media/Invest-Detroit-Copilot-Demo.mp4)
-
-Click the picture to open the video ([direct link](docs/media/Invest-Detroit-Copilot-Demo.mp4)). If it doesn't play in your browser, use the download button on that page.
+https://github.com/user-attachments/assets/a90f8112-174d-4001-aef7-aeb816549b3c
 
 ## What it does
 
