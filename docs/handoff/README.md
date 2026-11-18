@@ -1,0 +1,44 @@
+# Handoff package (November 17, 2026)
+
+Everything for the client's shared Google Drive folder. Put the [one-page README](../../README.md) first, with the live link at the top.
+
+| Drive item | File here | Status |
+|---|---|---|
+| 1. README | [../../README.md](../../README.md): save as Google Doc or PDF | Ready (live link and team added); fill in the named owner |
+| 2. Live tool | https://invest-detroit-project-1.onrender.com | Live; test on a phone that isn't the team laptop |
+| 3. Slide deck | **Final presentation** (22 slides, plain words: the need, how it works, limits and cost, next steps; no feature walkthrough): [../slides/Invest-Detroit-Copilot-Final-Presentation.pptx](../slides/Invest-Detroit-Copilot-Final-Presentation.pptx) (+ .pdf). Feature reference deck with screenshots: [../slides/Invest-Detroit-Copilot-Client-Deck.pptx](../slides/Invest-Detroit-Copilot-Client-Deck.pptx) | Ready (link, team and date added); fill in the owner placeholders |
+| 4. Test results sheet | [Invest-Detroit-Copilot-Test-Results.xlsx](Invest-Detroit-Copilot-Test-Results.xlsx): upload, then File → Save as Google Sheets | Ready: 46/46 |
+| 5. Demo videos | Scripts: [DEMO-VIDEO-SCRIPTS.md](DEMO-VIDEO-SCRIPTS.md) | **The team needs to record them** |
+| 6. User guide | [Invest-Detroit-Copilot-User-Guide.pdf](Invest-Detroit-Copilot-User-Guide.pdf) (+ .docx for Google Docs) | Ready; add the video links |
+| 7. Exit email | [EXIT-EMAIL.md](EXIT-EMAIL.md) | Draft; send after the presentation |
+| Extra: data-flow note for IT | [Invest-Detroit-Copilot-Data-Flow.pdf](Invest-Detroit-Copilot-Data-Flow.pdf) | Ready |
+| Extra: backend guide for IT | [Invest-Detroit-Copilot-Backend-Guide.pdf](Invest-Detroit-Copilot-Backend-Guide.pdf) (source [BACKEND-GUIDE.md](BACKEND-GUIDE.md)) | Ready |
+| Extra: reusable test kit | [test-set.json](test-set.json) + `node tools/run-test-set.mjs` (steps are in the sheet's "How to rerun" tab) | Ready |
+
+## Handoff checklist
+
+- [ ] The link opens on a device that isn't the team laptop and runs a new input
+- [x] No API key on the slides, screenshots or in the code (the key lives only in Render's settings)
+- [x] The test score matches in the sheet, deck and README (46/46)
+- [x] The measured impact uses only measured figures (2/10 today vs. 10/10 with the copilot, same 10 examples)
+- [x] The README fits on one page and covers all four parts (the prompt is pasted after the page)
+- [x] "What it can't do" names real misses from the test set (the first-run misses M02 and C10, and the city-limits miss C14, all fixed)
+- [ ] "Run it for real" names an owner (fill in the name; the cost estimate is in)
+- [x] The videos and user guide use only the fictional sample applicant
+- [ ] Client data is deleted and the exit email is ready
+- [ ] The user guide is tested by an AI Solutions Specialist
+
+## Turning off the "Fill with sample applicant" button
+
+The demo site has a "Fill with sample applicant" button above the form that fills in a made-up applicant. It is for demos only and is **not** part of the add-on that goes on Invest Detroit's real form. It is controlled by one setting:
+
+- **Turn it off:** set `VITE_SHOW_SAMPLE_BUTTON=false` in the host's environment settings (on Render: the service's **Environment** page) and redeploy. Or change `true` to `false` in [`src/prototype/demoSettings.js`](../../src/prototype/demoSettings.js).
+- **Turn it back on:** remove the setting, or set it to `true`.
+- **Delete it for good:** delete `src/prototype/demoSettings.js`, then remove the lines marked `DEMO: sample applicant button` in `src/prototype/IntakeForm.jsx`. Keep `src/prototype/sampleApplicant.js`: the automated tests use it as test data.
+
+## Regenerating
+
+- **Test results:** `node tools/run-test-set.mjs && python3 tools/build-results-sheet.py`
+- **Measured impact:** `node tools/measure-impact.mjs`
+- **Backend guide PDF:** `node tools/build-backend-guide.mjs` (built from [BACKEND-GUIDE.md](BACKEND-GUIDE.md))
+- **User guide PDF:** built from [USER-GUIDE.md](USER-GUIDE.md). Screenshots are in `img/`, taken from the app with the sample applicant.
