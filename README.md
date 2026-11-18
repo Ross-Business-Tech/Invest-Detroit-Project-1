@@ -3,6 +3,12 @@
 **Purpose:** helps applicants fill in Invest Detroit's Real Estate/C&I In-Take Form correctly the first time.
 **Live link:** https://invest-detroit-project-1.onrender.com (backup: https://invest-detroit.vercel.app/) · **Team:** Invest Detroit Team #1 (Johnny Lin, Ginny Liu, Shantanu Shah, Samantha Luu) · **Client:** Invest Detroit, Real Estate lending · **Date:** November 17, 2026
 
+## Demo video (2.5 minutes)
+
+[![Watch the demo video: the form, progress bar and chat assistant](docs/media/demo-video-thumbnail.jpg)](docs/media/Invest-Detroit-Copilot-Demo.mp4)
+
+Click the picture to open the video ([direct link](docs/media/Invest-Detroit-Copilot-Demo.mp4)). If it doesn't play in your browser, use the download button on that page.
+
 ## What it does
 
 - **Problem:** applicants submit the intake form with mistakes and gaps that screening staff then chase by email. It is for **the applicant** (developer or business owner) and **the screening staff member** who reads the application.
