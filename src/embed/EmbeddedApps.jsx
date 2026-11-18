@@ -27,7 +27,7 @@ import { saveDraft, loadDraft, clearDraft, draftsOff, setDraftsOff } from '../pr
 import { useI18n } from '../components/i18nContext.js'
 import { localeFromLang } from '../copilot/i18n/index.js'
 import { FIELDS_BY_ID, SECTIONS } from '../copilot/formDefinition.js'
-import { FIELD_GUIDE } from '../copilot/fieldGuide.js'
+import { hasHelpButton } from '../copilot/fieldGuide.js'
 import { liveNotesFor } from '../copilot/liveNotes.js'
 import { uploadTips } from '../copilot/uploadTips.js'
 import { equityMath, moneyNote, checkFile, stateForZip, ZIP_STATE } from '../copilot/formHelpers.js'
@@ -249,7 +249,7 @@ function FieldExtras({ id, hosts, values, live, error, onHelp }) {
   const tipsFor = id === 'doc_pfs' ? 'supporting_docs' : id // the supporting documents' tip sits before the first one
   return (
     <>
-      {hosts.help && FIELD_GUIDE[id] && createPortal(<HelpButton onClick={() => onHelp(id)} />, hosts.help)}
+      {hosts.help && hasHelpButton(id) && createPortal(<HelpButton onClick={() => onHelp(id)} />, hosts.help)}
       {hosts.tips && createPortal(<UploadTips tips={uploadTips(tipsFor, values)} id={`idc-${id}-tips`} />, hosts.tips)}
       {hosts.notes && createPortal(<Notes id={`idc-${id}`} notes={fieldNotes(id, values, live, error)} />, hosts.notes)}
     </>

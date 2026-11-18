@@ -536,6 +536,11 @@ Result: the "Fill with sample applicant" demo button is now controlled by one se
 
 Result: uploads in any format are accepted without a warning, on the demo and in the add-on. Files are still checked only for being empty (blocks Submit), very large (a warning) and a vague name (a tip). The large-file tip now says "a smaller file" instead of "a smaller PDF", in all five languages. The user guide, backend guide, setup docs and deck say files are checked by name and size only.
 
+**49. No ? button on simple questions**
+> Why is there an info button next to State? It's not a confusing question. Make sure it's still there for the confusing or misunderstood ones.
+
+Result: the three State questions (home, business, project) no longer show a ? button, on the demo or in the add-on. Every other question that had one keeps it (budget, loan, 10% equity, summary, square footage, AMI units, jobs, ownership, documents and the rest). The State help text is kept, so the chat can still answer. Other simple questions can be added to one list (`NO_HELP_BUTTON` in `src/copilot/fieldGuide.js`).
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

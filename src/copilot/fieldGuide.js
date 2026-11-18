@@ -70,6 +70,15 @@ const legal = {
 }
 
 /** Help for specific questions, keyed by field id (see formDefinition.js). */
+/**
+ * Questions too simple to need a ? button (the chat can still answer about them).
+ * Add a field id here to hide its button on the demo and in the add-on.
+ */
+export const NO_HELP_BUTTON = new Set(['home_state', 'business_state', 'project_state'])
+
+/** Whether a question gets a ? help button. */
+export const hasHelpButton = (fieldId) => Boolean(FIELD_GUIDE[fieldId]) && !NO_HELP_BUTTON.has(fieldId)
+
 export const FIELD_GUIDE = {
   total_budget: {
     explain: 'The full cost of the whole project, from every source combined: buying the property, construction or renovation, soft costs (design, permits, legal and financing fees) and a contingency. It is not just the amount you are asking Invest Detroit for. It should match the total of the Development Budget (sources and uses) you upload, which is reviewed again before closing. Remember to include financing costs: the Real Estate flyer lists fees of 1%–3%, and closing can add legal, appraisal, environmental, title and recording costs (published ranges, subject to change). Bank examiners (OCC) note contingencies usually run 5–10% of the budget.',

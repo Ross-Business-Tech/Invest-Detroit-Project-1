@@ -4,7 +4,7 @@
 import { useLayoutEffect, useRef } from 'react'
 import { useI18n } from './i18nContext.js'
 import RichText from './RichText.jsx'
-import { FIELD_GUIDE } from '../copilot/fieldGuide.js'
+import { hasHelpButton } from '../copilot/fieldGuide.js'
 import { formatMoneyInput, moneyNote, checkFile } from '../copilot/formHelpers.js'
 
 /** Collapsible tip shown before an upload button (see copilot/uploadTips.js). Closed by default. */
@@ -47,7 +47,7 @@ function Label({ field, htmlFor, as = 'label' }) {
 function LabelRow({ field, htmlFor, as, onHelp }) {
   const { t } = useI18n()
   const label = <Label field={field} htmlFor={htmlFor} as={as} />
-  if (!onHelp || !FIELD_GUIDE[field.id]) return label
+  if (!onHelp || !hasHelpButton(field.id)) return label
   return (
     <div className="label-row">
       {label}

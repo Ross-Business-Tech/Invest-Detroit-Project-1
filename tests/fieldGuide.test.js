@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { answerFromGuide, NO_MATCH } from '../src/copilot/guideTransport.js'
 import { buildRequest, createAssistant } from '../src/copilot/assistant.js'
 import { guideTransport } from '../src/copilot/guideTransport.js'
-import { FIELD_GUIDE, TOPICS } from '../src/copilot/fieldGuide.js'
+import { FIELD_GUIDE, TOPICS, hasHelpButton } from '../src/copilot/fieldGuide.js'
 import { FIELDS_BY_ID } from '../src/copilot/formDefinition.js'
 import { SOURCES } from '../src/copilot/config.js'
 
@@ -166,4 +166,13 @@ test('city-limits questions get the city-limits help; nearby questions keep thei
   assert.match(answerFromGuide({ message: 'What rates do you charge in Detroit?' }).text, /8%–9\.5%/)
   assert.match(answerFromGuide({ message: 'What documents do I need for a property in Detroit?' }).text, /project plan/)
   assert.equal(evaluateRequest({ message: 'Tell me a joke about 48201' }).action, 'reject')
+})
+
+test('simple questions like State get no ? button, but still have help for the chat', () => {
+  for (const id of ['home_state', 'business_state', 'project_state']) {
+    assert.ok(FIELD_GUIDE[id], id)
+    assert.equal(hasHelpButton(id), false, id)
+  }
+  assert.equal(hasHelpButton('total_budget'), true)
+  assert.equal(hasHelpButton('first_name'), false)
 })
