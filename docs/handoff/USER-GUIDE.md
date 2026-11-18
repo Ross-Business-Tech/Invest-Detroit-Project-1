@@ -116,7 +116,7 @@ The staff summary for this application then lists the two double-check items, wi
 
 - **Review results are reminders, not decisions.** A passed review doesn't mean the application is complete or eligible. Staff still read the documents.
 - **Chat answers about Invest Detroit** (rates, fees, steps) come from Invest Detroit documents and show their source. Published ranges are "subject to change"; confirm current terms before quoting them to a borrower.
-- **Uploaded files** are checked only for type, size and empty files. The copilot does not read what's inside them.
+- **Uploaded files** are checked only for size and empty files. Any file format is accepted. The copilot does not read what's inside them.
 - **Applicant notes** are the applicant's own words. Verify them against the documents.
 
 # Never trust it to

@@ -80,7 +80,7 @@ The deck was generated with pptxgenjs from a script that lived in the old sessio
 - **The AI may give general guidance** (finance concepts, how to write a summary, arithmetic), but Invest Detroit specifics come **only** from the knowledge base, with source ids (`server/systemPrompt.js`).
   - When an AI key is set, the pre-filter is lenient: unclear questions go to the AI. Protected, integrity, injection and off-topic-task requests are still blocked.
 - **The review never uses AI.** AI checks must never block Submit.
-- **No reading of uploaded PDFs.** Files are checked only for type, size and empty files. Upload tips are a collapsible blue "TIP".
+- **No reading of uploaded PDFs.** Files are checked only for size and empty files; any format is accepted (Invest Detroit takes any format). Upload tips are a collapsible blue "TIP".
 - **The staff summary** is built in the browser and goes only into a hidden FormAssembly field (add-on option `data-summary-field`). It is never stored by our server and is in English.
 - **Usage counts only:** allow-listed event types and keys. Never chat text, names or raw IP addresses. Per-visitor limits use a daily salted hash.
 - **Sensitive fields:** the SSN field is disabled in the prototype, and the chat redacts SSN-like numbers. Staff names are placeholders. All sample data is fictional ("Jordan Ellis").

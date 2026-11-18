@@ -69,7 +69,6 @@ export const ZIP_TEXT = 'This ZIP code is in Michigan. Please check the state.'
 
 // ---- Files (checked without opening them) --------------------------------------------------
 
-const OK_EXT = new Set(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'csv', 'jpg', 'jpeg', 'png'])
 const LARGE = 10 * 1024 * 1024
 const GENERIC_NAME = /^(scan|scanned|img|image|dsc|dcim|pxl|photo|picture|screenshot|screen shot|document|doc|file|untitled|new document|attachment|download|cam|camscanner)?[\s_-]*\(?\d*\)?(\s*\(\d+\))?$/i
 
@@ -84,15 +83,15 @@ export const FILE_EXAMPLES = {
 
 export const FILE_TEXT = {
   empty: 'This file is empty (0 bytes). Please choose the file again.',
-  type: 'Files ending in .{ext} may not open for Invest Detroit staff. A PDF works best.',
-  large: 'This file is large ({size}). If it doesn’t upload, try saving a smaller PDF.',
+  large: 'This file is large ({size}). If it doesn’t upload, try saving a smaller file.',
   name: 'Consider renaming this file so staff can tell what it is, for example "{example}".',
 }
 
 const mb = (bytes) => `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 
 /**
- * Checks on a chosen file using only its name, size and type: the contents are never read.
+ * Checks on a chosen file using only its name and size: the contents are never read. Any file
+ * format is accepted (Invest Detroit takes any format).
  * @param {string} fieldId
  * @param {{ name: string, size: number }} file
  * @returns {{ level: 'blocker'|'warning'|'info', key: string, text: string, params?: object }[]}
@@ -100,10 +99,8 @@ const mb = (bytes) => `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 export function checkFile(fieldId, file) {
   if (!file?.name) return []
   const out = []
-  const ext = file.name.includes('.') ? file.name.split('.').pop().toLowerCase() : ''
   const base = file.name.replace(/\.[^.]*$/, '').trim()
   if (file.size === 0) out.push({ level: 'blocker', key: 'empty', text: FILE_TEXT.empty })
-  if (!OK_EXT.has(ext)) out.push({ level: 'warning', key: 'type', text: FILE_TEXT.type, params: { ext: ext || '?' } })
   if (file.size > LARGE) out.push({ level: 'warning', key: 'large', text: FILE_TEXT.large, params: { size: mb(file.size) } })
   if (!base || GENERIC_NAME.test(base) || /^\d+$/.test(base)) {
     out.push({ level: 'info', key: 'name', text: FILE_TEXT.name, params: { example: FILE_EXAMPLES[fieldId] || 'Project-Plan.pdf' } })

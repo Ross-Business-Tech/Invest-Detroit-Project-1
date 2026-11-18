@@ -35,7 +35,7 @@ The copilot is **one script tag** plus a small server. It works on top of the ex
 | **?** button next to each question | ✅ Automatic | Added inside each question's label |
 | Notes as questions are answered (loan larger than budget, ZIP/state mismatch…) | ✅ Automatic | Under the question, once the applicant leaves it |
 | "About $1.45 million", 10% equity math | ✅ Automatic | Under the money and equity questions. The answer itself isn't changed. |
-| Upload tips; empty, oversized or wrong-type file checks | ✅ Automatic | Tip before each required upload. Only the file's name, size and type are read, never its contents. |
+| Upload tips; empty or oversized file checks | ✅ Automatic | Tip before each required upload. Any format is accepted. Only the file's name and size are read, never its contents. |
 | Progress bar with section chips | ✅ Automatic | Sticks to the top of the form; `data-progress-top` makes room for a sticky site header |
 | Five languages (incl. Arabic right to left) | ✅ Automatic | Follows the page's language; answers are read by FormAssembly's option codes, so translated pages still work |
 | Star ratings and usage counts | ✅ Automatic | Counts only, for Invest Detroit's own system: export, webhook or page events ([DATA-PIPELINE.md](DATA-PIPELINE.md)) |

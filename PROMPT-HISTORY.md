@@ -531,6 +531,11 @@ Result: the "Fill with sample applicant" demo button is now controlled by one se
 - **Documented** in the handoff README, the backend guide's settings table and the FormAssembly guide.
 - **Backend guide PDF rebuilt** with the new setting. `node tools/build-backend-guide.mjs` now rebuilds it from `BACKEND-GUIDE.md` in one step.
 
+**48. Accept any file format**
+> This warning pops up when users upload a non-PDF format to required documents ("Files ending in .md may not open for Invest Detroit staff. A PDF works best."). We are told Invest Detroit will take any format, so remove it.
+
+Result: uploads in any format are accepted without a warning, on the demo and in the add-on. Files are still checked only for being empty (blocks Submit), very large (a warning) and a vague name (a tip). The large-file tip now says "a smaller file" instead of "a smaller PDF", in all five languages. The user guide, backend guide, setup docs and deck say files are checked by name and size only.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.

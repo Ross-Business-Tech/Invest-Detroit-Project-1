@@ -42,7 +42,8 @@ const html = execFileSync('pandoc', [src, '-f', 'markdown', '-t', 'html5', '-s',
 const footer = `<div style="font-family: Inter, sans-serif; font-size: 6.5pt; color: #444; width: 100%; padding: 0 0.8in; display: flex; justify-content: space-between;">
   <span>${title.replace(/&/g, '&amp;')} · Invest Detroit Team #1</span><span><span class="pageNumber"></span> / <span class="totalPages"></span></span></div>`
 
-const browser = await chromium.launch()
+// CHROMIUM_PATH points at a preinstalled browser when Playwright's own download is missing.
+const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {})
 const page = await browser.newPage()
 await page.setContent(html, { waitUntil: 'load' })
 await page.pdf({ path: out, format: 'Letter', displayHeaderFooter: true, headerTemplate: '<span></span>', footerTemplate: footer, preferCSSPageSize: true, printBackground: true })

@@ -175,7 +175,7 @@ These are not settings. A developer must change them in the files.
 2. **Not tested on your real page.** We tested on a practice copy with made-up data. Nothing has been verified on your actual WordPress page, theme or security plugins.
 3. **The live AI has not been scored.** The 46/46 result is for the built-in answers. The live-AI score is the next measurement. Someone needs to run `OPENAI_API_KEY=… OPENAI_BASE_URL=… OPENAI_MODEL=… node tools/run-test-set.mjs --ai` from a computer that can reach the AI provider.
 4. **Real benefit is not yet measured.** We measured that the original form caught 2 of 10 common mistakes and the copilot caught 10 of 10. We have **not** measured time saved or fewer follow-up emails. That needs a pilot.
-5. **No file reading.** Uploaded files are checked only for type, size and emptiness. This is deliberate, for privacy.
+5. **No file reading.** Uploaded files are checked only for size and emptiness (any format is accepted). This is deliberate, for privacy.
 6. **Facts are static copies** that someone must keep current (section 3).
 7. **Translations were drafted with AI** and have not been checked by native speakers.
 8. **Review rules are reminders, not decisions.** Rules cannot know every situation, and staff still read the documents.

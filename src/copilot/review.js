@@ -326,7 +326,7 @@ function summaryExperience({ values }) {
   })]
 }
 
-// ---- Uploaded files, checked by name, size and type only (never opened) -------------------
+// ---- Uploaded files, checked by name and size only (never opened; any format is accepted) -------------------
 // The prototype passes { [fieldId]: { name, size } } as values._files. On other forms it is absent.
 
 function fileChecks({ values, visibleIds }) {

@@ -416,7 +416,7 @@ async function pic(slide, file, box, alt) {
     ['Runs on a class AI account', 'It ends after the sprint. Invest Detroit needs its own AI account.', RED],
     ['Not yet on your real page', 'We tested on a copy of your form with made-up data.', RED],
     ['AI answers not yet scored', 'Our 46/46 used the built-in answers. Scoring the live AI is next.', ORG],
-    ['Does not read uploaded files', 'On purpose, for privacy. It checks only name, size and type.', BLU],
+    ['Does not read uploaded files', 'On purpose, for privacy. It checks only name and size.', BLU],
     ['Facts must be kept current', 'They are copies of your documents, so update them when a flyer changes.', ORG],
     ['Translations need review', 'The five languages were drafted with AI.', BLU],
   ]

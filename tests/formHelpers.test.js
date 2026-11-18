@@ -40,7 +40,7 @@ test('files are checked by name and size only', () => {
   const keys = (f) => checkFile('doc_dev_budget', f).map((c) => c.key)
   assert.deepEqual(keys({ name: 'Development-Budget.pdf', size: 20000 }), [])
   assert.deepEqual(keys({ name: 'scan001.pdf', size: 20000 }), ['name'])
-  assert.deepEqual(keys({ name: 'IMG_1234.heic', size: 20000 }), ['type', 'name'])
+  assert.deepEqual(keys({ name: 'IMG_1234.heic', size: 20000 }), ['name'])
   assert.deepEqual(keys({ name: 'Budget.pdf', size: 0 }), ['empty'])
   assert.deepEqual(keys({ name: 'Budget.pdf', size: 30 * 1024 * 1024 }), ['large'])
   // In the review: an empty file blocks Submit; a vague name is only a tip.
