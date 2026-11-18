@@ -28,6 +28,14 @@ Everything for the client's shared Google Drive folder. Put the [one-page README
 - [ ] Client data is deleted and the exit email is ready
 - [ ] The user guide is tested by an AI Solutions Specialist
 
+## Turning off the "Fill with sample applicant" button
+
+The demo site has a "Fill with sample applicant" button above the form that fills in a made-up applicant. It is for demos only and is **not** part of the add-on that goes on Invest Detroit's real form. It is controlled by one setting:
+
+- **Turn it off:** set `VITE_SHOW_SAMPLE_BUTTON=false` in the host's environment settings (on Render: the service's **Environment** page) and redeploy. Or change `true` to `false` in [`src/prototype/demoSettings.js`](../../src/prototype/demoSettings.js).
+- **Turn it back on:** remove the setting, or set it to `true`.
+- **Delete it for good:** delete `src/prototype/demoSettings.js`, then remove the lines marked `DEMO: sample applicant button` in `src/prototype/IntakeForm.jsx`. Keep `src/prototype/sampleApplicant.js`: the automated tests use it as test data.
+
 ## Regenerating
 
 - **Test results:** `node tools/run-test-set.mjs && python3 tools/build-results-sheet.py`

@@ -9,7 +9,8 @@ import ReviewPanel from '../components/ReviewPanel.jsx'
 import SuccessDialog from '../components/SuccessDialog.jsx'
 import { useReviewSession } from '../components/useReviewSession.js'
 import { useI18n } from '../components/i18nContext.js'
-import { SAMPLE_APPLICANT } from './sampleApplicant.js'
+import { SAMPLE_APPLICANT } from './sampleApplicant.js' // DEMO: sample applicant button
+import { SHOW_SAMPLE_APPLICANT_BUTTON } from './demoSettings.js' // DEMO: sample applicant button
 import { goToField } from './goToField.js'
 import BeforeYouStart from './BeforeYouStart.jsx'
 import { uploadTips } from '../copilot/uploadTips.js'
@@ -195,6 +196,7 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
     document.getElementById('form')?.scrollIntoView({ behavior: 'smooth' })
   }
 
+  // DEMO: sample applicant button (start). Turn on/off in demoSettings.js.
   const fillSample = () => {
     markStarted()
     setValues(SAMPLE_APPLICANT)
@@ -204,6 +206,7 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
     setShowErrors(false)
     session.invalidate()
   }
+  // DEMO: sample applicant button (end)
 
   const onFocusCapture = (e) => {
     const id = e.target.closest?.('[data-field-id]')?.dataset.fieldId
@@ -231,7 +234,10 @@ export default function IntakeForm({ onActiveFieldChange = () => {}, onHelp }) {
 
       <div className="proto-tools">
         <span>{t('Prototype tools:')}</span>
-        <button type="button" className="btn small" onClick={fillSample}>{t('Fill with sample applicant')}</button>
+        {/* DEMO: sample applicant button. Turn on/off in demoSettings.js. */}
+        {SHOW_SAMPLE_APPLICANT_BUTTON && (
+          <button type="button" className="btn small" onClick={fillSample}>{t('Fill with sample applicant')}</button>
+        )}
         <button type="button" className="btn small outline" onClick={reset}>{t('Clear form')}</button>
       </div>
 

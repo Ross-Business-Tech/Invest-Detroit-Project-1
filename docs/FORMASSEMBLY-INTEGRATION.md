@@ -149,7 +149,7 @@ It never includes an SSN. It's sent only inside the application, to FormAssembly
 
 **What isn't carried over, on purpose:**
 - **Money boxes adding commas as you type:** their form's money boxes only accept numbers, so commas could block Submit. The "About $1.45 million" note gives the same reassurance.
-- **The demo's prototype banner and "Fill with sample applicant" / "Clear form" buttons:** these are for demos only.
+- **The demo's prototype banner and "Fill with sample applicant" / "Clear form" buttons:** these are for demos only. On the demo site, the sample button can be switched off with one setting (`VITE_SHOW_SAMPLE_BUTTON=false`, or `src/prototype/demoSettings.js`); see the [handoff README](handoff/README.md).
 - **"Selected: file (stays on your device)" under uploads:** on the real form, files *are* sent to Invest Detroit with the application, so that sentence would be wrong there. FormAssembly shows the chosen file itself.
 
 ## Step 5: check the page around the form (WordPress)

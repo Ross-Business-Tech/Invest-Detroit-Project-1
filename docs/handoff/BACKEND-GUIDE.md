@@ -155,6 +155,7 @@ This is the most important section for handoff. Everything in the first table is
 | `USAGE_EXPORT_TOKEN` | Password for `/api/usage` | Not set until needed | Set a long random value if you use the export |
 | `USAGE_WEBHOOK_URL`, `USAGE_WEBHOOK_SECRET` | Push counts to your system | Not set | Set if you want pushes |
 | `PORT` | Which port to listen on | Set by the host | Set by yours |
+| `VITE_SHOW_SAMPLE_BUTTON` | Shows the demo's "Fill with sample applicant" button (demo site only, not the add-on). Read when the site is built, so redeploy after changing it | Not set (button shows) | Set `false` to hide it, or delete it as described in the handoff README |
 
 ## Things hard-coded in the code
 

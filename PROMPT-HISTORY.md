@@ -522,6 +522,14 @@ Result: a 12-page PDF, `Invest-Detroit-Copilot-Backend-Guide.pdf`, with its sour
 - **How it works:** the three layers, the journey of one chat question, the knowledge base, what the AI will and won't do, and what data is kept.
 - **For handoff:** a table of every setting to change, what is written into the code, limitations, 13 things to be careful about, suggested improvements and a day-one checklist.
 
+**48. Make the sample applicant button a setting**
+> can you make it liek a setting that they can just turn off easily or delete
+
+Result: the "Fill with sample applicant" demo button is now controlled by one setting.
+- **Turn it off:** set `VITE_SHOW_SAMPLE_BUTTON=false` on the host and redeploy, or change one line in `src/prototype/demoSettings.js`.
+- **Delete it:** delete that file and the lines marked `DEMO: sample applicant button` in `IntakeForm.jsx`; the sample data stays because the tests use it.
+- **Documented** in the handoff README, the backend guide's settings table and the FormAssembly guide.
+
 ## Tips from this build
 
 - **Give Claude the source material.** Pasting the real form's page source produced a much closer replica than describing it.
